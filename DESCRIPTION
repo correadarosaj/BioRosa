@@ -17,4 +17,6 @@ Imports:
     stringr,
     weights,
     plyr,
-    tidyverse
+    tidyverse,
+    GA,
+    pROC
