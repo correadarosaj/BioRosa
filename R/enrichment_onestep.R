@@ -11,21 +11,51 @@
 
 #' Run a one-step enrichment pipeline from a gene list and its statistics
 #'
-#' Given three parallel vectors describing a differential-expression result
-#' (gene symbol, log2 fold-change, adjusted p-value), this function:
-#'   * splits genes into UP and DOWN subsets using `padj_cutoff` and
-#'     `log2fc_cutoff`,
-#'   * runs over-representation analysis (GO BP/MF/CC, Reactome, KEGG,
-#'     MSigDB Hallmark) on each subset,
-#'   * runs GSEA against GO terms (`gseGO`) ranked by `log2FoldChange`,
-#'   * runs FGSEA against the MSigDB Hallmark, GO_BP, and Reactome
-#'     collections.
+#' @description
+#' `enrichment_onestep()` is a single entry point that takes a
+#' differential-expression result — described by three parallel vectors
+#' (`genes`, `log2FoldChange`, `padj`) — and runs the full standard
+#' pathway-analysis battery in one call. The motivation is to remove the
+#' boilerplate (DEG splitting, ID conversion, per-collection looping,
+#' plot saving, Excel export) that otherwise sits between a DE table and
+#' a publishable enrichment figure, while keeping every intermediate
+#' result available for downstream inspection.
 #'
-#' Tables (.xlsx, .csv), plots (.png, .pdf), and a `log.txt` are written
-#' under `output_dir`. The full set of result objects is also returned.
+#' Internally the function:
 #'
-#' Human-only: uses `org.Hs.eg.db`, KEGG organism `"hsa"`, and `msigdbr`
-#' species `"human"`.
+#' 1. **Builds the candidate sets.** Genes are kept when `padj` is
+#'    non-`NA` and below `padj_cutoff`. From that filtered set, genes
+#'    with `log2FoldChange >  log2fc_cutoff` form the **UP** set, and
+#'    genes with `log2FoldChange < -log2fc_cutoff` form the **DOWN** set.
+#'    The over-representation universe is every gene with a non-`NA`
+#'    `padj`, regardless of cutoff.
+#' 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
+#'    Reactome (`C2 / REACTOME`) collections separately for UP and DOWN,
+#'    using the `log2FoldChange` as the ranking statistic and saving one
+#'    worksheet per collection-direction to `FGSEA_results.xlsx`.
+#' 3. **Runs over-representation analysis (ORA)** on each direction:
+#'    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
+#'    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
+#'    (organism `"hsa"`); and `clusterProfiler::enricher` against MSigDB
+#'    Hallmark. SYMBOL → ENTREZ conversion is done with
+#'    `clusterProfiler::bitr` only for the backends that require Entrez
+#'    IDs (Reactome, KEGG).
+#' 4. **Runs `gseGO`** with `ont = "ALL"` on each direction, ranked by
+#'    `log2FoldChange`, then collapses redundant terms with
+#'    `clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")`.
+#' 5. **Persists everything to `output_dir`** — Excel tables (`.xlsx`),
+#'    UP/DOWN gene lists (`.csv`), dotplots / treeplots / cnetplots /
+#'    ridgeplots (`.png` and `.pdf`), and a timestamped `log.txt` capturing
+#'    every save and any per-plot error. The function also returns the
+#'    full set of in-memory result objects so callers can iterate without
+#'    re-reading from disk.
+#'
+#' Each per-plot rendering step is wrapped in `tryCatch()`, so a single
+#' failing plot (e.g. an `enrichplot::treeplot` on a result with too few
+#' terms) is logged and skipped rather than aborting the whole pipeline.
+#'
+#' Human-only: uses `org.Hs.eg.db::org.Hs.eg.db`, KEGG organism `"hsa"`,
+#' and `msigdbr` species `"human"`.
 #'
 #' @param genes Character vector of HGNC gene symbols.
 #' @param log2FoldChange Numeric vector of log2 fold-changes, same length
