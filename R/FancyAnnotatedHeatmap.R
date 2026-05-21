@@ -1,3 +1,83 @@
+#' Draw a richly annotated expression heatmap with side fold-change tables
+#'
+#' @description
+#' `FancyAnnotatedHeatmap` produces a publication-style heatmap PDF of a
+#' gene-by-sample expression matrix using `ComplexHeatmap`. On top of the
+#' standard heatmap it can attach:
+#'
+#' * a column annotation block (`column_ha`) and an optional column split
+#'   (`colsplitx`) for grouping samples;
+#' * a left-hand row annotation containing gene symbols rendered in a
+#'   monospace font with consistent column widths;
+#' * one extra right-hand text column per contrast, each cell carrying
+#'   the (transformed) log2 fold-change plus a significance star derived
+#'   from the corresponding FDR / p-value.
+#'
+#' Fold-change values are transformed for display via
+#' `sign(lgfch) * 2 ^ |lgfch|` so the rendered numbers are on a fold-change
+#' scale rather than log2 scale. Significance stars follow the cut-points
+#' `c(0.001, 0.01, 0.05, 0.1, 1)` with symbols `***`, `**`, `*`, `+`, and
+#' blank. Numeric formatting is handled by the inline `padding()` helper,
+#' which uses invisible white hyphens to align decimal points across rows.
+#'
+#' The heatmap is colour-scaled either as row Z-scores (default) or on the
+#' raw log2-expression scale, using a blue / white / red ramp built with
+#' `circlize::colorRamp2`. Rows are clustered by Euclidean distance with
+#' complete linkage; columns are kept in the order supplied by
+#' `rownames(annot.col)`.
+#'
+#' The function has the side effect of writing the heatmap to `grafname`
+#' as a PDF (via `pdf()` / `dev.off()`) and returns invisibly.
+#'
+#' @param grafname Character. Path to the output PDF file.
+#' @param matx Numeric matrix of expression values. Rows are genes
+#'   (named), columns are samples. Must contain every sample listed in
+#'   `rownames(annot.col)`.
+#' @param annot.col Data frame of sample-level annotation. Row names are
+#'   sample IDs and define the column order of the heatmap.
+#' @param colsplitx Optional vector used by `ComplexHeatmap::Heatmap` to
+#'   split the heatmap into column groups. Default `NULL` (no split).
+#' @param column_ha Optional `HeatmapAnnotation` object to place above
+#'   the heatmap (e.g. clinical / phenotype tracks). Default `NULL`.
+#' @param BigTab Optional data frame of additional per-gene columns from
+#'   which a subset can be selected via `BigTabcols`. Default `NULL`.
+#' @param wdt Numeric. PDF width in inches. If `NULL`, derived from the
+#'   matrix dimensions as `ncol(matx) * 2 + ncol(cfx) / 10`.
+#' @param hgt Numeric. PDF height in inches. If `NULL`, derived as
+#'   `max(8, nrow(matx) / 4)`.
+#' @param setname Character. Title drawn at the bottom of the heatmap
+#'   (e.g. the gene-set name). Default empty string.
+#' @param column_names_max_height A `grid::unit` giving the maximum
+#'   height reserved for column labels. Default `unit(5, "cm")`.
+#' @param BigTabcols Optional character vector of column-name patterns;
+#'   columns of `BigTab` matching any pattern (via `stringr::str_detect`)
+#'   are kept. Default `NULL`.
+#' @param cfx Optional numeric matrix of log2 fold changes. Rows are
+#'   genes (must include all of `rownames(matx)`), columns are contrasts.
+#'   When supplied, one annotated text column per contrast is appended
+#'   to the heatmap. Default `NULL`.
+#' @param fdx Optional matrix of FDR or p-values matching the shape of
+#'   `cfx`. Required when `cfx` is supplied. Used to attach significance
+#'   stars to each fold-change cell.
+#' @param ShowColumnNames Logical. Show sample names along the heatmap's
+#'   bottom axis. Default `FALSE`.
+#' @param fnt_size_title Numeric. Font size for the column-split titles.
+#'   Default `8`.
+#' @param scalerows Logical. If `TRUE` (default), each row of `matx` is
+#'   converted to a Z-score before plotting and the legend is labelled
+#'   `Z-score`. If `FALSE`, raw values are used and the legend is
+#'   labelled `log2-expression`.
+#' @param rampvalues Numeric. Symmetric extreme of the colour ramp when
+#'   `scalerows = TRUE`: the ramp spans
+#'   `c(-rampvalues, 0, rampvalues)`. Default `2`.
+#' @param ... Currently unused; reserved for future extensions.
+#'
+#' @return Invisibly `NULL`. Called for the side effect of writing a PDF
+#'   to `grafname`.
+#'
+#' @seealso [doAnnotatedHeatmap()] for the earlier non-fancy variant.
+#'
+#' @export
 FancyAnnotatedHeatmap <- function(
     grafname,
     matx,        # matrix of expression
