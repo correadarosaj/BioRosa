@@ -19,5 +19,17 @@ Imports:
     plyr,
     tidyverse,
     GA,
-    pROC
+    pROC,
+    clusterProfiler,
+    ReactomePA,
+    msigdbr,
+    enrichplot,
+    fgsea,
+    org.Hs.eg.db,
+    openxlsx,
+    ggplot2,
+    data.table
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 RoxygenNote: 7.3.3
