@@ -1,6 +1,6 @@
 ---
 name: add-function
-description: Add a new function to this R package end-to-end — create `R/<name>.R`, draft a roxygen2 docblock, generate `man/<name>.Rd`, bootstrap testthat if missing, write `tests/testthat/test-<name>.R`, run `devtools::load_all()` and `devtools::test()`, then commit and push to `master`. Use when the user says "add a function", "new function", "create function in this package", "scaffold a function", "add R function", or "add and push a function".
+description: Add a new function to this R package end-to-end — create `R/<name>.R`, draft a roxygen2 docblock, generate `man/<name>.Rd`, bootstrap testthat if missing, write `tests/testthat/test-<name>.R`, run `devtools::load_all()` and `devtools::test()`, then commit and push to `master`. Also handles refactoring an existing script into a package-ready function. Use when the user says "add a function", "new function", "create function in this package", "scaffold a function", "add R function", "add and push a function", or "make this script ready for the package".
 ---
 
 # Add a function to the package (R)
@@ -18,15 +18,60 @@ Determine three things, asking the user only for what is missing:
   - Pasted inline in the user's message.
   - Path to an existing file the user wants moved into `R/`.
   - A short spec ("write a function that does X with signature `f(a, b = 1)`") — in this case draft the body yourself and confirm with the user before writing.
+  - **An existing standalone script** (top-level `library()` calls, helpers, multiple functions, side-effect entry-point) that the user wants turned into one package function. **This is refactor mode** — see §1a.
 - **Purpose / one-line description**. Needed for the roxygen `@title` and the commit message. If the user did not provide one, ask in one sentence.
 
 If anything is ambiguous (e.g. the name clashes), warn and ask before continuing.
 
+### 1a. Refactor mode: clarify the target shape before rewriting
+
+Trigger refactor mode when the source is a multi-function script, has top-level `library()` / `rm(list=ls())`, or is longer than ~40 lines. In refactor mode, **ask before you rewrite**. Skipping this step almost always produces a result the user has to send back.
+
+Use `AskUserQuestion` with `preview` blocks showing the **literal call signature** for each option. Concrete previews beat verbal descriptions — the user is choosing between code shapes, so show code.
+
+Ask only what you can't read off the source. Common axes:
+
+1. **Input signature** — parallel vectors? a single data.frame? a list with named slots? Show each as a preview:
+   ```r
+   # parallel vectors
+   my_fn(genes = ..., log2FoldChange = ..., padj = ...)
+
+   # single data.frame
+   my_fn(data = data.frame(SYMBOL, log2FoldChange, padj))
+   ```
+2. **File structure** — one self-contained function with helpers **nested in the body** (nothing else added to the package namespace), or one exported function plus helpers at file scope marked `@noRd @keywords internal`?
+3. **Scope parameters** — fix species/organism/dataset that the original hard-coded, or expose them as arguments?
+4. **Sub-analysis selection** — when the script runs N analyses, confirm which should remain (multi-select).
+5. **Output behaviour** — return objects only, write files only, or both (current behaviour)?
+
+Wait for answers before generating the rewrite. If the user explicitly says "just do it" / "you decide", record the choice in your reply and proceed.
+
 ### 2. Drop the function into `R/<fn_name>.R`
 
 - Create `R/<fn_name>.R`. **Never overwrite an existing file** without asking first.
-- Preserve the user-provided body verbatim. Do not refactor, rename arguments, or add error handling the user did not request.
+- By default, preserve the user-provided body verbatim. Do not refactor, rename arguments, or add error handling the user did not request.
+- **Refactor-mode exception**: when entered from §1a, apply the conventions in §2a "Package-ready idioms" below. Make no *behavioural* changes beyond what package compatibility forces — same analyses, same defaults, same outputs.
 - If the source had no roxygen block, add a stub (see step 3) before the function definition.
+
+### 2a. Package-ready idioms
+
+Apply these when writing fresh package code, and when refactoring an existing script into package form. They are not negotiable for code that ships in `R/`:
+
+- **No `library()` / `require()` calls** inside files in `R/`. Use `pkg::fn()` for every external call. Package attachment belongs in DESCRIPTION `Imports:` / `Depends:`, not in source files.
+- **No top-level side effects** in the file: no `rm(list=ls())`, no `setwd()`, no script-mode `print()` of intermediate values, no `source()` of sibling files.
+- **Bioconductor data packages passed as arguments** (e.g. an `OrgDb` object) use `pkg::pkg` form: `OrgDb = org.Hs.eg.db::org.Hs.eg.db`. The bare symbol only works because of attachment, which we are not doing.
+- **Namespace base utilities too** when they collide with common packages or aren't in `base`: `stats::setNames`, `utils::write.csv`, `grDevices::png`, `grDevices::dev.off`, `methods::is`. (Don't namespace `c()`, `length()`, etc.)
+- **`TRUE` / `FALSE`**, never `T` / `F` — `T`/`F` are rebindable variables.
+- **`message()` for status**, not `print()` or `cat()`. `print()` is reserved for explicit object printing (e.g. forcing a ggplot to render to an open device).
+- **Pair graphics devices with `on.exit`**: `grDevices::png(file); on.exit(grDevices::dev.off(), add = TRUE)`. Same for `pdf()`. Prevents leaking open devices when an error fires before `dev.off()`.
+- **Header `Imports:` comment** at the top of the file listing every package called via `::`, so the user knows what to add to DESCRIPTION. Example:
+  ```r
+  # Imports: clusterProfiler, ReactomePA, msigdbr, enrichplot, fgsea,
+  #          org.Hs.eg.db, openxlsx, ggplot2, data.table, grDevices, utils, stats
+  ```
+- **Input validation at the top of the body**: `missing()` checks, type coercion, length-equality checks for parallel-vector signatures, with actionable error messages (`stop("\`genes\`, \`log2FoldChange\`, and \`padj\` must have the same length.")`).
+- **clusterProfiler `enrichResult` length check**: use `nrow(obj@result)`, not `nrow(obj)` — the latter relies on a `dim()` method that isn't always present.
+- **Drop deprecated arguments** silently when refactoring (e.g. `nPerm` to `gseGO`). Don't preserve known-deprecated args just because the original had them; mention the removal in the commit message.
 
 ### 3. Document with roxygen2
 
@@ -131,6 +176,7 @@ Delegate to `.claude/skills/push/SKILL.md`.
 
 - Never overwrite an existing `R/<fn_name>.R`, `man/<fn_name>.Rd`, or `tests/testthat/test-<fn_name>.R` without explicit user confirmation.
 - Never silently rewrite the user's function body. If the body has a clear bug discovered during testing, surface it and ask before changing.
+- In refactor mode (§1a), never start the rewrite without confirming the input signature and file structure. The cost of one `AskUserQuestion` round is small; the cost of a wrong-shape rewrite is a full redo.
 - Never stage `.Rd` files for functions other than the one being added. `roxygenise()` is global; staging must be selective.
 - Never delete or modify `NAMESPACE` by hand — it is generated; let `roxygenise()` rewrite it if the new function needs `@export` plumbing.
 - Never push to `master` from inside this skill if the local branch has diverged from upstream. Defer to `/pull` first.
