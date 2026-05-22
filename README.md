@@ -1,4 +1,4 @@
-# GuttmanHeatmap
+# BioRosa
 
 Annotated heatmaps and downstream analysis helpers for RNA-seq gene-expression
 data. Built on top of `ComplexHeatmap`, with support for significance
@@ -23,7 +23,7 @@ BiocManager::install(c(
 if (!requireNamespace("remotes", quietly = TRUE))
   install.packages("remotes")
 
-remotes::install_github("GuttmanLabMSSM/GuttmanHeatmap")
+remotes::install_github("correadarosaj/BioRosa")
 ```
 
 `remotes::install_github()` will pull the remaining CRAN dependencies
@@ -36,7 +36,7 @@ remotes::install_github("GuttmanLabMSSM/GuttmanHeatmap")
 
 ```r
 install.packages("pak")
-pak::pkg_install("github::GuttmanLabMSSM/GuttmanHeatmap")
+pak::pkg_install("github::correadarosaj/BioRosa")
 ```
 
 ### Pinning to a specific version
@@ -44,14 +44,14 @@ pak::pkg_install("github::GuttmanLabMSSM/GuttmanHeatmap")
 For reproducibility, pin to a tag, branch, or commit:
 
 ```r
-remotes::install_github("GuttmanLabMSSM/GuttmanHeatmap", ref = "master")
-remotes::install_github("GuttmanLabMSSM/GuttmanHeatmap", ref = "<commit-sha>")
+remotes::install_github("correadarosaj/BioRosa", ref = "master")
+remotes::install_github("correadarosaj/BioRosa", ref = "<commit-sha>")
 ```
 
 ## Quick start
 
 ```r
-library(GuttmanHeatmap)
+library(BioRosa)
 
 # Annotated heatmap with side fold-change tables
 FancyAnnotatedHeatmap(

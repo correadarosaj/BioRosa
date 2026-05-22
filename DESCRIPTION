@@ -1,4 +1,4 @@
-Package: GuttmanHeatmap
+Package: BioRosa
 Type: Package
 Title: Annotated Heatmaps for RNA-seq Gene Expression Analysis
 Version: 0.1.0

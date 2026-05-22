@@ -1,4 +1,4 @@
 library(testthat)
-library(GuttmanHeatmap)
+library(BioRosa)
 
-test_check("GuttmanHeatmap")
+test_check("BioRosa")
