@@ -298,9 +298,9 @@ enrichment_onestep <- function(genes,
     up   <- flt[flt$log2FoldChange >  log2fc_cutoff, ]
     down <- flt[flt$log2FoldChange < -log2fc_cutoff, ]
 
-    hm <- msigdbr::msigdbr(species = "human", category = "H")
-    bp <- msigdbr::msigdbr(species = "human", category = "C5", subcategory = "BP")
-    re <- msigdbr::msigdbr(species = "human", category = "C2", subcategory = "REACTOME")
+    hm <- msigdbr::msigdbr(species = "human", collection = "H")
+    bp <- msigdbr::msigdbr(species = "human", collection = "C5", subcollection = "BP")
+    re <- msigdbr::msigdbr(species = "human", collection = "C2", subcollection = "REACTOME")
 
     sets <- list(
       Hallmark = split(hm$gene_symbol, hm$gs_name),
@@ -324,7 +324,13 @@ enrichment_onestep <- function(genes,
       openxlsx::writeData(wb, sheet, res)
 
       if (nrow(res) > 0) {
-        top_path <- res[order(-res$NES)][1, ]$pathway
+        # Use which.max() instead of `res[order(-res$NES)][1, ]$pathway`.
+        # The bracket form fell through to `[.data.frame` because BioRosa
+        # does not Imports: data.table, which made `[.data.table`'s
+        # "cedta" check treat the call as data.frame indexing and try to
+        # select columns at positions 1..nrow(res). which.max() works on
+        # both data.table and data.frame regardless of cedta state.
+        top_path <- res$pathway[which.max(res$NES)]
         png_path <- file.path(dirname(output_excel),
                               paste0("FGSEA_", set_name, "_", direction, "_top.png"))
         grDevices::png(png_path, width = 800, height = 600)
