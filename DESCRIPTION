@@ -14,6 +14,9 @@ LazyData: true
 Imports:
     ComplexHeatmap,
     circlize,
+    grid,
+    grDevices,
+    stats,
     stringr,
     weights,
     plyr,
