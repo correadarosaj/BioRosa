@@ -50,6 +50,13 @@
 #'    full set of in-memory result objects so callers can iterate without
 #'    re-reading from disk.
 #'
+#' 6. **Runs the OpenXGR-style RXGR engine** (when `run_rxgr = TRUE`) on the
+#'    same UP / DOWN sets via [rxgr_enrichment()], against MSigDB Hallmark,
+#'    GO_BP, Reactome and the bundled [guttman_pathways] lab list. This adds
+#'    Fisher's-exact statistics (enrichment z-score, odds ratio with 95% CI,
+#'    FDR) plus a dotplot and forest plot per collection, written under
+#'    `output_dir/RXGR/`.
+#'
 #' Each per-plot rendering step is wrapped in `tryCatch()`, so a single
 #' failing plot (e.g. an `enrichplot::treeplot` on a result with too few
 #' terms) is logged and skipped rather than aborting the whole pipeline.
@@ -71,6 +78,17 @@
 #'   `log2FoldChange < -log2fc_cutoff` form the DOWN set.
 #' @param pval_cutoff p-value cutoff passed to the ORA / GSEA backends.
 #' @param qval_cutoff q-value cutoff passed to the ORA backends.
+#' @param run_rxgr Logical. When `TRUE` (default) the OpenXGR-style Fisher's
+#'   exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
+#'   UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
+#'   confidence interval and FDR, and writing the matching dotplot and forest
+#'   plot. Outputs go to `output_dir/RXGR/<collection>/`.
+#' @param rxgr_sets Named list of gene-set collections for the RXGR engine, each
+#'   element itself a named list of gene-symbol vectors. `NULL` (default) uses
+#'   MSigDB Hallmark, GO biological process and Reactome together with the
+#'   bundled [guttman_pathways] lab list.
+#' @param rxgr_fdr FDR cut-off applied when keeping RXGR terms for the tables and
+#'   figures. Default `0.05`.
 #'
 #' @return A named list:
 #'   * `fgsea` — list with `$UP` and `$DOWN`, each a per-collection
@@ -78,6 +96,9 @@
 #'   * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
 #'     `KEGG`, and `Hallmark` enrichment result objects.
 #'   * `gsea`  — list with `$UP` and `$DOWN` `gseGO` result objects.
+#'   * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
+#'     [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
+#'     `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
 #'
 #' @examples
 #' \dontrun{
@@ -98,7 +119,10 @@ enrichment_onestep <- function(genes,
                                padj_cutoff   = 0.05,
                                log2fc_cutoff = 0,
                                pval_cutoff   = 0.05,
-                               qval_cutoff   = 0.1) {
+                               qval_cutoff   = 0.1,
+                               run_rxgr      = TRUE,
+                               rxgr_sets     = NULL,
+                               rxgr_fdr      = 0.05) {
 
   # ---- Validate inputs ----
   if (missing(genes) || missing(log2FoldChange) || missing(padj)) {
@@ -406,8 +430,44 @@ enrichment_onestep <- function(genes,
     gsea$DOWN         <- perform_gse(down_df, gse_dir, "DOWN")
   }
 
+  # ---- RXGR: OpenXGR-style Fisher / odds-ratio enrichment ----
+  rxgr <- list(UP = NULL, DOWN = NULL)
+  if (run_rxgr) {
+    if (is.null(rxgr_sets)) {
+      hm <- msigdbr::msigdbr(species = "human", collection = "H")
+      bp <- msigdbr::msigdbr(species = "human", collection = "C5", subcollection = "BP")
+      re <- msigdbr::msigdbr(species = "human", collection = "C2", subcollection = "REACTOME")
+      gp <- get("guttman_pathways", envir = asNamespace("BioRosa"))
+      rxgr_sets <- list(
+        Hallmark         = split(hm$gene_symbol, hm$gs_name),
+        GO_BP            = split(bp$gene_symbol, bp$gs_name),
+        Reactome         = split(re$gene_symbol, re$gs_name),
+        guttman_pathways = gp[lengths(gp) > 0]
+      )
+    }
+    rxgr_root <- file.path(output_dir, "RXGR"); make_dir(rxgr_root)
+    queries   <- list(UP = up_df$SYMBOL, DOWN = down_df$SYMBOL)
+    for (dir_name in names(queries)) {
+      q <- queries[[dir_name]]
+      if (length(q) == 0L) next
+      rxgr[[dir_name]] <- list()
+      for (sn in names(rxgr_sets)) {
+        rxgr[[dir_name]][[sn]] <- tryCatch(
+          rxgr_enrichment(
+            data = q, set = rxgr_sets[[sn]], background = universe,
+            FDR.cutoff = rxgr_fdr, min.overlap = 3, size.range = c(5, 5000),
+            output.dir = file.path(rxgr_root, sn),
+            prefix = paste0(sn, "_", dir_name), verbose = FALSE),
+          error = function(e) {
+            write_log(output_dir, paste("RXGR error", sn, dir_name, ":", e$message))
+            NULL
+          })
+      }
+    }
+  }
+
   write_log(output_dir, "Pipeline finished.")
   message("=== PIPELINE IS FINISHED ===")
 
-  list(fgsea = fgsea_results, ora = ora, gsea = gsea)
+  list(fgsea = fgsea_results, ora = ora, gsea = gsea, rxgr = rxgr)
 }

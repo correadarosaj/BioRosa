@@ -102,11 +102,12 @@ test_that("enrichment_onestep() completes end-to-end on a DEG list with FGSEA hi
       padj_cutoff    = 0.05,
       log2fc_cutoff  = 0,
       pval_cutoff    = 0.5,
-      qval_cutoff    = 0.5
+      qval_cutoff    = 0.5,
+      run_rxgr       = FALSE   # keep this regression test focused on FGSEA
     )
   )
 
-  expect_named(res, c("fgsea", "ora", "gsea"))
+  expect_named(res, c("fgsea", "ora", "gsea", "rxgr"))
   expect_named(res$fgsea, c("UP", "DOWN"))
   expect_true(file.exists(file.path(out_dir, "FGSEA_results.xlsx")))
   expect_true(file.exists(file.path(out_dir, "up_df.csv")))

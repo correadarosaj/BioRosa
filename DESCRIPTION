@@ -31,6 +31,8 @@ Imports:
     org.Hs.eg.db,
     openxlsx,
     ggplot2,
+    ggrepel,
+    utils,
     data.table
 Suggests:
     testthat (>= 3.0.0)

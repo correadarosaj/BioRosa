@@ -12,7 +12,10 @@ enrichment_onestep(
   padj_cutoff = 0.05,
   log2fc_cutoff = 0,
   pval_cutoff = 0.05,
-  qval_cutoff = 0.1
+  qval_cutoff = 0.1,
+  run_rxgr = TRUE,
+  rxgr_sets = NULL,
+  rxgr_fdr = 0.05
 )
 }
 \arguments{
@@ -37,6 +40,20 @@ Created if missing.}
 \item{pval_cutoff}{p-value cutoff passed to the ORA / GSEA backends.}
 
 \item{qval_cutoff}{q-value cutoff passed to the ORA backends.}
+
+\item{run_rxgr}{Logical. When `TRUE` (default) the OpenXGR-style Fisher's
+exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
+UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
+confidence interval and FDR, and writing the matching dotplot and forest
+plot. Outputs go to `output_dir/RXGR/<collection>/`.}
+
+\item{rxgr_sets}{Named list of gene-set collections for the RXGR engine, each
+element itself a named list of gene-symbol vectors. `NULL` (default) uses
+MSigDB Hallmark, GO biological process and Reactome together with the
+bundled [guttman_pathways] lab list.}
+
+\item{rxgr_fdr}{FDR cut-off applied when keeping RXGR terms for the tables and
+figures. Default `0.05`.}
 }
 \value{
 A named list:
@@ -45,6 +62,9 @@ A named list:
   * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
     `KEGG`, and `Hallmark` enrichment result objects.
   * `gsea`  — list with `$UP` and `$DOWN` `gseGO` result objects.
+  * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
+    [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
+    `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
 }
 \description{
 `enrichment_onestep()` is a single entry point that takes a
@@ -84,6 +104,13 @@ Internally the function:
    every save and any per-plot error. The function also returns the
    full set of in-memory result objects so callers can iterate without
    re-reading from disk.
+
+6. **Runs the OpenXGR-style RXGR engine** (when `run_rxgr = TRUE`) on the
+   same UP / DOWN sets via [rxgr_enrichment()], against MSigDB Hallmark,
+   GO_BP, Reactome and the bundled [guttman_pathways] lab list. This adds
+   Fisher's-exact statistics (enrichment z-score, odds ratio with 95% CI,
+   FDR) plus a dotplot and forest plot per collection, written under
+   `output_dir/RXGR/`.
 
 Each per-plot rendering step is wrapped in `tryCatch()`, so a single
 failing plot (e.g. an `enrichplot::treeplot` on a result with too few
