@@ -37,20 +37,29 @@ test_that("enrichment_onestep() rejects unequal-length inputs", {
   )
 })
 
-test_that("enrichment_onestep() errors cleanly when no genes pass the padj filter", {
-  skip_if_not_installed("msigdbr")
+test_that("enrichment_onestep() errors when the ranked list is too small for FGSEA", {
+  # GSEA now runs on the FULL ranked list (no padj filter), so the only
+  # early stop is a degenerate ranking. This fires before any Bioconductor
+  # call, so no skip is needed.
   out_dir <- withr::local_tempdir()
   expect_error(
-    enrichment_onestep(
-      genes          = c("TP53", "MYC", "BRCA1"),
-      log2FoldChange = c(1.2, -0.8, 0.5),
-      padj           = c(0.9, 0.95, 0.99),
-      output_dir     = out_dir,
-      padj_cutoff    = 0.05
-    ),
-    "No genes after filtering padj",
-    fixed = TRUE
+    enrichment_onestep(genes = "TP53", log2FoldChange = 1.2, padj = 0.01,
+                       output_dir = out_dir),
+    "Too few ranked genes", fixed = TRUE
   )
+})
+
+test_that("enrichment_onestep() BigTab mode validates contrast and columns", {
+  bt <- data.frame(
+    GENENAME           = c("TP53", "MYC", "EGFR"),
+    `lgFCH_Drug.W16vsBL` = c(1.2, -0.8, 2.0),
+    `pvals_Drug.W16vsBL` = c(0.01, 0.2, 0.001),
+    check.names = FALSE
+  )
+  expect_error(enrichment_onestep(BigTab = bt),
+               "single `contrast`", fixed = TRUE)
+  expect_error(enrichment_onestep(BigTab = bt, contrast = "Nope.X2vsBL"),
+               "Available contrasts", fixed = TRUE)
 })
 
 # Regression test for "undefined columns selected" inside FGSEA's run_block().
@@ -108,15 +117,15 @@ test_that("enrichment_onestep() completes end-to-end on a DEG list with FGSEA hi
   )
 
   expect_named(res, c("fgsea", "ora", "gsea", "rxgr"))
-  expect_named(res$fgsea, c("UP", "DOWN"))
+  expect_named(res$fgsea, c("Hallmark", "GO_BP", "Reactome"))
   expect_true(file.exists(file.path(out_dir, "FGSEA_results.xlsx")))
   expect_true(file.exists(file.path(out_dir, "up_df.csv")))
   expect_true(file.exists(file.path(out_dir, "down_df.csv")))
 
-  # Most important: FGSEA UP/Hallmark should be non-empty (the IFN
-  # pathway is built from itself) and at least one top-pathway PNG must
-  # have been emitted by the previously-failing code path.
-  expect_gt(nrow(res$fgsea$UP$Hallmark), 0)
+  # FGSEA now runs on the full ranked list (UP + DOWN together): the IFN
+  # Hallmark pathway is present in the ranking, so Hallmark is non-empty and
+  # at least one top-pathway PNG must have been emitted.
+  expect_gt(nrow(res$fgsea$Hallmark), 0)
   pngs <- list.files(out_dir, pattern = "^FGSEA_.*_top\\.png$", full.names = TRUE)
   expect_gt(length(pngs), 0)
   expect_true(all(file.info(pngs)$size > 0))

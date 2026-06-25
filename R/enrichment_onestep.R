@@ -13,8 +13,10 @@
 #'
 #' @description
 #' `enrichment_onestep()` is a single entry point that takes a
-#' differential-expression result — described by three parallel vectors
-#' (`genes`, `log2FoldChange`, `padj`) — and runs the full standard
+#' differential-expression result — described either by three parallel
+#' vectors (`genes`, `log2FoldChange`, `padj`) or by a `BigTab` table plus a
+#' `contrast` suffix (e.g. `"Drug.W16vsBL"`), from which the log2 fold-changes
+#' and p-values are read directly — and runs the full standard
 #' pathway-analysis battery in one call. The motivation is to remove the
 #' boilerplate (DEG splitting, ID conversion, per-collection looping,
 #' plot saving, Excel export) that otherwise sits between a DE table and
@@ -30,9 +32,12 @@
 #'    The over-representation universe is every gene with a non-`NA`
 #'    `padj`, regardless of cutoff.
 #' 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
-#'    Reactome (`C2 / REACTOME`) collections separately for UP and DOWN,
-#'    using the `log2FoldChange` as the ranking statistic and saving one
-#'    worksheet per collection-direction to `FGSEA_results.xlsx`.
+#'    Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
+#'    gene list ranked by `log2FoldChange`** — not on a `padj`-filtered or
+#'    UP/DOWN-split subset — because its statistic depends on where a set's
+#'    members fall across the *entire* ranking, with direction encoded in the
+#'    sign of the NES. One worksheet per collection is saved to
+#'    `FGSEA_results.xlsx`.
 #' 3. **Runs over-representation analysis (ORA)** on each direction:
 #'    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
 #'    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
@@ -40,8 +45,8 @@
 #'    Hallmark. SYMBOL → ENTREZ conversion is done with
 #'    `clusterProfiler::bitr` only for the backends that require Entrez
 #'    IDs (Reactome, KEGG).
-#' 4. **Runs `gseGO`** with `ont = "ALL"` on each direction, ranked by
-#'    `log2FoldChange`, then collapses redundant terms with
+#' 4. **Runs `gseGO`** with `ont = "ALL"` once on the same full ranked list
+#'    (again, not split by direction), then collapses redundant terms with
 #'    `clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")`.
 #' 5. **Persists everything to `output_dir`** — Excel tables (`.xlsx`),
 #'    UP/DOWN gene lists (`.csv`), dotplots / treeplots / cnetplots /
@@ -64,12 +69,14 @@
 #' Human-only: uses `org.Hs.eg.db::org.Hs.eg.db`, KEGG organism `"hsa"`,
 #' and `msigdbr` species `"human"`.
 #'
-#' @param genes Character vector of HGNC gene symbols.
+#' @param genes Character vector of HGNC gene symbols. Optional when `BigTab`
+#'   is supplied.
 #' @param log2FoldChange Numeric vector of log2 fold-changes, same length
 #'   and order as `genes`. Used as the GSEA ranking statistic and for the
-#'   UP / DOWN split.
-#' @param padj Numeric vector of adjusted p-values, same length and order
-#'   as `genes`. Used for thresholding.
+#'   UP / DOWN split. Optional when `BigTab` is supplied.
+#' @param padj Numeric vector of p-values (or adjusted p-values), same length
+#'   and order as `genes`, used for thresholding. Optional when `BigTab` is
+#'   supplied.
 #' @param output_dir Directory for Excel tables, plots, and `log.txt`.
 #'   Created if missing.
 #' @param padj_cutoff Maximum `padj` for a gene to enter the ORA gene sets.
@@ -78,6 +85,18 @@
 #'   `log2FoldChange < -log2fc_cutoff` form the DOWN set.
 #' @param pval_cutoff p-value cutoff passed to the ORA / GSEA backends.
 #' @param qval_cutoff q-value cutoff passed to the ORA backends.
+#' @param BigTab Optional data frame of differential-expression results indexed
+#'   by gene (a `GENENAME` column, or row names). When supplied with `contrast`,
+#'   `genes`, `log2FoldChange` and `padj` are read from it instead of the
+#'   parallel-vector arguments. This is the same table consumed by
+#'   [doAnnotatedHeatmapGrid()] and produced by [process_degs()].
+#' @param contrast Single contrast suffix selecting the `BigTab` columns to use,
+#'   e.g. `"Drug.W16vsBL"` reads `paste0(lgfch_prefix, contrast)` and
+#'   `paste0(pval_prefix, contrast)`. Required when `BigTab` is supplied.
+#' @param lgfch_prefix,pval_prefix Column-name prefixes for the log2
+#'   fold-change and the p-value columns in `BigTab`. Defaults `"lgFCH_"` and
+#'   `"pvals_"`; set `pval_prefix = "fdr_"` (or similar) to threshold on adjusted
+#'   p-values.
 #' @param run_rxgr Logical. When `TRUE` (default) the OpenXGR-style Fisher's
 #'   exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
 #'   UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
@@ -91,17 +110,19 @@
 #'   figures. Default `0.05`.
 #'
 #' @return A named list:
-#'   * `fgsea` — list with `$UP` and `$DOWN`, each a per-collection
-#'     `data.table` of FGSEA results.
+#'   * `fgsea` — named per-collection list (`Hallmark`, `GO_BP`, `Reactome`),
+#'     each a `data.table` of FGSEA results on the full ranked list (NES sign
+#'     gives direction).
 #'   * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
 #'     `KEGG`, and `Hallmark` enrichment result objects.
-#'   * `gsea`  — list with `$UP` and `$DOWN` `gseGO` result objects.
+#'   * `gsea`  — a single `gseGO` result object (run on the full ranked list).
 #'   * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
 #'     [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
 #'     `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
 #'
 #' @examples
 #' \dontrun{
+#' # (a) parallel vectors
 #' degs <- readxl::read_excel("path/to/deg.xlsx")
 #' res  <- enrichment_onestep(
 #'   genes          = degs$SYMBOL,
@@ -109,25 +130,60 @@
 #'   padj           = degs$padj,
 #'   output_dir     = "results/enrichment"
 #' )
+#'
+#' # (b) straight from a BigTab + contrast suffix (reads lgFCH_/pvals_ columns)
+#' res <- enrichment_onestep(
+#'   BigTab     = BigTab,            # GENENAME-indexed DE table
+#'   contrast   = "Drug.W16vsBL",
+#'   output_dir = "results/Drug.W16vsBL"
+#' )
 #' }
 #'
 #' @export
-enrichment_onestep <- function(genes,
-                               log2FoldChange,
-                               padj,
-                               output_dir    = "output_enrichment",
-                               padj_cutoff   = 0.05,
-                               log2fc_cutoff = 0,
-                               pval_cutoff   = 0.05,
-                               qval_cutoff   = 0.1,
-                               run_rxgr      = TRUE,
-                               rxgr_sets     = NULL,
-                               rxgr_fdr      = 0.05) {
+enrichment_onestep <- function(genes          = NULL,
+                               log2FoldChange = NULL,
+                               padj           = NULL,
+                               output_dir     = "output_enrichment",
+                               padj_cutoff    = 0.05,
+                               log2fc_cutoff  = 0,
+                               pval_cutoff    = 0.05,
+                               qval_cutoff    = 0.1,
+                               BigTab         = NULL,
+                               contrast       = NULL,
+                               lgfch_prefix   = "lgFCH_",
+                               pval_prefix    = "pvals_",
+                               run_rxgr       = TRUE,
+                               rxgr_sets      = NULL,
+                               rxgr_fdr       = 0.05) {
 
-  # ---- Validate inputs ----
-  if (missing(genes) || missing(log2FoldChange) || missing(padj)) {
+  # ---- Resolve inputs: parallel vectors OR a BigTab + contrast suffix ----
+  if (!is.null(BigTab)) {
+    if (!is.data.frame(BigTab)) stop("`BigTab` must be a data frame.")
+    if (is.null(contrast) || length(contrast) != 1L) {
+      stop("With `BigTab`, supply a single `contrast` suffix (e.g. \"Drug.W16vsBL\").")
+    }
+    sym <- if ("GENENAME" %in% colnames(BigTab)) as.character(BigTab$GENENAME)
+           else rownames(BigTab)
+    if (is.null(sym)) {
+      stop("`BigTab` needs gene names in a `GENENAME` column or in its row names.")
+    }
+    lf_col <- paste0(lgfch_prefix, contrast)
+    pv_col <- paste0(pval_prefix,  contrast)
+    miss   <- setdiff(c(lf_col, pv_col), colnames(BigTab))
+    if (length(miss)) {
+      avail <- unique(sub(paste0("^", lgfch_prefix), "",
+                          grep(paste0("^", lgfch_prefix), colnames(BigTab),
+                               value = TRUE)))
+      stop("Contrast column(s) not found in `BigTab`: ", paste(miss, collapse = ", "),
+           ". Available contrasts: ", paste(avail, collapse = ", "))
+    }
+    genes          <- sym
+    log2FoldChange <- BigTab[[lf_col]]
+    padj           <- BigTab[[pv_col]]
+  } else if (is.null(genes) || is.null(log2FoldChange) || is.null(padj)) {
     stop("`genes`, `log2FoldChange`, and `padj` are all required.")
   }
+
   if (length(genes) != length(log2FoldChange) ||
       length(genes) != length(padj)) {
     stop("`genes`, `log2FoldChange`, and `padj` must have the same length.")
@@ -279,10 +335,11 @@ enrichment_onestep <- function(genes,
     res
   }
 
-  perform_gse <- function(sub_df, outdir, label) {
-    ranks <- sub_df$log2FoldChange
-    names(ranks) <- sub_df$SYMBOL
-    ranks <- sort(ranks, decreasing = TRUE)
+  # gseGO is GSEA: run it once on the full ranked list (see .ranked_list /
+  # perform_fgsea_all). Up- and down-regulated terms are distinguished by the
+  # sign of the enrichment score, so there is no UP/DOWN split.
+  perform_gse <- function(df, outdir) {
+    ranks <- .ranked_list(df)
 
     gse <- clusterProfiler::gseGO(
       geneList      = ranks,
@@ -301,26 +358,35 @@ enrichment_onestep <- function(genes,
       gse, cutoff = 0.7, by = "p.adjust",
       select_fun = min, measure = "Wang", semData = NULL
     )
-    plot_all_enrichment(gse2, outdir, paste0("GSE_", label))
+    plot_all_enrichment(gse2, outdir, "GSE")
 
     tryCatch({
       p_ridge <- enrichplot::ridgeplot(gse2, showCategory = 15) +
         ggplot2::labs(x = "enrichment distribution")
-      save_plot(p_ridge,
-                file.path(outdir, paste0("GSE_", label, "_ridgeplot.png")),
-                dir = outdir)
-    }, error = function(e) write_log(outdir, paste("Error ridgeplot", label, e$message)))
+      save_plot(p_ridge, file.path(outdir, "GSE_ridgeplot.png"), dir = outdir)
+    }, error = function(e) write_log(outdir, paste("Error ridgeplot:", e$message)))
 
     gse2
   }
 
+  # GSEA must see the FULL ranked gene list (every gene with a finite
+  # statistic), NOT a padj-filtered or direction-split subset: its null comes
+  # from where a set's members fall across the whole ranking, and direction is
+  # encoded in the sign of the NES. Duplicated symbols are collapsed to their
+  # mean log2FC so the ranking vector has unique names.
+  .ranked_list <- function(df) {
+    rk <- df[is.finite(df$log2FoldChange) & !is.na(df$SYMBOL) & nzchar(df$SYMBOL), ]
+    ranks <- tapply(rk$log2FoldChange, rk$SYMBOL, mean)
+    # tapply() returns an array; gseGO requires a plain numeric vector for
+    # `geneList`, so strip the array class while keeping the gene names.
+    ranks <- stats::setNames(as.numeric(ranks), names(ranks))
+    sort(ranks, decreasing = TRUE)
+  }
+
   perform_fgsea_all <- function(df, output_excel) {
     make_dir(dirname(output_excel))
-    flt <- df[!is.na(df$padj) & df$padj < padj_cutoff, ]
-    if (nrow(flt) == 0) stop("No genes after filtering padj < ", padj_cutoff)
-
-    up   <- flt[flt$log2FoldChange >  log2fc_cutoff, ]
-    down <- flt[flt$log2FoldChange < -log2fc_cutoff, ]
+    ranks <- .ranked_list(df)
+    if (length(ranks) < 2) stop("Too few ranked genes for FGSEA.")
 
     hm <- msigdbr::msigdbr(species = "human", collection = "H")
     bp <- msigdbr::msigdbr(species = "human", collection = "C5", subcollection = "BP")
@@ -333,43 +399,32 @@ enrichment_onestep <- function(genes,
     )
 
     wb <- openxlsx::createWorkbook()
-    results <- list(UP = list(), DOWN = list())
+    results <- list()
 
-    run_block <- function(sub_df, direction, set_name, pathways) {
-      if (nrow(sub_df) == 0) return(NULL)
-      ranks <- stats::setNames(sub_df$log2FoldChange, sub_df$SYMBOL)
-      res   <- fgsea::fgsea(pathways = pathways, stats = ranks,
-                            minSize = 15, maxSize = 500)
-      res   <- data.table::as.data.table(res)
-      results[[direction]][[set_name]] <<- res
+    for (set_name in names(sets)) {
+      pathways <- sets[[set_name]]
+      res <- fgsea::fgsea(pathways = pathways, stats = ranks,
+                          minSize = 15, maxSize = 500)
+      res <- data.table::as.data.table(res)
+      results[[set_name]] <- res
 
-      sheet <- paste0(set_name, "_", direction)
-      openxlsx::addWorksheet(wb, sheet)
-      openxlsx::writeData(wb, sheet, res)
+      openxlsx::addWorksheet(wb, set_name)
+      openxlsx::writeData(wb, set_name, res)
 
       if (nrow(res) > 0) {
-        # Use which.max() instead of `res[order(-res$NES)][1, ]$pathway`.
-        # The bracket form fell through to `[.data.frame` because BioRosa
-        # does not Imports: data.table, which made `[.data.table`'s
-        # "cedta" check treat the call as data.frame indexing and try to
-        # select columns at positions 1..nrow(res). which.max() works on
-        # both data.table and data.frame regardless of cedta state.
-        top_path <- res$pathway[which.max(res$NES)]
+        # plot the single most significant pathway (its NES sign shows the
+        # direction of regulation). which.min on padj works on data.table and
+        # data.frame regardless of the data.table cedta state.
+        top_path <- res$pathway[which.min(res$padj)]
         png_path <- file.path(dirname(output_excel),
-                              paste0("FGSEA_", set_name, "_", direction, "_top.png"))
+                              paste0("FGSEA_", set_name, "_top.png"))
         grDevices::png(png_path, width = 800, height = 600)
         on.exit(grDevices::dev.off(), add = TRUE)
         print(
           fgsea::plotEnrichment(pathways[[top_path]], ranks) +
-            ggplot2::labs(title = paste(set_name, direction, ":", top_path))
+            ggplot2::labs(title = paste(set_name, ":", top_path))
         )
       }
-      invisible(NULL)
-    }
-
-    for (sn in names(sets)) {
-      run_block(up,   "UP",   sn, sets[[sn]])
-      run_block(down, "DOWN", sn, sets[[sn]])
     }
 
     openxlsx::saveWorkbook(wb, output_excel, overwrite = TRUE)
@@ -411,15 +466,15 @@ enrichment_onestep <- function(genes,
   gse_dir  <- file.path(output_dir, "gse")
   lapply(list(go_dir, re_dir, kegg_dir, hm_dir, gse_dir), make_dir)
 
-  ora  <- list(UP = list(), DOWN = list())
-  gsea <- list(UP = NULL,   DOWN = NULL)
+  # ORA (over-representation) is the method that legitimately takes the UP /
+  # DOWN significant gene sets.
+  ora <- list(UP = list(), DOWN = list())
 
   if (nrow(up_df) > 0) {
     ora$UP$GO       <- perform_go(up_df$SYMBOL, universe, go_dir,  "UP")
     ora$UP$Reactome <- perform_reactome(entrez_up$ENTREZID, re_dir, "UP")
     ora$UP$KEGG     <- perform_kegg(entrez_up$ENTREZID, kegg_dir,   "UP")
     ora$UP$Hallmark <- perform_hallmark(up_df$SYMBOL, hm_dir,       "UP")
-    gsea$UP         <- perform_gse(up_df, gse_dir, "UP")
   }
 
   if (nrow(down_df) > 0) {
@@ -427,8 +482,10 @@ enrichment_onestep <- function(genes,
     ora$DOWN$Reactome <- perform_reactome(entrez_dn$ENTREZID, re_dir, "DOWN")
     ora$DOWN$KEGG     <- perform_kegg(entrez_dn$ENTREZID, kegg_dir,   "DOWN")
     ora$DOWN$Hallmark <- perform_hallmark(down_df$SYMBOL, hm_dir,     "DOWN")
-    gsea$DOWN         <- perform_gse(down_df, gse_dir, "DOWN")
   }
+
+  # GSEA (gseGO) runs ONCE on the full ranked list; NES sign gives direction.
+  gsea <- perform_gse(df, gse_dir)
 
   # ---- RXGR: OpenXGR-style Fisher / odds-ratio enrichment ----
   rxgr <- list(UP = NULL, DOWN = NULL)

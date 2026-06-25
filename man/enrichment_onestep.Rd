@@ -5,28 +5,34 @@
 \title{Run a one-step enrichment pipeline from a gene list and its statistics}
 \usage{
 enrichment_onestep(
-  genes,
-  log2FoldChange,
-  padj,
+  genes = NULL,
+  log2FoldChange = NULL,
+  padj = NULL,
   output_dir = "output_enrichment",
   padj_cutoff = 0.05,
   log2fc_cutoff = 0,
   pval_cutoff = 0.05,
   qval_cutoff = 0.1,
+  BigTab = NULL,
+  contrast = NULL,
+  lgfch_prefix = "lgFCH_",
+  pval_prefix = "pvals_",
   run_rxgr = TRUE,
   rxgr_sets = NULL,
   rxgr_fdr = 0.05
 )
 }
 \arguments{
-\item{genes}{Character vector of HGNC gene symbols.}
+\item{genes}{Character vector of HGNC gene symbols. Optional when `BigTab`
+is supplied.}
 
 \item{log2FoldChange}{Numeric vector of log2 fold-changes, same length
 and order as `genes`. Used as the GSEA ranking statistic and for the
-UP / DOWN split.}
+UP / DOWN split. Optional when `BigTab` is supplied.}
 
-\item{padj}{Numeric vector of adjusted p-values, same length and order
-as `genes`. Used for thresholding.}
+\item{padj}{Numeric vector of p-values (or adjusted p-values), same length
+and order as `genes`, used for thresholding. Optional when `BigTab` is
+supplied.}
 
 \item{output_dir}{Directory for Excel tables, plots, and `log.txt`.
 Created if missing.}
@@ -40,6 +46,21 @@ Created if missing.}
 \item{pval_cutoff}{p-value cutoff passed to the ORA / GSEA backends.}
 
 \item{qval_cutoff}{q-value cutoff passed to the ORA backends.}
+
+\item{BigTab}{Optional data frame of differential-expression results indexed
+by gene (a `GENENAME` column, or row names). When supplied with `contrast`,
+`genes`, `log2FoldChange` and `padj` are read from it instead of the
+parallel-vector arguments. This is the same table consumed by
+[doAnnotatedHeatmapGrid()] and produced by [process_degs()].}
+
+\item{contrast}{Single contrast suffix selecting the `BigTab` columns to use,
+e.g. `"Drug.W16vsBL"` reads `paste0(lgfch_prefix, contrast)` and
+`paste0(pval_prefix, contrast)`. Required when `BigTab` is supplied.}
+
+\item{lgfch_prefix, pval_prefix}{Column-name prefixes for the log2
+fold-change and the p-value columns in `BigTab`. Defaults `"lgFCH_"` and
+`"pvals_"`; set `pval_prefix = "fdr_"` (or similar) to threshold on adjusted
+p-values.}
 
 \item{run_rxgr}{Logical. When `TRUE` (default) the OpenXGR-style Fisher's
 exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
@@ -57,19 +78,22 @@ figures. Default `0.05`.}
 }
 \value{
 A named list:
-  * `fgsea` — list with `$UP` and `$DOWN`, each a per-collection
-    `data.table` of FGSEA results.
+  * `fgsea` — named per-collection list (`Hallmark`, `GO_BP`, `Reactome`),
+    each a `data.table` of FGSEA results on the full ranked list (NES sign
+    gives direction).
   * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
     `KEGG`, and `Hallmark` enrichment result objects.
-  * `gsea`  — list with `$UP` and `$DOWN` `gseGO` result objects.
+  * `gsea`  — a single `gseGO` result object (run on the full ranked list).
   * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
     [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
     `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
 }
 \description{
 `enrichment_onestep()` is a single entry point that takes a
-differential-expression result — described by three parallel vectors
-(`genes`, `log2FoldChange`, `padj`) — and runs the full standard
+differential-expression result — described either by three parallel
+vectors (`genes`, `log2FoldChange`, `padj`) or by a `BigTab` table plus a
+`contrast` suffix (e.g. `"Drug.W16vsBL"`), from which the log2 fold-changes
+and p-values are read directly — and runs the full standard
 pathway-analysis battery in one call. The motivation is to remove the
 boilerplate (DEG splitting, ID conversion, per-collection looping,
 plot saving, Excel export) that otherwise sits between a DE table and
@@ -85,9 +109,12 @@ Internally the function:
    The over-representation universe is every gene with a non-`NA`
    `padj`, regardless of cutoff.
 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
-   Reactome (`C2 / REACTOME`) collections separately for UP and DOWN,
-   using the `log2FoldChange` as the ranking statistic and saving one
-   worksheet per collection-direction to `FGSEA_results.xlsx`.
+   Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
+   gene list ranked by `log2FoldChange`** — not on a `padj`-filtered or
+   UP/DOWN-split subset — because its statistic depends on where a set's
+   members fall across the *entire* ranking, with direction encoded in the
+   sign of the NES. One worksheet per collection is saved to
+   `FGSEA_results.xlsx`.
 3. **Runs over-representation analysis (ORA)** on each direction:
    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
@@ -95,8 +122,8 @@ Internally the function:
    Hallmark. SYMBOL → ENTREZ conversion is done with
    `clusterProfiler::bitr` only for the backends that require Entrez
    IDs (Reactome, KEGG).
-4. **Runs `gseGO`** with `ont = "ALL"` on each direction, ranked by
-   `log2FoldChange`, then collapses redundant terms with
+4. **Runs `gseGO`** with `ont = "ALL"` once on the same full ranked list
+   (again, not split by direction), then collapses redundant terms with
    `clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")`.
 5. **Persists everything to `output_dir`** — Excel tables (`.xlsx`),
    UP/DOWN gene lists (`.csv`), dotplots / treeplots / cnetplots /
@@ -121,12 +148,20 @@ and `msigdbr` species `"human"`.
 }
 \examples{
 \dontrun{
+# (a) parallel vectors
 degs <- readxl::read_excel("path/to/deg.xlsx")
 res  <- enrichment_onestep(
   genes          = degs$SYMBOL,
   log2FoldChange = degs$log2FoldChange,
   padj           = degs$padj,
   output_dir     = "results/enrichment"
+)
+
+# (b) straight from a BigTab + contrast suffix (reads lgFCH_/pvals_ columns)
+res <- enrichment_onestep(
+  BigTab     = BigTab,            # GENENAME-indexed DE table
+  contrast   = "Drug.W16vsBL",
+  output_dir = "results/Drug.W16vsBL"
 )
 }
 
