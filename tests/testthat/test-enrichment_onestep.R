@@ -62,6 +62,27 @@ test_that("enrichment_onestep() BigTab mode validates contrast and columns", {
                "Available contrasts", fixed = TRUE)
 })
 
+test_that("enrichment_onestep() rejects an unknown rank_by and ambiguous status", {
+  expect_error(
+    enrichment_onestep(genes = "A", log2FoldChange = 1, padj = 0.1,
+                       output_dir = tempfile(), rank_by = "zzz"),
+    "should be one of"   # match.arg message
+  )
+  # two columns both match <status>..._<contrast> -> must be disambiguated
+  bt <- data.frame(
+    GENENAME                         = c("TP53", "MYC"),
+    `lgFCH_Drug.W16vsBL`             = c(2, -1),
+    `pvals_Drug.W16vsBL`             = c(0.01, 0.2),
+    `Status_Drug.W16vsBL`            = c(1L, -1L),
+    `StatusFCH1.3P0.05_Drug.W16vsBL` = c(1L, 0L),
+    check.names = FALSE
+  )
+  expect_error(
+    enrichment_onestep(BigTab = bt, contrast = "Drug.W16vsBL"),
+    "Multiple status columns", fixed = TRUE
+  )
+})
+
 # Regression test for "undefined columns selected" inside FGSEA's run_block().
 #
 # The bug: data.table's cedta() check sees that BioRosa does not

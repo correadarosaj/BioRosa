@@ -25,19 +25,20 @@
 #'
 #' Internally the function:
 #'
-#' 1. **Builds the candidate sets.** Genes are kept when `padj` is
-#'    non-`NA` and below `padj_cutoff`. From that filtered set, genes
-#'    with `log2FoldChange >  log2fc_cutoff` form the **UP** set, and
-#'    genes with `log2FoldChange < -log2fc_cutoff` form the **DOWN** set.
-#'    The over-representation universe is every gene with a non-`NA`
-#'    `padj`, regardless of cutoff.
+#' 1. **Builds the candidate (UP / DOWN) sets for ORA.** When a `BigTab`
+#'    status column is available (and `ora_from_status = TRUE`), genes with
+#'    status `1` form the **UP** set and status `-1` the **DOWN** set, with the
+#'    universe being every gene that has a non-`NA` status. Otherwise the sets
+#'    are derived from thresholds: `padj < padj_cutoff` together with
+#'    `log2FoldChange > log2fc_cutoff` (UP) or `< -log2fc_cutoff` (DOWN), and
+#'    the universe is every gene with a non-`NA` `padj`.
 #' 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
 #'    Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
-#'    gene list ranked by `log2FoldChange`** — not on a `padj`-filtered or
-#'    UP/DOWN-split subset — because its statistic depends on where a set's
-#'    members fall across the *entire* ranking, with direction encoded in the
-#'    sign of the NES. One worksheet per collection is saved to
-#'    `FGSEA_results.xlsx`.
+#'    gene list ranked by the `rank_by` statistic** (default `log2FoldChange`)
+#'    — not on a `padj`-filtered or UP/DOWN-split subset — because its
+#'    statistic depends on where a set's members fall across the *entire*
+#'    ranking, with direction encoded in the sign of the NES. One worksheet per
+#'    collection is saved to `FGSEA_results.xlsx`.
 #' 3. **Runs over-representation analysis (ORA)** on each direction:
 #'    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
 #'    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
@@ -97,6 +98,18 @@
 #'   fold-change and the p-value columns in `BigTab`. Defaults `"lgFCH_"` and
 #'   `"pvals_"`; set `pval_prefix = "fdr_"` (or similar) to threshold on adjusted
 #'   p-values.
+#' @param status_prefix Prefix used to locate the DEG status column in `BigTab`
+#'   for the chosen `contrast`; the column is the one whose name starts with
+#'   `status_prefix` and ends with `_<contrast>` (e.g. `"Status_Drug.W16vsBL"`
+#'   or `"StatusFCH1.3P0.05_Drug.W16vsBL"`). Default `"Status"`.
+#' @param ora_from_status Logical. When `TRUE` (default) and a status column is
+#'   found in `BigTab`, the ORA UP / DOWN sets are taken from it (`1` = UP,
+#'   `-1` = DOWN) instead of the `padj` / `log2fc` thresholds.
+#' @param rank_by Statistic used to rank genes for GSEA (`fgsea` / `gseGO`).
+#'   One of `"lgFCH"` (log2 fold change, default), `"FCH"` (signed linear fold
+#'   change `sign(lgFCH) * 2^|lgFCH|`), or `"signed_pval"`
+#'   (`sign(lgFCH) * -log10(p)`). Affects the weighted enrichment score, since
+#'   the magnitude of the statistic weights each gene.
 #' @param run_rxgr Logical. When `TRUE` (default) the OpenXGR-style Fisher's
 #'   exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
 #'   UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
@@ -148,13 +161,18 @@ enrichment_onestep <- function(genes          = NULL,
                                log2fc_cutoff  = 0,
                                pval_cutoff    = 0.05,
                                qval_cutoff    = 0.1,
-                               BigTab         = NULL,
-                               contrast       = NULL,
-                               lgfch_prefix   = "lgFCH_",
-                               pval_prefix    = "pvals_",
-                               run_rxgr       = TRUE,
-                               rxgr_sets      = NULL,
-                               rxgr_fdr       = 0.05) {
+                               BigTab          = NULL,
+                               contrast        = NULL,
+                               lgfch_prefix    = "lgFCH_",
+                               pval_prefix     = "pvals_",
+                               status_prefix   = "Status",
+                               ora_from_status = TRUE,
+                               rank_by         = c("lgFCH", "FCH", "signed_pval"),
+                               run_rxgr        = TRUE,
+                               rxgr_sets       = NULL,
+                               rxgr_fdr        = 0.05) {
+
+  rank_by <- match.arg(rank_by)
 
   # ---- Resolve inputs: parallel vectors OR a BigTab + contrast suffix ----
   if (!is.null(BigTab)) {
@@ -180,6 +198,22 @@ enrichment_onestep <- function(genes          = NULL,
     genes          <- sym
     log2FoldChange <- BigTab[[lf_col]]
     padj           <- BigTab[[pv_col]]
+
+    # Optional DEG status column (1 = UP, -1 = DOWN, 0 = n.s.), matched as
+    # <status_prefix>..._<contrast> (e.g. "Status_..." or "StatusFCH1.3P0.05_...").
+    if (ora_from_status) {
+      cand <- colnames(BigTab)[startsWith(colnames(BigTab), status_prefix) &
+                               endsWith(colnames(BigTab), paste0("_", contrast))]
+      if (length(cand) == 1L) {
+        status <- as.numeric(BigTab[[cand]])
+      } else if (length(cand) > 1L) {
+        stop("Multiple status columns match contrast '", contrast, "': ",
+             paste(cand, collapse = ", "), ". Set `status_prefix` more specifically.")
+      } else {
+        message("No '", status_prefix, "...' column for contrast '", contrast,
+                "'; ORA UP/DOWN sets fall back to padj/log2fc thresholds.")
+      }
+    }
   } else if (is.null(genes) || is.null(log2FoldChange) || is.null(padj)) {
     stop("`genes`, `log2FoldChange`, and `padj` are all required.")
   }
@@ -191,12 +225,26 @@ enrichment_onestep <- function(genes          = NULL,
   if (!is.character(genes))         genes          <- as.character(genes)
   if (!is.numeric(log2FoldChange))  log2FoldChange <- as.numeric(log2FoldChange)
   if (!is.numeric(padj))            padj           <- as.numeric(padj)
+  if (!exists("status", inherits = FALSE)) status <- NULL
 
   df <- data.frame(
     SYMBOL         = genes,
     log2FoldChange = log2FoldChange,
     padj           = padj,
     stringsAsFactors = FALSE
+  )
+  if (!is.null(status)) df$status <- status
+
+  # Ranking statistic for GSEA (fgsea / gseGO). Magnitude matters for the
+  # weighted enrichment score, so the choice of stat is exposed:
+  #   "lgFCH"       log2 fold change (default)
+  #   "FCH"         signed linear fold change, sign(lgFCH) * 2^|lgFCH|
+  #   "signed_pval" sign(lgFCH) * -log10(p), significance with direction
+  df$rank_stat <- switch(
+    rank_by,
+    lgFCH       = df$log2FoldChange,
+    FCH         = sign(df$log2FoldChange) * 2 ^ abs(df$log2FoldChange),
+    signed_pval = sign(df$log2FoldChange) * -log10(pmax(df$padj, 1e-300))
   )
 
   # ---- Nested helpers ----
@@ -375,8 +423,8 @@ enrichment_onestep <- function(genes          = NULL,
   # encoded in the sign of the NES. Duplicated symbols are collapsed to their
   # mean log2FC so the ranking vector has unique names.
   .ranked_list <- function(df) {
-    rk <- df[is.finite(df$log2FoldChange) & !is.na(df$SYMBOL) & nzchar(df$SYMBOL), ]
-    ranks <- tapply(rk$log2FoldChange, rk$SYMBOL, mean)
+    rk <- df[is.finite(df$rank_stat) & !is.na(df$SYMBOL) & nzchar(df$SYMBOL), ]
+    ranks <- tapply(rk$rank_stat, rk$SYMBOL, mean)
     # tapply() returns an array; gseGO requires a plain numeric vector for
     # `geneList`, so strip the array class while keeping the gene names.
     ranks <- stats::setNames(as.numeric(ranks), names(ranks))
@@ -439,11 +487,20 @@ enrichment_onestep <- function(genes          = NULL,
   fgsea_excel   <- file.path(output_dir, "FGSEA_results.xlsx")
   fgsea_results <- perform_fgsea_all(df, fgsea_excel)
 
-  universe <- df$SYMBOL[!is.na(df$padj)]
-  up_df    <- df[!is.na(df$padj) & df$padj < padj_cutoff &
-                   df$log2FoldChange >  log2fc_cutoff, ]
-  down_df  <- df[!is.na(df$padj) & df$padj < padj_cutoff &
-                   df$log2FoldChange < -log2fc_cutoff, ]
+  # UP / DOWN sets for ORA: from the BigTab status column when available
+  # (1 = UP, -1 = DOWN), otherwise from the padj / log2fc thresholds.
+  if (!is.null(df$status)) {
+    message("ORA UP/DOWN sets defined by the BigTab status column.")
+    universe <- df$SYMBOL[!is.na(df$status)]
+    up_df    <- df[!is.na(df$status) & df$status ==  1, ]
+    down_df  <- df[!is.na(df$status) & df$status == -1, ]
+  } else {
+    universe <- df$SYMBOL[!is.na(df$padj)]
+    up_df    <- df[!is.na(df$padj) & df$padj < padj_cutoff &
+                     df$log2FoldChange >  log2fc_cutoff, ]
+    down_df  <- df[!is.na(df$padj) & df$padj < padj_cutoff &
+                     df$log2FoldChange < -log2fc_cutoff, ]
+  }
 
   message("UP genes:   ", nrow(up_df))
   message("DOWN genes: ", nrow(down_df))

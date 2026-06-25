@@ -17,6 +17,9 @@ enrichment_onestep(
   contrast = NULL,
   lgfch_prefix = "lgFCH_",
   pval_prefix = "pvals_",
+  status_prefix = "Status",
+  ora_from_status = TRUE,
+  rank_by = c("lgFCH", "FCH", "signed_pval"),
   run_rxgr = TRUE,
   rxgr_sets = NULL,
   rxgr_fdr = 0.05
@@ -62,6 +65,21 @@ fold-change and the p-value columns in `BigTab`. Defaults `"lgFCH_"` and
 `"pvals_"`; set `pval_prefix = "fdr_"` (or similar) to threshold on adjusted
 p-values.}
 
+\item{status_prefix}{Prefix used to locate the DEG status column in `BigTab`
+for the chosen `contrast`; the column is the one whose name starts with
+`status_prefix` and ends with `_<contrast>` (e.g. `"Status_Drug.W16vsBL"`
+or `"StatusFCH1.3P0.05_Drug.W16vsBL"`). Default `"Status"`.}
+
+\item{ora_from_status}{Logical. When `TRUE` (default) and a status column is
+found in `BigTab`, the ORA UP / DOWN sets are taken from it (`1` = UP,
+`-1` = DOWN) instead of the `padj` / `log2fc` thresholds.}
+
+\item{rank_by}{Statistic used to rank genes for GSEA (`fgsea` / `gseGO`).
+One of `"lgFCH"` (log2 fold change, default), `"FCH"` (signed linear fold
+change `sign(lgFCH) * 2^|lgFCH|`), or `"signed_pval"`
+(`sign(lgFCH) * -log10(p)`). Affects the weighted enrichment score, since
+the magnitude of the statistic weights each gene.}
+
 \item{run_rxgr}{Logical. When `TRUE` (default) the OpenXGR-style Fisher's
 exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
 UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
@@ -102,19 +120,20 @@ result available for downstream inspection.
 
 Internally the function:
 
-1. **Builds the candidate sets.** Genes are kept when `padj` is
-   non-`NA` and below `padj_cutoff`. From that filtered set, genes
-   with `log2FoldChange >  log2fc_cutoff` form the **UP** set, and
-   genes with `log2FoldChange < -log2fc_cutoff` form the **DOWN** set.
-   The over-representation universe is every gene with a non-`NA`
-   `padj`, regardless of cutoff.
+1. **Builds the candidate (UP / DOWN) sets for ORA.** When a `BigTab`
+   status column is available (and `ora_from_status = TRUE`), genes with
+   status `1` form the **UP** set and status `-1` the **DOWN** set, with the
+   universe being every gene that has a non-`NA` status. Otherwise the sets
+   are derived from thresholds: `padj < padj_cutoff` together with
+   `log2FoldChange > log2fc_cutoff` (UP) or `< -log2fc_cutoff` (DOWN), and
+   the universe is every gene with a non-`NA` `padj`.
 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
    Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
-   gene list ranked by `log2FoldChange`** — not on a `padj`-filtered or
-   UP/DOWN-split subset — because its statistic depends on where a set's
-   members fall across the *entire* ranking, with direction encoded in the
-   sign of the NES. One worksheet per collection is saved to
-   `FGSEA_results.xlsx`.
+   gene list ranked by the `rank_by` statistic** (default `log2FoldChange`)
+   — not on a `padj`-filtered or UP/DOWN-split subset — because its
+   statistic depends on where a set's members fall across the *entire*
+   ranking, with direction encoded in the sign of the NES. One worksheet per
+   collection is saved to `FGSEA_results.xlsx`.
 3. **Runs over-representation analysis (ORA)** on each direction:
    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
