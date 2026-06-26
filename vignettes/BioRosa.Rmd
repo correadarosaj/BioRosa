@@ -96,15 +96,24 @@ res$degs$Drug.W16vsBL  # DEG symbols for one contrast
 
 # Annotated heatmaps
 
-`doAnnotatedHeatmapGrid()` draws a publication-quality heatmap: a row-Z-scored
-expression body on the left, and a companion **grid table** on the right where
-every cell carries the signed fold change + significance stars for one
-contrast, decimal-aligned per column. Contrast groups (parsed from the contrast
-names) become boxed, colour-filled header bands.
+BioRosa provides two heatmap functions. Both draw a row-Z-scored expression body
+on the left and a per-contrast fold-change table on the right, read from the
+same BigTab; they differ only in how that table looks. Both **write a PDF** to
+`grafname` (they do not return an inline figure).
 
-```{r heatmap}
+| Function | Side table |
+|---|---|
+| `doAnnotatedHeatmap()` | One text column per contrast; numbers decimal-aligned with significance stars. |
+| `doAnnotatedHeatmapGrid()` | A clean grid with **boxed, colour-filled group bands** parsed from the contrast names. |
+
+## Grid variant — `doAnnotatedHeatmapGrid()`
+
+The grid table groups contrasts into boxed, colour-filled header bands; cells
+carry the signed fold change + stars, decimal-aligned per column.
+
+```{r heatmap-grid}
 doAnnotatedHeatmapGrid(
-  grafname   = "heatmap.pdf",
+  grafname   = "heatmap_grid.pdf",
   mat        = expr_means,            # features x sample/group-mean columns
   annot.col  = annotx,                # row names define the column order
   colsplitx  = annotx$response,       # split the body into column groups
@@ -113,11 +122,36 @@ doAnnotatedHeatmapGrid(
   setname    = "Immune proteins")
 ```
 
-The function auto-sizes the canvas and fonts to the gene-set size, parses the
-group bands from the contrast names (here `R` / `NR` / `RvsNR`), and drops any
-dot-token that is constant across contrasts from the sub-labels. Everything is
-overridable — see `?doAnnotatedHeatmapGrid`. The classic side-table variant is
-`doAnnotatedHeatmap()`.
+It auto-sizes the canvas and fonts to the gene-set size, parses the group bands
+from the contrast names (here `R` / `NR` / `RvsNR`), and drops any dot-token that
+is constant across contrasts from the sub-labels. Everything is overridable —
+see `?doAnnotatedHeatmapGrid`.
+
+## Side-table variant — `doAnnotatedHeatmap()`
+
+The classic variant takes the log fold changes (`cfx`) and p-values (`fdx`) as
+matrices (genes x contrasts) and appends one text column per contrast:
+
+```{r heatmap-side}
+contrasts <- c("R.Drug.W2vsBL", "NR.Drug.W2vsBL", "RvsNR.Drug.W2vsBL")
+genes     <- rownames(BigTab)
+
+cfx <- as.matrix(BigTab[genes, paste0("lgFCH_", contrasts)])  # log2 fold change
+fdx <- as.matrix(BigTab[genes, paste0("pvals_", contrasts)])  # p-values
+
+doAnnotatedHeatmap(
+  grafname  = "heatmap_side.pdf",
+  matx      = expr_means[genes, ],
+  annot.col = annotx,
+  colsplitx = annotx$response,
+  cfx       = cfx,
+  fdx       = fdx,
+  setname   = "Immune proteins")
+```
+
+See `?doAnnotatedHeatmap`. Use the **grid** variant when you want grouped,
+colour-banded contrasts for a slide or figure; the **side-table** variant when
+you just need the per-contrast numbers beside the heatmap.
 
 # One-call enrichment: `enrichment_onestep()`
 
@@ -239,10 +273,11 @@ present <- intersect(guttman_pathways[["Immune Genes (EG)"]], rownames(expr_mat)
 
 # Where to go next
 
-* `?doAnnotatedHeatmapGrid` — annotated grid heatmaps, all styling arguments.
+* `?BioRosa` — package overview and a map of every workflow.
+* `?doAnnotatedHeatmap`, `?doAnnotatedHeatmapGrid` — the two annotated heatmaps.
 * `?enrichment_onestep` — the full enrichment pipeline and its options.
 * `?oSEA`, `?oSEAforest`, `?oSEAdotplot` — the OpenXGR-style engine.
-* `?process_degs`, `?runBigTab` — building and summarising a BigTab.
+* `?runEbfit`, `?runBigTab`, `?process_degs` — building and summarising a BigTab.
 
 ```{r session, eval = TRUE}
 sessionInfo()

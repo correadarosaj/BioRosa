@@ -1,3 +1,29 @@
+#' Per-gene transcriptomic improvement in a lesional / non-lesional design
+#'
+#' @description
+#' `extractImprovement()` quantifies how far treatment moves the lesional
+#' transcriptome back toward the non-lesional (healthy) state, gene by gene, for
+#' a paired baseline-lesional / baseline-non-lesional / post-treatment-lesional
+#' design. From a matrix of group-mean expression it derives, per gene:
+#'
+#' * `Regulation = bl.ls - bl.nl` — baseline disease dysregulation
+#'   (`Reg.Type` = Up / Down).
+#' * `Modulation = post.ls - bl.ls` — treatment-induced change
+#'   (`Mod.Type` = Up / Down).
+#' * `Normalization = post.ls - bl.nl` — residual distance from healthy.
+#' * `Improvement = -100 * Modulation / Regulation` — percent reversal of the
+#'   baseline dysregulation (100% = fully normalised).
+#'
+#' @param PRE.LS,PRE.NL,POST.LS Column names in `coefs` holding the group means
+#'   for baseline lesional, baseline non-lesional, and post-treatment lesional.
+#' @param genes Character vector of genes to keep.
+#' @param coefs A matrix or data frame of group-mean expression with genes as
+#'   row names and the three group-mean columns named above.
+#'
+#' @return A data frame with one row per gene: `GENENAME`, `Improvement`,
+#'   `Regulation`, `Reg.Type`, `Modulation`, `Mod.Type`, `Normalization`,
+#'   `post.expr`, and the `PRE.LS` / `PRE.NL` / `POST.LS` column names used.
+#' @export
 extractImprovement = function(PRE.LS,PRE.NL,POST.LS,genes,coefs){
 
   d = coefs %>%

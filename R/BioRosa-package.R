@@ -1,0 +1,41 @@
+#' BioRosa: annotated heatmaps and enrichment for gene-expression analysis
+#'
+#' @description
+#' BioRosa packages the gene-expression analysis toolkit used in the Guttman
+#' laboratory. It is organised around a small number of workflows that share a
+#' common data structure, the **BigTab** — a gene-indexed data frame holding,
+#' for each contrast, consistently named statistic columns (`lgFCH_*`, `FCH_*`,
+#' `pvals_*`, `fdrs_*`, and a `Status*_*` DEG call).
+#'
+#' @section Building and summarising a BigTab:
+#' * [runEbfit()] — reshape a tidy table of per-gene model results into an
+#'   `ebfit` (a list of `coef` / `p.value` matrices).
+#' * [runBigTab()] — turn an `ebfit` into a BigTab with all the per-contrast
+#'   columns.
+#' * [process_degs()] — count up/down DEGs per contrast and export per-contrast
+#'   gene lists to Excel.
+#'
+#' @section Annotated heatmaps:
+#' * [doAnnotatedHeatmap()] — heatmap with a per-contrast fold-change side table.
+#' * [doAnnotatedHeatmapGrid()] — heatmap whose fold-change table is a
+#'   decimal-aligned grid with boxed, colour-filled group bands.
+#'
+#' @section Enrichment:
+#' * [enrichment_onestep()] — one call running FGSEA + ORA + GSEA and the
+#'   OpenXGR-style RXGR engine from a DEG result or a BigTab + contrast.
+#' * [oSEA()], [oSEAextract()], [oSEAdotplot()], [oSEAforest()], [oColormap()],
+#'   [oRDS()], [rxgr_enrichment()] — the OpenXGR-compatible Fisher / odds-ratio
+#'   engine (z-score, OR + 95% CI, FDR, dotplot, forest plot).
+#'
+#' @section Data:
+#' * [guttman_pathways] — the lab's curated gene-set collection (May 2026).
+#'
+#' @section Other helpers:
+#' [muScore()], [GA_logistic_regression()], [summarySE()], [generate.Zscores()],
+#' [extractImprovement()], and the improvement-figure functions
+#' ([compute_improvement()], [plot_improvement_genes()]).
+#'
+#' See the vignette `vignette("BioRosa")` for an end-to-end walkthrough.
+#'
+#' @keywords internal
+"_PACKAGE"

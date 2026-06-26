@@ -1,10 +1,28 @@
-# Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
-##   data: a data frame.
-##   measurevar: the name of a column that contains the variable to be summariezed
-##   groupvars: a vector containing names of columns that contain grouping variables
-##   na.rm: a boolean that indicates whether to ignore NA's
-##   conf.interval: the percent range of the confidence interval (default is 95%)
-
+#' Summarise a variable by group (count, mean, SD, SE, CI)
+#'
+#' @description
+#' `summarySE()` computes, for each combination of grouping variables, the
+#' count, mean, standard deviation, standard error of the mean, and confidence
+#' interval of one measured variable. It is the widely used helper from the
+#' *Cookbook for R*, convenient for building error-bar summaries before plotting.
+#'
+#' @param data A data frame.
+#' @param measurevar Character. Name of the column to summarise.
+#' @param groupvars Character vector of column names to group by. `NULL`
+#'   (default) summarises the whole data set.
+#' @param na.rm Logical. Drop `NA`s from the counts and statistics. Default
+#'   `FALSE`.
+#' @param conf.interval Width of the confidence interval. Default `0.95`.
+#' @param .drop Passed to `plyr::ddply`; drop empty group combinations. Default
+#'   `TRUE`.
+#'
+#' @return A data frame with one row per group and columns `N`, the group mean
+#'   (named after `measurevar`), `sd`, `se`, and `ci`.
+#' @examples
+#' \dontrun{
+#' summarySE(ToothGrowth, measurevar = "len", groupvars = c("supp", "dose"))
+#' }
+#' @export
 summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
                       conf.interval=.95, .drop=TRUE) {
   library(plyr)
