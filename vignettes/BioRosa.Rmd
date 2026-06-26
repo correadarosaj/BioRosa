@@ -1,0 +1,249 @@
+---
+title: "Getting started with BioRosa"
+author: "Joel Correa da Rosa"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Getting started with BioRosa}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  eval     = FALSE          # most chunks are illustrative; see note below
+)
+```
+
+`BioRosa` packages the gene-expression analysis toolkit used in the Guttman
+laboratory: richly **annotated heatmaps**, a one-call **enrichment pipeline**
+(FGSEA + ORA + GSEA + an OpenXGR-style Fisher engine), the lab's curated
+**pathway list**, and the helpers that tie a differential-expression result
+together. This vignette walks through the main workflow end to end.
+
+> **A note on the code chunks.** Most chunks below are shown for illustration
+> only (`eval = FALSE`): the heatmap and enrichment steps depend on
+> Bioconductor packages, write files, and can take minutes. The lightweight
+> sections — exploring the bundled pathway list and the OpenXGR-style
+> enrichment engine — are actually run.
+
+```{r install, eval = FALSE}
+# install.packages("remotes")
+remotes::install_github("correadarosaj/BioRosa")
+```
+
+```{r load, eval = TRUE, message = FALSE, warning = FALSE}
+library(BioRosa)
+```
+
+# The BigTab: BioRosa's central data structure
+
+Most BioRosa functions revolve around a **BigTab** — a gene-indexed data frame
+that holds, for *each contrast*, a set of statistics in consistently named
+columns. For a contrast suffix such as `Drug.W16vsBL` the columns are:
+
+| Column                              | Meaning                                  |
+|-------------------------------------|------------------------------------------|
+| `lgFCH_Drug.W16vsBL`                | log2 fold change                         |
+| `FCH_Drug.W16vsBL`                  | signed linear fold change `sign·2^|lgFCH|` |
+| `pvals_Drug.W16vsBL`                | p-value                                  |
+| `fdrs_Drug.W16vsBL`                 | adjusted p-value (FDR)                   |
+| `StatusFCH1.3FDR0.05_Drug.W16vsBL`  | DEG call: `1` = up, `-1` = down, `0` = n.s. |
+
+Genes live in a `GENENAME` column (or the row names). Contrast suffixes are
+free-form and dot-separated, which is what lets the heatmap and enrichment
+functions parse groups out of names like `R.Drug.W2vsBL` or `Lesional.W4vsBL`.
+
+## Building a BigTab from a model fit
+
+If you fit per-gene linear / mixed models, `runEbfit()` reshapes a tidy table
+of estimates into an `ebfit` (a list with `$coef` and `$p.value`), and
+`runBigTab()` turns that into a BigTab with all the columns above:
+
+```{r build-bigtab}
+# `tb` is a long table with columns: biomarker, contrasts, estimate, p.value
+ebfit  <- runEbfit(tb)
+BigTab <- runBigTab(ebfit, adj = "BH", mcut = 1.3, pcut = 0.05)
+# -> columns lgFCH_*, FCH_*, pvals_*, fdrs_*, StatusFCH1.3FDR0.05_*
+```
+
+Already have a DESeq2 / limma table? You can build the equivalent columns
+yourself, or skip the BigTab and pass parallel vectors directly to the
+enrichment pipeline (shown later).
+
+## Summarising the differential expression
+
+`process_degs()` counts up/down genes per contrast from the `Status_*` columns
+and writes one Excel workbook (a `Summary` sheet plus one sheet of DEGs per
+contrast):
+
+```{r process-degs}
+res <- process_degs(
+  BigTab      = BigTab,
+  cont.list   = c("Drug.W2vsBL", "Drug.W16vsBL"),
+  FCH         = 1.3,
+  pcut        = 0.05,
+  method      = "fdr",
+  output_xlsx = "DEG_summary.xlsx"
+)
+res$summary          # per-contrast Up / Down counts
+res$degs$Drug.W16vsBL  # DEG symbols for one contrast
+```
+
+# Annotated heatmaps
+
+`doAnnotatedHeatmapGrid()` draws a publication-quality heatmap: a row-Z-scored
+expression body on the left, and a companion **grid table** on the right where
+every cell carries the signed fold change + significance stars for one
+contrast, decimal-aligned per column. Contrast groups (parsed from the contrast
+names) become boxed, colour-filled header bands.
+
+```{r heatmap}
+doAnnotatedHeatmapGrid(
+  grafname   = "heatmap.pdf",
+  mat        = expr_means,            # features x sample/group-mean columns
+  annot.col  = annotx,                # row names define the column order
+  colsplitx  = annotx$response,       # split the body into column groups
+  BigTab     = BigTab,                # FCH_* / pvals_* columns
+  BigTabcols = c("R.Drug.W2vsBL", "NR.Drug.W2vsBL", "RvsNR.Drug.W2vsBL"),
+  setname    = "Immune proteins")
+```
+
+The function auto-sizes the canvas and fonts to the gene-set size, parses the
+group bands from the contrast names (here `R` / `NR` / `RvsNR`), and drops any
+dot-token that is constant across contrasts from the sub-labels. Everything is
+overridable — see `?doAnnotatedHeatmapGrid`. The classic side-table variant is
+`doAnnotatedHeatmap()`.
+
+# One-call enrichment: `enrichment_onestep()`
+
+`enrichment_onestep()` runs the full pathway-analysis battery in a single call
+and writes every table and figure to `output_dir`. It is built around an
+important distinction:
+
+* **GSEA** (`fgsea` and `gseGO`) runs **once on the full ranked gene list** —
+  direction is read from the sign of the NES. (Running GSEA on a pre-filtered or
+  up/down-split list is statistically wrong.)
+* **ORA** (`enrichGO` / `enrichKEGG` / `enrichPathway` / Hallmark, plus the
+  OpenXGR-style RXGR engine) runs on the **UP and DOWN gene sets** — where the
+  split is valid.
+
+## From a BigTab + contrast
+
+The most convenient entry point reads the log fold changes and p-values
+straight from a BigTab for one contrast suffix:
+
+```{r enrich-bigtab}
+res <- enrichment_onestep(
+  BigTab     = BigTab,
+  contrast   = "Drug.W16vsBL",   # reads lgFCH_Drug.W16vsBL + pvals_Drug.W16vsBL
+  output_dir = "results/Drug.W16vsBL"
+)
+```
+
+## From parallel vectors
+
+```{r enrich-vectors}
+res <- enrichment_onestep(
+  genes          = deg$SYMBOL,
+  log2FoldChange = deg$log2FoldChange,
+  padj           = deg$padj,
+  output_dir     = "results/enrichment"
+)
+```
+
+## Useful options
+
+```{r enrich-options}
+res <- enrichment_onestep(
+  BigTab   = BigTab,
+  contrast = "Drug.W16vsBL",
+
+  # 1. Define the ORA UP/DOWN sets from the BigTab status column (1 = up,
+  #    -1 = down) instead of recomputing from thresholds. On by default when
+  #    a status column is present.
+  ora_from_status = TRUE,
+  status_prefix   = "Status",     # matches Status_... and StatusFCH1.3FDR0.05_...
+
+  # 2. Choose the GSEA ranking statistic. "FCH" amplifies large fold changes
+  #    in the weighted enrichment score; "signed_pval" = sign(lgFCH)*-log10(p).
+  rank_by = "lgFCH",              # or "FCH", "signed_pval"
+
+  # 3. Toggle the OpenXGR-style Fisher / odds-ratio engine (on by default).
+  run_rxgr = TRUE,
+
+  output_dir = "results/Drug.W16vsBL"
+)
+```
+
+The returned list has four elements:
+
+* `res$fgsea` — per-collection FGSEA (`Hallmark`, `GO_BP`, `Reactome`).
+* `res$ora`   — `$UP` / `$DOWN`, each with `GO`, `Reactome`, `KEGG`, `Hallmark`.
+* `res$gsea`  — a single `gseGO` result.
+* `res$rxgr`  — `$UP` / `$DOWN`, each a per-collection RXGR result
+  (`$table`, `$dotplot`, `$forest`).
+
+…and `output_dir/` is populated with the matching Excel tables and
+dotplot / treeplot / cnetplot / ridgeplot / forest figures.
+
+# The OpenXGR-style enrichment engine (RXGR)
+
+The Fisher's-exact engine that powers `res$rxgr` is also exposed directly. It
+takes a query gene vector and any **named list of gene sets** — including the
+bundled `guttman_pathways` — and reports the same statistics as the OpenXGR web
+server: enrichment z-score, odds ratio with 95% CI, and FDR.
+
+```{r osea, eval = TRUE, message = FALSE, fig.width = 6, fig.height = 4}
+# A small, self-contained example (no Bioconductor / network needed).
+sets  <- guttman_pathways[lengths(guttman_pathways) > 0]
+query <- sets[["Immune Genes (EG)"]]
+
+eset <- oSEA(query, sets, min.overlap = 3, size.range = c(5, 3000),
+             verbose = FALSE)
+head(oSEAextract(eset, sortBy = "or")[, c("name", "nO", "or", "adjp")])
+```
+
+The two companion figures — a dotplot (z-score vs significance) and a forest
+plot (log2 odds ratio with 95% CIs) — are produced from the same object:
+
+```{r osea-figs, eval = TRUE, message = FALSE, warning = FALSE, fig.width = 7, fig.height = 4.5}
+oSEAforest(eset, top = 10)
+```
+
+`rxgr_enrichment()` is the one-call wrapper that runs `oSEA()` and writes the
+table + both figures to disk, mirroring the OpenXGR downloads.
+
+# The bundled pathway list
+
+`guttman_pathways` is the lab's curated gene-set collection (May 2026 release):
+a named list of gene-symbol vectors, with many signatures split into directional
+`... Up` / `... Down` halves.
+
+```{r data, eval = TRUE}
+length(guttman_pathways)                       # number of gene sets
+head(names(guttman_pathways), 4)               # set names
+length(guttman_pathways[["Immune Genes (EG)"]])  # genes in one set
+```
+
+A common pattern is to restrict a gene set to what you actually measured before
+feeding it to a heatmap or scoring routine:
+
+```{r data-subset}
+present <- intersect(guttman_pathways[["Immune Genes (EG)"]], rownames(expr_mat))
+```
+
+# Where to go next
+
+* `?doAnnotatedHeatmapGrid` — annotated grid heatmaps, all styling arguments.
+* `?enrichment_onestep` — the full enrichment pipeline and its options.
+* `?oSEA`, `?oSEAforest`, `?oSEAdotplot` — the OpenXGR-style engine.
+* `?process_degs`, `?runBigTab` — building and summarising a BigTab.
+
+```{r session, eval = TRUE}
+sessionInfo()
+```
