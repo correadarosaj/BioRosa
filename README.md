@@ -53,8 +53,8 @@ remotes::install_github("correadarosaj/BioRosa", ref = "<commit-sha>")
 ```r
 library(BioRosa)
 
-# Annotated heatmap with side fold-change tables
-FancyAnnotatedHeatmap(
+# Annotated heatmap with a per-contrast fold-change side table
+doAnnotatedHeatmap(
   grafname  = "heatmap.pdf",
   matx      = expr_matrix,        # genes x samples
   annot.col = sample_annotation,  # rownames = sample IDs
@@ -78,10 +78,9 @@ scores <- muScore(biomarker_matrix)
 
 | Function | Purpose |
 |---|---|
-| `FancyAnnotatedHeatmap()` | Publication-style annotated heatmap with per-contrast side tables. |
-| `FancyAnnotatedHeatmap_vs2()` | v2 renderer with bordered side tables sized for 16:9 slides. |
-| `doAnnotatedHeatmap()` | Earlier non-fancy variant. |
-| `enrichment_onestep()` | UP/DOWN split + GO/Reactome/KEGG/Hallmark ORA + GSEA + FGSEA. |
+| `doAnnotatedHeatmap()` | Annotated heatmap with a per-contrast fold-change side table. |
+| `doAnnotatedHeatmapGrid()` | Annotated heatmap whose fold-change table is a decimal-aligned grid with boxed group bands. |
+| `enrichment_onestep()` | UP/DOWN split + GO/Reactome/KEGG/Hallmark ORA + GSEA + FGSEA + OpenXGR-style RXGR. |
 | `muScore()` | Tie-aware, rank-based ordinal subject summary across variables. |
 | `GA_logistic_regression()` | Genetic-algorithm predictor selection for binary logistic regression. |
 
