@@ -26,91 +26,93 @@ enrichment_onestep(
 )
 }
 \arguments{
-\item{genes}{Character vector of HGNC gene symbols. Optional when `BigTab`
+\item{genes}{Character vector of HGNC gene symbols. Optional when \code{BigTab}
 is supplied.}
 
 \item{log2FoldChange}{Numeric vector of log2 fold-changes, same length
-and order as `genes`. Used as the GSEA ranking statistic and for the
-UP / DOWN split. Optional when `BigTab` is supplied.}
+and order as \code{genes}. Used as the GSEA ranking statistic and for the
+UP / DOWN split. Optional when \code{BigTab} is supplied.}
 
 \item{padj}{Numeric vector of p-values (or adjusted p-values), same length
-and order as `genes`, used for thresholding. Optional when `BigTab` is
+and order as \code{genes}, used for thresholding. Optional when \code{BigTab} is
 supplied.}
 
-\item{output_dir}{Directory for Excel tables, plots, and `log.txt`.
+\item{output_dir}{Directory for Excel tables, plots, and \code{log.txt}.
 Created if missing.}
 
-\item{padj_cutoff}{Maximum `padj` for a gene to enter the ORA gene sets.}
+\item{padj_cutoff}{Maximum \code{padj} for a gene to enter the ORA gene sets.}
 
-\item{log2fc_cutoff}{Absolute `log2FoldChange` threshold. Genes with
-`log2FoldChange > log2fc_cutoff` form the UP set; genes with
-`log2FoldChange < -log2fc_cutoff` form the DOWN set.}
+\item{log2fc_cutoff}{Absolute \code{log2FoldChange} threshold. Genes with
+\code{log2FoldChange > log2fc_cutoff} form the UP set; genes with
+\code{log2FoldChange < -log2fc_cutoff} form the DOWN set.}
 
 \item{pval_cutoff}{p-value cutoff passed to the ORA / GSEA backends.}
 
 \item{qval_cutoff}{q-value cutoff passed to the ORA backends.}
 
 \item{BigTab}{Optional data frame of differential-expression results indexed
-by gene (a `GENENAME` column, or row names). When supplied with `contrast`,
-`genes`, `log2FoldChange` and `padj` are read from it instead of the
+by gene (a \code{GENENAME} column, or row names). When supplied with \code{contrast},
+\code{genes}, \code{log2FoldChange} and \code{padj} are read from it instead of the
 parallel-vector arguments. This is the same table consumed by
-[doAnnotatedHeatmapGrid()] and produced by [process_degs()].}
+\code{\link[=doAnnotatedHeatmapGrid]{doAnnotatedHeatmapGrid()}} and produced by \code{\link[=process_degs]{process_degs()}}.}
 
-\item{contrast}{Single contrast suffix selecting the `BigTab` columns to use,
-e.g. `"Drug.W16vsBL"` reads `paste0(lgfch_prefix, contrast)` and
-`paste0(pval_prefix, contrast)`. Required when `BigTab` is supplied.}
+\item{contrast}{Single contrast suffix selecting the \code{BigTab} columns to use,
+e.g. \code{"Drug.W16vsBL"} reads \code{paste0(lgfch_prefix, contrast)} and
+\code{paste0(pval_prefix, contrast)}. Required when \code{BigTab} is supplied.}
 
 \item{lgfch_prefix, pval_prefix}{Column-name prefixes for the log2
-fold-change and the p-value columns in `BigTab`. Defaults `"lgFCH_"` and
-`"pvals_"`; set `pval_prefix = "fdr_"` (or similar) to threshold on adjusted
+fold-change and the p-value columns in \code{BigTab}. Defaults \code{"lgFCH_"} and
+\code{"pvals_"}; set \code{pval_prefix = "fdr_"} (or similar) to threshold on adjusted
 p-values.}
 
-\item{status_prefix}{Prefix used to locate the DEG status column in `BigTab`
-for the chosen `contrast`; the column is the one whose name starts with
-`status_prefix` and ends with `_<contrast>` (e.g. `"Status_Drug.W16vsBL"`
-or `"StatusFCH1.3P0.05_Drug.W16vsBL"`). Default `"Status"`.}
+\item{status_prefix}{Prefix used to locate the DEG status column in \code{BigTab}
+for the chosen \code{contrast}; the column is the one whose name starts with
+\code{status_prefix} and ends with \verb{_<contrast>} (e.g. \code{"Status_Drug.W16vsBL"}
+or \code{"StatusFCH1.3P0.05_Drug.W16vsBL"}). Default \code{"Status"}.}
 
-\item{ora_from_status}{Logical. When `TRUE` (default) and a status column is
-found in `BigTab`, the ORA UP / DOWN sets are taken from it (`1` = UP,
-`-1` = DOWN) instead of the `padj` / `log2fc` thresholds.}
+\item{ora_from_status}{Logical. When \code{TRUE} (default) and a status column is
+found in \code{BigTab}, the ORA UP / DOWN sets are taken from it (\code{1} = UP,
+\code{-1} = DOWN) instead of the \code{padj} / \code{log2fc} thresholds.}
 
-\item{rank_by}{Statistic used to rank genes for GSEA (`fgsea` / `gseGO`).
-One of `"lgFCH"` (log2 fold change, default), `"FCH"` (signed linear fold
-change `sign(lgFCH) * 2^|lgFCH|`), or `"signed_pval"`
-(`sign(lgFCH) * -log10(p)`). Affects the weighted enrichment score, since
+\item{rank_by}{Statistic used to rank genes for GSEA (\code{fgsea} / \code{gseGO}).
+One of \code{"lgFCH"} (log2 fold change, default), \code{"FCH"} (signed linear fold
+change \verb{sign(lgFCH) * 2^|lgFCH|}), or \code{"signed_pval"}
+(\code{sign(lgFCH) * -log10(p)}). Affects the weighted enrichment score, since
 the magnitude of the statistic weights each gene.}
 
-\item{run_rxgr}{Logical. When `TRUE` (default) the OpenXGR-style Fisher's
-exact set-enrichment engine ([rxgr_enrichment()]) is also run on the same
-UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95%
+\item{run_rxgr}{Logical. When \code{TRUE} (default) the OpenXGR-style Fisher's
+exact set-enrichment engine (\code{\link[=rxgr_enrichment]{rxgr_enrichment()}}) is also run on the same
+UP / DOWN gene sets, reporting enrichment z-score, odds ratio with 95\%
 confidence interval and FDR, and writing the matching dotplot and forest
-plot. Outputs go to `output_dir/RXGR/<collection>/`.}
+plot. Outputs go to \verb{output_dir/RXGR/<collection>/}.}
 
 \item{rxgr_sets}{Named list of gene-set collections for the RXGR engine, each
-element itself a named list of gene-symbol vectors. `NULL` (default) uses
+element itself a named list of gene-symbol vectors. \code{NULL} (default) uses
 MSigDB Hallmark, GO biological process and Reactome together with the
-bundled [guttman_pathways] lab list.}
+bundled \link{guttman_pathways} lab list.}
 
 \item{rxgr_fdr}{FDR cut-off applied when keeping RXGR terms for the tables and
-figures. Default `0.05`.}
+figures. Default \code{0.05}.}
 }
 \value{
 A named list:
-  * `fgsea` — named per-collection list (`Hallmark`, `GO_BP`, `Reactome`),
-    each a `data.table` of FGSEA results on the full ranked list (NES sign
-    gives direction).
-  * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
-    `KEGG`, and `Hallmark` enrichment result objects.
-  * `gsea`  — a single `gseGO` result object (run on the full ranked list).
-  * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
-    [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
-    `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
+\itemize{
+\item \code{fgsea} — named per-collection list (\code{Hallmark}, \code{GO_BP}, \code{Reactome}),
+each a \code{data.table} of FGSEA results on the full ranked list (NES sign
+gives direction).
+\item \code{ora}   — list with \verb{$UP} and \verb{$DOWN}, each holding \code{GO}, \code{Reactome},
+\code{KEGG}, and \code{Hallmark} enrichment result objects.
+\item \code{gsea}  — a single \code{gseGO} result object (run on the full ranked list).
+\item \code{rxgr}  — list with \verb{$UP} and \verb{$DOWN}, each a per-collection
+\code{\link[=rxgr_enrichment]{rxgr_enrichment()}} result (\verb{$table}, \verb{$dotplot}, \verb{$forest}, ...);
+\code{NULL} entries when \code{run_rxgr = FALSE} or a direction has no genes.
+}
 }
 \description{
-`enrichment_onestep()` is a single entry point that takes a
+\code{enrichment_onestep()} is a single entry point that takes a
 differential-expression result — described either by three parallel
-vectors (`genes`, `log2FoldChange`, `padj`) or by a `BigTab` table plus a
-`contrast` suffix (e.g. `"Drug.W16vsBL"`), from which the log2 fold-changes
+vectors (\code{genes}, \code{log2FoldChange}, \code{padj}) or by a \code{BigTab} table plus a
+\code{contrast} suffix (e.g. \code{"Drug.W16vsBL"}), from which the log2 fold-changes
 and p-values are read directly — and runs the full standard
 pathway-analysis battery in one call. The motivation is to remove the
 boilerplate (DEG splitting, ID conversion, per-collection looping,
@@ -119,51 +121,51 @@ a publishable enrichment figure, while keeping every intermediate
 result available for downstream inspection.
 
 Internally the function:
+\enumerate{
+\item \strong{Builds the candidate (UP / DOWN) sets for ORA.} When a \code{BigTab}
+status column is available (and \code{ora_from_status = TRUE}), genes with
+status \code{1} form the \strong{UP} set and status \code{-1} the \strong{DOWN} set, with the
+universe being every gene that has a non-\code{NA} status. Otherwise the sets
+are derived from thresholds: \code{padj < padj_cutoff} together with
+\code{log2FoldChange > log2fc_cutoff} (UP) or \verb{< -log2fc_cutoff} (DOWN), and
+the universe is every gene with a non-\code{NA} \code{padj}.
+\item \strong{Runs FGSEA} against the MSigDB Hallmark, GO_BP (\code{C5 / BP}), and
+Reactome (\code{C2 / REACTOME}) collections. GSEA is run \strong{once on the full
+gene list ranked by the \code{rank_by} statistic} (default \code{log2FoldChange})
+— not on a \code{padj}-filtered or UP/DOWN-split subset — because its
+statistic depends on where a set's members fall across the \emph{entire}
+ranking, with direction encoded in the sign of the NES. One worksheet per
+collection is saved to \code{FGSEA_results.xlsx}.
+\item \strong{Runs over-representation analysis (ORA)} on each direction:
+\code{clusterProfiler::enrichGO} for GO \code{BP}, \code{MF}, \code{CC};
+\code{ReactomePA::enrichPathway}; \code{clusterProfiler::enrichKEGG}
+(organism \code{"hsa"}); and \code{clusterProfiler::enricher} against MSigDB
+Hallmark. SYMBOL → ENTREZ conversion is done with
+\code{clusterProfiler::bitr} only for the backends that require Entrez
+IDs (Reactome, KEGG).
+\item \strong{Runs \code{gseGO}} with \code{ont = "ALL"} once on the same full ranked list
+(again, not split by direction), then collapses redundant terms with
+\code{clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")}.
+\item \strong{Persists everything to \code{output_dir}} — Excel tables (\code{.xlsx}),
+UP/DOWN gene lists (\code{.csv}), dotplots / treeplots / cnetplots /
+ridgeplots (\code{.png} and \code{.pdf}), and a timestamped \code{log.txt} capturing
+every save and any per-plot error. The function also returns the
+full set of in-memory result objects so callers can iterate without
+re-reading from disk.
+\item \strong{Runs the OpenXGR-style RXGR engine} (when \code{run_rxgr = TRUE}) on the
+same UP / DOWN sets via \code{\link[=rxgr_enrichment]{rxgr_enrichment()}}, against MSigDB Hallmark,
+GO_BP, Reactome and the bundled \link{guttman_pathways} lab list. This adds
+Fisher's-exact statistics (enrichment z-score, odds ratio with 95\% CI,
+FDR) plus a dotplot and forest plot per collection, written under
+\verb{output_dir/RXGR/}.
+}
 
-1. **Builds the candidate (UP / DOWN) sets for ORA.** When a `BigTab`
-   status column is available (and `ora_from_status = TRUE`), genes with
-   status `1` form the **UP** set and status `-1` the **DOWN** set, with the
-   universe being every gene that has a non-`NA` status. Otherwise the sets
-   are derived from thresholds: `padj < padj_cutoff` together with
-   `log2FoldChange > log2fc_cutoff` (UP) or `< -log2fc_cutoff` (DOWN), and
-   the universe is every gene with a non-`NA` `padj`.
-2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
-   Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
-   gene list ranked by the `rank_by` statistic** (default `log2FoldChange`)
-   — not on a `padj`-filtered or UP/DOWN-split subset — because its
-   statistic depends on where a set's members fall across the *entire*
-   ranking, with direction encoded in the sign of the NES. One worksheet per
-   collection is saved to `FGSEA_results.xlsx`.
-3. **Runs over-representation analysis (ORA)** on each direction:
-   `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
-   `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
-   (organism `"hsa"`); and `clusterProfiler::enricher` against MSigDB
-   Hallmark. SYMBOL → ENTREZ conversion is done with
-   `clusterProfiler::bitr` only for the backends that require Entrez
-   IDs (Reactome, KEGG).
-4. **Runs `gseGO`** with `ont = "ALL"` once on the same full ranked list
-   (again, not split by direction), then collapses redundant terms with
-   `clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")`.
-5. **Persists everything to `output_dir`** — Excel tables (`.xlsx`),
-   UP/DOWN gene lists (`.csv`), dotplots / treeplots / cnetplots /
-   ridgeplots (`.png` and `.pdf`), and a timestamped `log.txt` capturing
-   every save and any per-plot error. The function also returns the
-   full set of in-memory result objects so callers can iterate without
-   re-reading from disk.
-
-6. **Runs the OpenXGR-style RXGR engine** (when `run_rxgr = TRUE`) on the
-   same UP / DOWN sets via [rxgr_enrichment()], against MSigDB Hallmark,
-   GO_BP, Reactome and the bundled [guttman_pathways] lab list. This adds
-   Fisher's-exact statistics (enrichment z-score, odds ratio with 95% CI,
-   FDR) plus a dotplot and forest plot per collection, written under
-   `output_dir/RXGR/`.
-
-Each per-plot rendering step is wrapped in `tryCatch()`, so a single
-failing plot (e.g. an `enrichplot::treeplot` on a result with too few
+Each per-plot rendering step is wrapped in \code{tryCatch()}, so a single
+failing plot (e.g. an \code{enrichplot::treeplot} on a result with too few
 terms) is logged and skipped rather than aborting the whole pipeline.
 
-Human-only: uses `org.Hs.eg.db::org.Hs.eg.db`, KEGG organism `"hsa"`,
-and `msigdbr` species `"human"`.
+Human-only: uses \code{org.Hs.eg.db::org.Hs.eg.db}, KEGG organism \code{"hsa"},
+and \code{msigdbr} species \code{"human"}.
 }
 \examples{
 \dontrun{

@@ -14,13 +14,13 @@ by ComplexHeatmap; unused here).}
 }
 \value{
 Called for its side effect of drawing into the current viewport;
-  returns `NULL` invisibly.
+returns \code{NULL} invisibly.
 }
 \description{
-`panel_fun()` is a simple panel function for `ComplexHeatmap::anno_block`: it
+\code{panel_fun()} is a simple panel function for \code{ComplexHeatmap::anno_block}: it
 draws a bordered rectangle and prints the block's level label centred inside
-it. Pass it as `anno_block(panel_fun = panel_fun, ...)`. It follows the
-`panel_fun(index, levels)` signature ComplexHeatmap calls for each block.
+it. Pass it as \code{anno_block(panel_fun = panel_fun, ...)}. It follows the
+\code{panel_fun(index, levels)} signature ComplexHeatmap calls for each block.
 }
 \examples{
 \dontrun{
@@ -28,5 +28,5 @@ ComplexHeatmap::anno_block(align_to = leveler(groups), panel_fun = panel_fun)
 }
 }
 \seealso{
-[leveler()]
+\code{\link[=leveler]{leveler()}}
 }

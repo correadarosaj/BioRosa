@@ -2,7 +2,7 @@
 % Please edit documentation in R/oSEAextract.R
 \name{oSEAextract}
 \alias{oSEAextract}
-\title{Extract a flat enrichment results table from an `eSET`}
+\title{Extract a flat enrichment results table from an \code{eSET}}
 \usage{
 oSEAextract(
   obj,
@@ -11,20 +11,19 @@ oSEAextract(
 )
 }
 \arguments{
-\item{obj}{an `eSET` object from [oSEA()].}
+\item{obj}{an \code{eSET} object from \code{\link[=oSEA]{oSEA()}}.}
 
-\item{sortBy}{ordering of the output. One of `"adjp"`, `"pvalue"`,
-`"zscore"`, `"fc"`, `"nA"`, `"nO"`, `"or"`, `"id"`, `"name"`,
-`"distance"`. Default `"adjp"` (which orders by `pvalue` then descending
-`zscore`, as in the original).}
+\item{sortBy}{ordering of the output. One of \code{"adjp"}, \code{"pvalue"},
+\code{"zscore"}, \code{"fc"}, \code{"nA"}, \code{"nO"}, \code{"or"}, \code{"id"}, \code{"name"},
+\code{"distance"}. Default \code{"adjp"} (which orders by \code{pvalue} then descending
+\code{zscore}, as in the original).}
 }
 \value{
-A data frame with columns `name, id, nA, nO, fc, zscore, pvalue,
-  adjp, or, CIl, CIu, distance, namespace, overlap`.
+A data frame with columns \verb{name, id, nA, nO, fc, zscore, pvalue, adjp, or, CIl, CIu, distance, namespace, overlap}.
 }
 \description{
-Mirrors OpenXGR's `oSEAextract()`: returns a data frame of enriched terms
-with the `overlap` (member) genes collapsed into a single comma-separated
+Mirrors OpenXGR's \code{oSEAextract()}: returns a data frame of enriched terms
+with the \code{overlap} (member) genes collapsed into a single comma-separated
 string, sorted by the requested key.
 }
 \examples{

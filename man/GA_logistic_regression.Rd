@@ -25,85 +25,87 @@ GA_logistic_regression(
 \item{data}{A matrix or data frame containing the binary response and
 the candidate predictors. Will be coerced to a data frame internally.}
 
-\item{response}{Column of `data` holding the binary response (0/1).
+\item{response}{Column of \code{data} holding the binary response (0/1).
 May be a character column name or an integer column index.
-Default `1` — i.e. the first column is taken as the response.}
+Default \code{1} — i.e. the first column is taken as the response.}
 
 \item{predictors}{Optional character vector of predictor column names
-to consider. Default `NULL` uses every column of `data` except the
+to consider. Default \code{NULL} uses every column of \code{data} except the
 response.}
 
-\item{criterion}{Fitness criterion, either `"AIC"` (default) or
-`"AUC"`. See description for how each is maximised.}
+\item{criterion}{Fitness criterion, either \code{"AIC"} (default) or
+\code{"AUC"}. See description for how each is maximised.}
 
 \item{popSize, maxiter, run, pmutation, pcrossover}{GA control parameters
-forwarded to `GA::ga`. Defaults: `popSize = 50`, `maxiter = 40`,
-`run = 500`, `pmutation = 0.1`, `pcrossover = 0.8`.}
+forwarded to \code{GA::ga}. Defaults: \code{popSize = 50}, \code{maxiter = 40},
+\code{run = 500}, \code{pmutation = 0.1}, \code{pcrossover = 0.8}.}
 
 \item{elitism}{Number of elite chromosomes preserved each generation.
-Default `base::max(1, round(popSize * 0.05))` — the `GA::ga` default.}
+Default \code{base::max(1, round(popSize * 0.05))} — the \code{GA::ga} default.}
 
-\item{parallel}{Logical or integer passed to `GA::ga`. Default `FALSE`
-so the function is deterministic given `seed` and does not silently
+\item{parallel}{Logical or integer passed to \code{GA::ga}. Default \code{FALSE}
+so the function is deterministic given \code{seed} and does not silently
 fork worker processes.}
 
-\item{seed}{Integer seed forwarded to `GA::ga` for reproducibility.
-Default `1234`.}
+\item{seed}{Integer seed forwarded to \code{GA::ga} for reproducibility.
+Default \code{1234}.}
 
-\item{keepBest}{Logical, passed to `GA::ga`. Default `TRUE`.}
+\item{keepBest}{Logical, passed to \code{GA::ga}. Default \code{TRUE}.}
 
-\item{verbose}{If `TRUE`, prints a short summary at the end. Default
-`FALSE`.}
+\item{verbose}{If \code{TRUE}, prints a short summary at the end. Default
+\code{FALSE}.}
 }
 \value{
-A list of class `"GA_logistic_regression"` with components:
+A list of class \code{"GA_logistic_regression"} with components:
 \describe{
-  \item{`best_subset`}{Character vector of predictors selected in every
-    elite solution.}
-  \item{`final_model`}{The `glm` refit on `best_subset` (or the
-    intercept-only model if `best_subset` is empty).}
-  \item{`coefficients`}{Data frame of coefficient estimates, standard
-    errors, z-values, p-values and 95\% Wald confidence intervals for
-    `final_model`.}
-  \item{`fit_stats`}{Named numeric vector: `AIC`, `BIC`, `deviance`,
-    `null_deviance`, `df_residual`, `df_null`, `n_predictors`.}
-  \item{`auc`}{In-sample AUC of `final_model` (numeric scalar).}
-  \item{`roc`}{The `pROC::roc` object for `final_model`.}
-  \item{`predictions`}{Data frame with columns `observed`, `prob`,
-    `predicted` (0/1 at threshold 0.5).}
-  \item{`fitness_trace`}{Data frame of GA progress with columns
-    `generation`, `best`, `mean`, `median`. For `criterion = "AIC"` the
-    values are reported on the AIC scale (i.e. sign-flipped back).}
-  \item{`best_fitness`}{The optimal raw fitness value reported by GA
-    (negative AIC, or AUC with parsimony tweak — same scale used during
-    evolution).}
-  \item{`criterion`}{The criterion used (`"AIC"` or `"AUC"`).}
-  \item{`ga`}{The full `GA::ga` result object.}
-  \item{`call`}{The matched function call.}
+\item{\code{best_subset}}{Character vector of predictors selected in every
+elite solution.}
+\item{\code{final_model}}{The \code{glm} refit on \code{best_subset} (or the
+intercept-only model if \code{best_subset} is empty).}
+\item{\code{coefficients}}{Data frame of coefficient estimates, standard
+errors, z-values, p-values and 95\\% Wald confidence intervals for
+\code{final_model}.}
+\item{\code{fit_stats}}{Named numeric vector: \code{AIC}, \code{BIC}, \code{deviance},
+\code{null_deviance}, \code{df_residual}, \code{df_null}, \code{n_predictors}.}
+\item{\code{auc}}{In-sample AUC of \code{final_model} (numeric scalar).}
+\item{\code{roc}}{The \code{pROC::roc} object for \code{final_model}.}
+\item{\code{predictions}}{Data frame with columns \code{observed}, \code{prob},
+\code{predicted} (0/1 at threshold 0.5).}
+\item{\code{fitness_trace}}{Data frame of GA progress with columns
+\code{generation}, \code{best}, \code{mean}, \code{median}. For \code{criterion = "AIC"} the
+values are reported on the AIC scale (i.e. sign-flipped back).}
+\item{\code{best_fitness}}{The optimal raw fitness value reported by GA
+(negative AIC, or AUC with parsimony tweak — same scale used during
+evolution).}
+\item{\code{criterion}}{The criterion used (\code{"AIC"} or \code{"AUC"}).}
+\item{\code{ga}}{The full \code{GA::ga} result object.}
+\item{\code{call}}{The matched function call.}
 }
 }
 \description{
-Wraps `GA::ga` (binary chromosome — one bit per predictor) around
-`stats::glm(..., family = binomial)` to search for the predictor subset
-that optimises either the model's `AIC` or its in-sample `AUC`. The
+Wraps \code{GA::ga} (binary chromosome — one bit per predictor) around
+\code{stats::glm(..., family = binomial)} to search for the predictor subset
+that optimises either the model's \code{AIC} or its in-sample \code{AUC}. The
 input is a single matrix (or data frame) in which one column is the
 binary response (0/1) and the remaining columns are candidate
 predictors. The function returns a list collecting the fitted final
 model, the selected subset, fit statistics, the ROC object, the
-generation-by-generation fitness trace, and the underlying `GA`
+generation-by-generation fitness trace, and the underlying \code{GA}
 object — everything a downstream pipeline typically needs to report
 or plot results.
 
 Selection rule: the "best subset" is the set of predictors that appear
-in every elite solution returned by `GA::ga` (i.e. columns where
-`colSums(GA@solution) == nrow(GA@solution)`). When the GA has a unique
+in every elite solution returned by \code{GA::ga} (i.e. columns where
+\code{colSums(GA@solution) == nrow(GA@solution)}). When the GA has a unique
 best chromosome this collapses to that chromosome's selected bits.
 
 Fitness:
-- `criterion = "AIC"` returns `-AIC(fit)` (GA maximises, lower AIC is better).
-- `criterion = "AUC"` returns `AUC - 1e-5 * length(selected)` so that
-  ties in AUC are broken by parsimony. AIC already penalises complexity.
-Models with an empty predictor set are assigned `-Inf` (AIC) or `0` (AUC).
+\itemize{
+\item \code{criterion = "AIC"} returns \code{-AIC(fit)} (GA maximises, lower AIC is better).
+\item \code{criterion = "AUC"} returns \code{AUC - 1e-5 * length(selected)} so that
+ties in AUC are broken by parsimony. AIC already penalises complexity.
+Models with an empty predictor set are assigned \code{-Inf} (AIC) or \code{0} (AUC).
+}
 }
 \examples{
 \dontrun{

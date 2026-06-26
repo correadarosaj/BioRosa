@@ -19,10 +19,10 @@ plot_improvement_subjects(
 )
 }
 \arguments{
-\item{agg}{A subject-level aggregate from [aggregate_improvement()].}
+\item{agg}{A subject-level aggregate from \code{\link[=aggregate_improvement]{aggregate_improvement()}}.}
 
-\item{by_reg}{Facet by treatment and split Up / Down (`TRUE`) or pool
-directions with arms side-by-side (`FALSE`, default).}
+\item{by_reg}{Facet by treatment and split Up / Down (\code{TRUE}) or pool
+directions with arms side-by-side (\code{FALSE}, default).}
 
 \item{mu0}{Null value for the within-group (black-star) test.}
 
@@ -30,31 +30,31 @@ directions with arms side-by-side (`FALSE`, default).}
 
 \item{box_width}{Box width (a little narrower than the ggplot2 default).}
 
-\item{label}{When `TRUE` (default), label each subject point with its id via
-[ggrepel::geom_text_repel()].}
+\item{label}{When \code{TRUE} (default), label each subject point with its id via
+\code{\link[ggrepel:geom_text_repel]{ggrepel::geom_text_repel()}}.}
 
 \item{arm_palette}{Named colours for the treatment arms (default darkgreen /
 orange for Drug / Placebo).}
 
 \item{reg_palette}{Named colours for Down / Up regulation.}
 
-\item{mean_color}{Colour of the horizontal mean line; `NULL` resolves to red
+\item{mean_color}{Colour of the horizontal mean line; \code{NULL} resolves to red
 on the overall view and white on the by-regulation view.}
 
-\item{week_labels}{When `TRUE`, relabel `"W4"` as `"Week 4"` on the x-axis
+\item{week_labels}{When \code{TRUE}, relabel \code{"W4"} as \code{"Week 4"} on the x-axis
 (the underlying data are untouched).}
 }
 \value{
-A [ggplot2::ggplot] object.
+A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 }
 \description{
 Draws subject-level improvement with every subject shown as a point labelled
 by id, so outliers are immediately identifiable (the "per-patient" style).
 The panel is faceted by treatment (dropped automatically for a single arm).
-In the **by-regulation** view boxes are solid with Up = red / Down = blue and
+In the \strong{by-regulation} view boxes are solid with Up = red / Down = blue and
 subjects drawn in dark grey so they stay visible on the fills. Each box
 carries its median percentage, a thick mean line, and a black significance
-star (one-sample test vs `mu0`).
+star (one-sample test vs \code{mu0}).
 }
 \examples{
 \donttest{
@@ -68,5 +68,5 @@ plot_improvement_subjects(aggregate_improvement(imp, "subject"))
 }
 }
 \seealso{
-[plot_improvement_genes()], [evaluate_improvement()]
+\code{\link[=plot_improvement_genes]{plot_improvement_genes()}}, \code{\link[=evaluate_improvement]{evaluate_improvement()}}
 }

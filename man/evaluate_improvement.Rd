@@ -21,48 +21,48 @@ evaluate_improvement(
 \arguments{
 \item{data}{Long data frame, one row per Subject x Visit x Tissue x Gene.}
 
-\item{...}{Additional arguments passed to [compute_improvement()] (e.g.
-`gene_col`, `tissue_col`, `lesional`, `nonlesional`, `degs`,
-`fc_threshold`).}
+\item{...}{Additional arguments passed to \code{\link[=compute_improvement]{compute_improvement()}} (e.g.
+\code{gene_col}, \code{tissue_col}, \code{lesional}, \code{nonlesional}, \code{degs},
+\code{fc_threshold}).}
 
-\item{arm_col}{Optional treatment-arm column name; `NULL` for a single arm.}
+\item{arm_col}{Optional treatment-arm column name; \code{NULL} for a single arm.}
 
 \item{reference}{Treatment arm used as the comparator for the between-arm
-(red) stars in the gene-level overall figure (e.g. `"Placebo"`); `NULL`
+(red) stars in the gene-level overall figure (e.g. \code{"Placebo"}); \code{NULL}
 for none.}
 
 \item{mu0}{Null value for the within-group (black-star) significance test.}
 
 \item{y_label}{Y-axis title. Defaults to
-`"Lesional % Improvement to Non-Lesional"`; use a control-based wording when
-`nonlesional` is a control group.}
+\code{"Lesional \% Improvement to Non-Lesional"}; use a control-based wording when
+\code{nonlesional} is a control group.}
 
 \item{arm_palette, reg_palette}{Named colour vectors for the treatment arms and
 the Down / Up regulation classes.}
 
-\item{week_labels}{When `TRUE`, relabel `"W4"` as `"Week 4"` on the x-axis.}
+\item{week_labels}{When \code{TRUE}, relabel \code{"W4"} as \code{"Week 4"} on the x-axis.}
 
 \item{signature_name}{Label used in plot titles and output file names.}
 
-\item{outdir}{If not `NULL`, a directory to write the four PDFs into (created
+\item{outdir}{If not \code{NULL}, a directory to write the four PDFs into (created
 if needed).}
 }
 \value{
 A list with
-  \describe{
-    \item{`improvement`}{the per-subject, per-gene table.}
-    \item{`reference`}{the per-gene regulation table.}
-    \item{`summary`}{the four aggregates (gene/subject x overall/byReg).}
-    \item{`plots`}{the four [ggplot2::ggplot] objects named `gene_overall`,
-      `gene_byReg`, `subject_overall`, `subject_byReg`.}
-  }
+\describe{
+\item{\code{improvement}}{the per-subject, per-gene table.}
+\item{\code{reference}}{the per-gene regulation table.}
+\item{\code{summary}}{the four aggregates (gene/subject x overall/byReg).}
+\item{\code{plots}}{the four \link[ggplot2:ggplot]{ggplot2::ggplot} objects named \code{gene_overall},
+\code{gene_byReg}, \code{subject_overall}, \code{subject_byReg}.}
+}
 }
 \description{
-One-call pipeline that runs [compute_improvement()], collapses the result to
-both the gene and subject level with [aggregate_improvement()], and renders
-the four standard figures via [plot_improvement_genes()] and
-[plot_improvement_subjects()]: gene/subject x overall/by-regulation. When
-`outdir` is given the figures are also written as PDFs.
+One-call pipeline that runs \code{\link[=compute_improvement]{compute_improvement()}}, collapses the result to
+both the gene and subject level with \code{\link[=aggregate_improvement]{aggregate_improvement()}}, and renders
+the four standard figures via \code{\link[=plot_improvement_genes]{plot_improvement_genes()}} and
+\code{\link[=plot_improvement_subjects]{plot_improvement_subjects()}}: gene/subject x overall/by-regulation. When
+\code{outdir} is given the figures are also written as PDFs.
 }
 \examples{
 \donttest{
@@ -82,6 +82,6 @@ res$plots$subject_overall
 }
 }
 \seealso{
-[compute_improvement()], [aggregate_improvement()],
-  [plot_improvement_genes()], [plot_improvement_subjects()]
+\code{\link[=compute_improvement]{compute_improvement()}}, \code{\link[=aggregate_improvement]{aggregate_improvement()}},
+\code{\link[=plot_improvement_genes]{plot_improvement_genes()}}, \code{\link[=plot_improvement_subjects]{plot_improvement_subjects()}}
 }

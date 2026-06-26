@@ -16,33 +16,33 @@ oSEAdotplot(
 )
 }
 \arguments{
-\item{obj}{an `eSET` from [oSEA()], or a data frame as returned by
-[oSEAextract()] (must contain `zscore`, `adjp`, `nO`, `name`).}
+\item{obj}{an \code{eSET} from \code{\link[=oSEA]{oSEA()}}, or a data frame as returned by
+\code{\link[=oSEAextract]{oSEAextract()}} (must contain \code{zscore}, \code{adjp}, \code{nO}, \code{name}).}
 
-\item{FDR.cutoff}{significance threshold for colouring. Default `0.05`.}
+\item{FDR.cutoff}{significance threshold for colouring. Default \code{0.05}.}
 
-\item{label.top}{number of top terms (smallest FDR) to label. Default `5`.}
+\item{label.top}{number of top terms (smallest FDR) to label. Default \code{5}.}
 
-\item{colors}{length-2 vector `c(non-significant, significant)`. Default
-`c("#95c11f", "#026634")` as used by OpenXGR.}
+\item{colors}{length-2 vector \code{c(non-significant, significant)}. Default
+\code{c("#95c11f", "#026634")} as used by OpenXGR.}
 
-\item{size.range}{dot size range. Default `c(0.5, 3.5)`.}
+\item{size.range}{dot size range. Default \code{c(0.5, 3.5)}.}
 
-\item{size.title}{legend title for dot size. Default `"Number of genes"`.}
+\item{size.title}{legend title for dot size. Default \code{"Number of genes"}.}
 
-\item{label.direction.y}{one of `"none"`, `"left"`, `"right"`; nudges labels.}
+\item{label.direction.y}{one of \code{"none"}, \code{"left"}, \code{"right"}; nudges labels.}
 
-\item{label.size}{text size for labels. Default `2`.}
+\item{label.size}{text size for labels. Default \code{2}.}
 }
 \value{
-A `ggplot` object.
+A \code{ggplot} object.
 }
 \description{
 Reproduces the OpenXGR enrichment dotplot: each enriched term is a dot
-positioned by enrichment z-score (x) and significance `-log10(FDR)` (y), with
+positioned by enrichment z-score (x) and significance \code{-log10(FDR)} (y), with
 dot size proportional to the number of overlapping genes. Dots that pass the
 FDR cut-off are drawn in the "significant" colour (dark green by default,
-matching OpenXGR's `c("#95c11f", "#026634")`), and the top terms (by FDR) are
+matching OpenXGR's \code{c("#95c11f", "#026634")}), and the top terms (by FDR) are
 labelled.
 }
 \examples{

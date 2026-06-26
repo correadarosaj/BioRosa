@@ -5,13 +5,13 @@
 \alias{guttman_pathways}
 \title{GuttmanLab curated pathway / gene-set list (May 2026)}
 \format{
-A named `list` of 350 character vectors. Each vector holds the gene
-  symbols (HGNC) of one gene set; `names()` gives the gene-set names. The list
-  spans 20,347 unique gene symbols.
+A named \code{list} of 350 character vectors. Each vector holds the gene
+symbols (HGNC) of one gene set; \code{names()} gives the gene-set names. The list
+spans 20,347 unique gene symbols.
 }
 \source{
-GuttmanLab pathways repository, version `version_may_2026`
-  (`ML_pathways_2026_05_11.RData`).
+GuttmanLab pathways repository, version \code{version_may_2026}
+(\code{ML_pathways_2026_05_11.RData}).
 }
 \usage{
 guttman_pathways
@@ -24,14 +24,14 @@ structural gene panels, and disease meta-analysis derived MADAD/MAPP sets).
 This is the May 2026 release of the list.
 
 Each element is a character vector of gene symbols; the element name is the
-gene-set name. Many signature sets are split into directional `"... Up"` and
-`"... Down"` halves (e.g. `"MADAD (LSvsNL) Up"` / `"... Down"`, where LS/NL/NN
+gene-set name. Many signature sets are split into directional \code{"... Up"} and
+\code{"... Down"} halves (e.g. \code{"MADAD (LSvsNL) Up"} / \code{"... Down"}, where LS/NL/NN
 denote lesional / non-lesional / normal tissue). A small number of sets may be
 empty; entries are retained as released and are not deduplicated or filtered.
 
 This dataset is the package-shipped replacement for the lab's standalone
-`ML_pathways_<date>.RData` file (the in-memory object was historically named
-`ML`); use `BioRosa::guttman_pathways` instead of `load()`-ing that file.
+\verb{ML_pathways_<date>.RData} file (the in-memory object was historically named
+\code{ML}); use \code{BioRosa::guttman_pathways} instead of \code{load()}-ing that file.
 }
 \examples{
 data("guttman_pathways", package = "BioRosa")

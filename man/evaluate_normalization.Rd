@@ -20,34 +20,34 @@ evaluate_normalization(
 \arguments{
 \item{data}{Long data frame, one row per Subject x Visit x Tissue x Gene.}
 
-\item{...}{Additional arguments passed to [compute_normalization()].}
+\item{...}{Additional arguments passed to \code{\link[=compute_normalization]{compute_normalization()}}.}
 
-\item{arm_col}{Optional treatment-arm column name; `NULL` for a single arm.}
+\item{arm_col}{Optional treatment-arm column name; \code{NULL} for a single arm.}
 
-\item{reference}{The tissue/group level to normalize toward, e.g. `"NL"`
-(non-lesional) or `"HC"` / `"Control"` (healthy controls).}
+\item{reference}{The tissue/group level to normalize toward, e.g. \code{"NL"}
+(non-lesional) or \code{"HC"} / \code{"Control"} (healthy controls).}
 
 \item{reference_label}{Short reference name for the y-axis and file name; when
-`NULL` it is guessed from `reference` (`"NL"` -> "Non-Lesional",
-`"HC"`/`"Control"` -> "Controls").}
+\code{NULL} it is guessed from \code{reference} (\code{"NL"} -> "Non-Lesional",
+\code{"HC"}/\code{"Control"} -> "Controls").}
 
 \item{reg_palette, arm_strip}{Colour overrides forwarded to
-[plot_normalization()].}
+\code{\link[=plot_normalization]{plot_normalization()}}.}
 
-\item{week_labels}{When `TRUE`, relabel `"W4"` as `"Week 4"` on the x-axis.}
+\item{week_labels}{When \code{TRUE}, relabel \code{"W4"} as \code{"Week 4"} on the x-axis.}
 
 \item{signature_name}{Label used in the plot title and output file name.}
 
-\item{outdir}{If not `NULL`, a directory to write the PDF into (created if
+\item{outdir}{If not \code{NULL}, a directory to write the PDF into (created if
 needed).}
 }
 \value{
-A list with `normalization` (the table), `reference` (the per-gene
-  regulation table) and `plot` (the [ggplot2::ggplot]).
+A list with \code{normalization} (the table), \code{reference} (the per-gene
+regulation table) and \code{plot} (the \link[ggplot2:ggplot]{ggplot2::ggplot}).
 }
 \description{
-One-call pipeline that runs [compute_normalization()] and renders the
-normalization boxplot via [plot_normalization()]. When `outdir` is given the
+One-call pipeline that runs \code{\link[=compute_normalization]{compute_normalization()}} and renders the
+normalization boxplot via \code{\link[=plot_normalization]{plot_normalization()}}. When \code{outdir} is given the
 figure is written as a 10.5 x 4.5 inch PDF.
 }
 \examples{
@@ -66,6 +66,6 @@ res$plot
 }
 }
 \seealso{
-[compute_normalization()], [plot_normalization()],
-  [evaluate_improvement()]
+\code{\link[=compute_normalization]{compute_normalization()}}, \code{\link[=plot_normalization]{plot_normalization()}},
+\code{\link[=evaluate_improvement]{evaluate_improvement()}}
 }

@@ -27,19 +27,19 @@ compute_normalization(
 \item{data}{Long data frame, one row per Subject x Visit x Tissue x Gene.}
 
 \item{gene_col, value_col, subject_col, visit_col, tissue_col}{Column names in
-`data` holding the gene/protein id, the (log-scale) expression value, the
+\code{data} holding the gene/protein id, the (log-scale) expression value, the
 subject id, the visit, and the tissue/group.}
 
-\item{arm_col}{Optional treatment-arm column name; `NULL` for a single arm.}
+\item{arm_col}{Optional treatment-arm column name; \code{NULL} for a single arm.}
 
 \item{baseline, lesional}{Level labels for the baseline visit and the lesional
 (disease) tissue.}
 
-\item{reference}{The tissue/group level to normalize toward, e.g. `"NL"`
-(non-lesional) or `"HC"` / `"Control"` (healthy controls).}
+\item{reference}{The tissue/group level to normalize toward, e.g. \code{"NL"}
+(non-lesional) or \code{"HC"} / \code{"Control"} (healthy controls).}
 
 \item{visit_levels}{Optional ordering of the visits on the x-axis (baseline
-first). Defaults to the sorted unique visits with `baseline` moved first.}
+first). Defaults to the sorted unique visits with \code{baseline} moved first.}
 
 \item{genes}{Optional character vector to restrict to before computation.}
 
@@ -47,34 +47,34 @@ first). Defaults to the sorted unique visits with `baseline` moved first.}
 skips the internal baseline significance / fold-change filter.}
 
 \item{fc_threshold}{Fold-change cutoff for the baseline lesional-vs-reference
-dysregulation filter (default `1.5`). Ignored when `degs` is supplied.}
+dysregulation filter (default \code{1.5}). Ignored when \code{degs} is supplied.}
 
 \item{p_cut, use_fdr}{Significance cutoff on the baseline lesional-vs-reference
-t-test; set `use_fdr = TRUE` to threshold on BH-FDR (default `p_cut = 0.05`).
-Ignored when `degs` is supplied.}
+t-test; set \code{use_fdr = TRUE} to threshold on BH-FDR (default \code{p_cut = 0.05}).
+Ignored when \code{degs} is supplied.}
 }
 \value{
 A list with
-  \describe{
-    \item{`normalization`}{tidy data frame, one row per kept gene x visit x
-      arm, with the `reference` value, `Reg.Type` ("Up"/"Down") and `logFC`.}
-    \item{`reference`}{per-gene baseline regulation table for the kept genes.}
-    \item{`n_genes`}{number of dysregulated genes retained.}
-  }
+\describe{
+\item{\code{normalization}}{tidy data frame, one row per kept gene x visit x
+arm, with the \code{reference} value, \code{Reg.Type} ("Up"/"Down") and \code{logFC}.}
+\item{\code{reference}}{per-gene baseline regulation table for the kept genes.}
+\item{\code{n_genes}}{number of dysregulated genes retained.}
+}
 }
 \description{
-`compute_normalization()` turns a long expression table (one row per
+\code{compute_normalization()} turns a long expression table (one row per
 Subject x Visit x Tissue x Gene) into the group-level log-fold change of
 lesional tissue against a fixed healthy reference, at every visit:
 \deqn{logFC_{g,v,a} = mean(LS_{g,v,a}) - reference_g.}
-The reference is computed once (the baseline mean of the `reference` level,
+The reference is computed once (the baseline mean of the \code{reference} level,
 pooled across arms) and subtracted at every visit, so the baseline column
 reproduces the disease regulation and later visits show the return toward 0.
-Set `reference = "NL"` to normalize toward non-lesional skin, or to a control
-group level (e.g. `"HC"` / `"Control"`) to normalize toward healthy controls.
+Set \code{reference = "NL"} to normalize toward non-lesional skin, or to a control
+group level (e.g. \code{"HC"} / \code{"Control"}) to normalize toward healthy controls.
 
 Genes are restricted to those dysregulated at baseline, either via an explicit
-`degs` set or by an internal fold-change + significance filter on baseline
+\code{degs} set or by an internal fold-change + significance filter on baseline
 lesional vs reference.
 }
 \examples{
@@ -88,6 +88,6 @@ df$Value <- with(df, ifelse(Tissue == "NL", 0,
 compute_normalization(df, reference = "NL", degs = c("G1", "G2"))$normalization
 }
 \seealso{
-[plot_normalization()], [evaluate_normalization()],
-  [compute_improvement()]
+\code{\link[=plot_normalization]{plot_normalization()}}, \code{\link[=evaluate_normalization]{evaluate_normalization()}},
+\code{\link[=compute_improvement]{compute_improvement()}}
 }

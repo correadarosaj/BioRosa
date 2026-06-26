@@ -10,13 +10,13 @@ leveler(fact)
 \item{fact}{A factor or vector of group labels.}
 }
 \value{
-A named list; each element holds the indices of `fact` equal to that
-  level, named by the level.
+A named list; each element holds the indices of \code{fact} equal to that
+level, named by the level.
 }
 \description{
-`leveler()` turns a factor or character vector into a named list whose
+\code{leveler()} turns a factor or character vector into a named list whose
 elements are the integer positions of each distinct level, in order of first
-appearance. This is the shape `ComplexHeatmap::anno_block(align_to = ...)`
+appearance. This is the shape \code{ComplexHeatmap::anno_block(align_to = ...)}
 (and the heatmap panel helpers) expect to align a band to the columns
 belonging to each group.
 }

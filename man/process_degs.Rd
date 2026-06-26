@@ -14,58 +14,61 @@ process_degs(
 )
 }
 \arguments{
-\item{BigTab}{Data frame with a `GENENAME` column and one
-`Status_<contrast>` column per contrast (values in `{-1, 0, 1}`).
-Typically also carries `lgFCH_<contrast>`, `pvals_<contrast>`, and
-`fdr_<contrast>` columns — these are copied into the per-contrast
+\item{BigTab}{Data frame with a \code{GENENAME} column and one
+\verb{Status_<contrast>} column per contrast (values in \verb{\{-1, 0, 1\}}).
+Typically also carries \verb{lgFCH_<contrast>}, \verb{pvals_<contrast>}, and
+\verb{fdr_<contrast>} columns — these are copied into the per-contrast
 Excel sheets when present.}
 
 \item{cont.list}{Character vector of contrast labels. Each label must
-match (as a substring of `_<label>`) the suffix of the corresponding
-`Status_*` column in `BigTab`.}
+match (as a substring of \verb{_<label>}) the suffix of the corresponding
+\verb{Status_*} column in \code{BigTab}.}
 
 \item{FCH}{Numeric. Fold-change threshold used to build the BigTab.
-Recorded in the `Summary` table for traceability only — it is not
+Recorded in the \code{Summary} table for traceability only — it is not
 re-applied here.}
 
 \item{pcut}{Numeric. P-value (or FDR) threshold used to build the
-BigTab. Recorded in the `Summary` table for traceability only.}
+BigTab. Recorded in the \code{Summary} table for traceability only.}
 
-\item{method}{One of `"none"` (default) or `"fdr"`. Controls whether
-`pcut` is reported as a `PVAL` or `FDR` column in the `Summary`
+\item{method}{One of \code{"none"} (default) or \code{"fdr"}. Controls whether
+\code{pcut} is reported as a \code{PVAL} or \code{FDR} column in the \code{Summary}
 sheet.}
 
-\item{output_xlsx}{Path to the output `.xlsx` file. The parent
-directory is created if missing. Default `"degs.xlsx"`.}
+\item{output_xlsx}{Path to the output \code{.xlsx} file. The parent
+directory is created if missing. Default \code{"degs.xlsx"}.}
 }
 \value{
 Invisibly, a list with two elements:
-  * `summary` — a data frame with columns `contrast`, `Down`, `Up`,
-    `FCH`, and either `PVAL` or `FDR`.
-  * `degs` — a named list (one entry per contrast) of character
-    vectors of DEG `GENENAME` values.
+\itemize{
+\item \code{summary} — a data frame with columns \code{contrast}, \code{Down}, \code{Up},
+\code{FCH}, and either \code{PVAL} or \code{FDR}.
+\item \code{degs} — a named list (one entry per contrast) of character
+vectors of DEG \code{GENENAME} values.
+}
 
-Side effect: writes the workbook at `output_xlsx`.
+Side effect: writes the workbook at \code{output_xlsx}.
 }
 \description{
-`process_degs()` consolidates two previously separate helpers
-(`extract_degs()` and `build_DEGsTable()`) into a single call. Given a
-"BigTab" data frame holding per-contrast statistics with one `Status_*`
-column per contrast (encoded as `-1` for down-regulated, `0` for
-unchanged, `1` for up-regulated), the function:
-
-1. **Builds a count summary** — for every contrast in `cont.list`,
-   counts the number of `Down` (`Status == -1`) and `Up`
-   (`Status == 1`) genes, and annotates the row with the fold-change
-   cutoff (`FCH`) and either the p-value cutoff (`PVAL`) or FDR
-   cutoff (`FDR`) depending on `method`.
-2. **Extracts DEG identities** — for each contrast, collects the
-   `GENENAME` values where `Status != 0` together with every BigTab
-   column tagged with that contrast (e.g. `lgFCH_*`, `pvals_*`,
-   `fdr_*`, `Status_*`).
-3. **Writes a single Excel workbook** — sheet `Summary` carries the
-   count table; one further sheet per contrast carries the DEG rows
-   with their statistics, ready for hand-off to collaborators.
+\code{process_degs()} consolidates two previously separate helpers
+(\code{extract_degs()} and \code{build_DEGsTable()}) into a single call. Given a
+"BigTab" data frame holding per-contrast statistics with one \verb{Status_*}
+column per contrast (encoded as \code{-1} for down-regulated, \code{0} for
+unchanged, \code{1} for up-regulated), the function:
+\enumerate{
+\item \strong{Builds a count summary} — for every contrast in \code{cont.list},
+counts the number of \code{Down} (\code{Status == -1}) and \code{Up}
+(\code{Status == 1}) genes, and annotates the row with the fold-change
+cutoff (\code{FCH}) and either the p-value cutoff (\code{PVAL}) or FDR
+cutoff (\code{FDR}) depending on \code{method}.
+\item \strong{Extracts DEG identities} — for each contrast, collects the
+\code{GENENAME} values where \code{Status != 0} together with every BigTab
+column tagged with that contrast (e.g. \verb{lgFCH_*}, \verb{pvals_*},
+\verb{fdr_*}, \verb{Status_*}).
+\item \strong{Writes a single Excel workbook} — sheet \code{Summary} carries the
+count table; one further sheet per contrast carries the DEG rows
+with their statistics, ready for hand-off to collaborators.
+}
 
 The return value contains the summary table and a named character
 vector of DEG symbols per contrast, so downstream code can keep

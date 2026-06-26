@@ -16,12 +16,12 @@ plot_normalization(
 )
 }
 \arguments{
-\item{norm}{The `normalization` table from [compute_normalization()].}
+\item{norm}{The \code{normalization} table from \code{\link[=compute_normalization]{compute_normalization()}}.}
 
 \item{reference_label}{Short reference name for the y-axis, e.g.
-`"Non-Lesional"` or `"Controls"` -> `"logFCH (vs. <label>)"`.}
+\code{"Non-Lesional"} or \code{"Controls"} -> \code{"logFCH (vs. <label>)"}.}
 
-\item{y_label}{Full y-axis title (overrides `reference_label` when given).}
+\item{y_label}{Full y-axis title (overrides \code{reference_label} when given).}
 
 \item{title}{Plot title.}
 
@@ -32,11 +32,11 @@ plot_normalization(
 
 \item{box_width}{Width of the (dodged) boxes.}
 
-\item{week_labels}{When `TRUE`, relabel `"W4"` as `"Week 4"` on the x-axis
+\item{week_labels}{When \code{TRUE}, relabel \code{"W4"} as \code{"Week 4"} on the x-axis
 (the underlying data are untouched).}
 }
 \value{
-A [ggplot2::ggplot] object.
+A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 }
 \description{
 Draws the normalization figure: per visit (baseline included) the
@@ -45,7 +45,7 @@ healthy reference, faceted by treatment arm. Boxes are filled by baseline
 regulation (Down = blue, Up = red) and the mean of each box is a
 white-bordered filled circle; a dashed line marks the healthy reference at 0.
 Treatment facet strips are coloured (Drug = darkgreen, Placebo = darkorange)
-via [ggh4x::facet_grid2()]; a single arm drops the facet.
+via \code{\link[ggh4x:facet_grid2]{ggh4x::facet_grid2()}}; a single arm drops the facet.
 }
 \examples{
 \donttest{
@@ -59,5 +59,5 @@ plot_normalization(nz$normalization, reference_label = "Non-Lesional")
 }
 }
 \seealso{
-[compute_normalization()], [evaluate_normalization()]
+\code{\link[=compute_normalization]{compute_normalization()}}, \code{\link[=evaluate_normalization]{evaluate_normalization()}}
 }

@@ -29,76 +29,76 @@ doAnnotatedHeatmap(
 \item{grafname}{Character. Path to the output PDF file.}
 
 \item{matx}{Numeric matrix of expression values (genes x samples). Must
-contain every sample in `rownames(annot.col)`.}
+contain every sample in \code{rownames(annot.col)}.}
 
 \item{annot.col}{Data frame of per-sample annotation; its row names define
 the heatmap column order.}
 
 \item{colsplitx}{Optional vector used to split the heatmap into column
-groups. Default `NULL`.}
+groups. Default \code{NULL}.}
 
-\item{column_ha}{Optional `ComplexHeatmap::HeatmapAnnotation` drawn above the
-heatmap. Default `NULL`.}
+\item{column_ha}{Optional \code{ComplexHeatmap::HeatmapAnnotation} drawn above the
+heatmap. Default \code{NULL}.}
 
 \item{BigTab}{Optional data frame of additional per-gene columns; a subset is
-selected via `BigTabcols`. Default `NULL`.}
+selected via \code{BigTabcols}. Default \code{NULL}.}
 
-\item{wdt, hgt}{Numeric PDF width / height in inches. `NULL` (default) derives
+\item{wdt, hgt}{Numeric PDF width / height in inches. \code{NULL} (default) derives
 them from the matrix dimensions.}
 
-\item{setname}{Character. Caption drawn at the bottom. Default `""`.}
+\item{setname}{Character. Caption drawn at the bottom. Default \code{""}.}
 
-\item{column_names_max_height}{A `grid::unit` giving the maximum height
-reserved for column labels. Default `grid::unit(8, "cm")`.}
+\item{column_names_max_height}{A \code{grid::unit} giving the maximum height
+reserved for column labels. Default \code{grid::unit(8, "cm")}.}
 
-\item{BigTabcols}{Optional character vector; columns of `BigTab` matching any
-entry (via `stringr::str_detect`) are kept. Default `NULL`.}
+\item{BigTabcols}{Optional character vector; columns of \code{BigTab} matching any
+entry (via \code{stringr::str_detect}) are kept. Default \code{NULL}.}
 
 \item{cfx}{Optional numeric matrix of log2 fold changes (genes x contrasts).
-When supplied together with `fdx`, one annotated text column per contrast
-is appended. Default `NULL`.}
+When supplied together with \code{fdx}, one annotated text column per contrast
+is appended. Default \code{NULL}.}
 
-\item{fdx}{Optional matrix of FDR / p-values matching the shape of `cfx`.
-Required when `cfx` is supplied. Default `NULL`.}
+\item{fdx}{Optional matrix of FDR / p-values matching the shape of \code{cfx}.
+Required when \code{cfx} is supplied. Default \code{NULL}.}
 
 \item{ShowColumnNames}{Logical. Show sample names under the heatmap.
-Default `FALSE`.}
+Default \code{FALSE}.}
 
 \item{fnt_size_title}{Numeric. Font size for the column-split titles.
-Default `20`.}
+Default \code{20}.}
 
-\item{scalerows}{Logical. Row Z-score the matrix (`TRUE`, default) or plot it
-on the raw log2-expression scale (`FALSE`).}
+\item{scalerows}{Logical. Row Z-score the matrix (\code{TRUE}, default) or plot it
+on the raw log2-expression scale (\code{FALSE}).}
 
 \item{rampvalues}{Numeric. Symmetric limit of the blue/white/red colour ramp
-when `scalerows = TRUE`. Default `1.5`.}
+when \code{scalerows = TRUE}. Default \code{1.5}.}
 
 \item{...}{Reserved for future use; currently ignored.}
 }
 \value{
-Invisibly `NULL`; called for the side effect of writing `grafname`.
+Invisibly \code{NULL}; called for the side effect of writing \code{grafname}.
 }
 \description{
-`doAnnotatedHeatmap()` draws a `ComplexHeatmap` of a gene-by-sample
+\code{doAnnotatedHeatmap()} draws a \code{ComplexHeatmap} of a gene-by-sample
 expression matrix and appends, to its right, one text column per contrast in
 which each cell carries the (display-transformed) fold change plus a
 significance star. A left-hand row annotation lists the gene symbols in a
 monospace font.
 
-Fold changes are shown on a linear scale via `sign(lgFCH) * 2^|lgFCH|`, and
-significance stars follow the cut-points `0.001 / 0.01 / 0.05 / 0.1`
-(`***`, `**`, `*`, `+`). Cell numbers are decimal-aligned down each column
-using invisible white hyphens, rendered with `ComplexHeatmap::gt_render`. The
-string-building logic (formerly the standalone `doTab()` helper) is now
+Fold changes are shown on a linear scale via \verb{sign(lgFCH) * 2^|lgFCH|}, and
+significance stars follow the cut-points \code{0.001 / 0.01 / 0.05 / 0.1}
+(\verb{***}, \verb{**}, \code{*}, \code{+}). Cell numbers are decimal-aligned down each column
+using invisible white hyphens, rendered with \code{ComplexHeatmap::gt_render}. The
+string-building logic (formerly the standalone \code{doTab()} helper) is now
 internal to this function.
 
 The matrix is colour-scaled either as row Z-scores (default) or on the raw
 log2-expression scale, with a blue / white / red ramp from
-`circlize::colorRamp2`. Rows are clustered; columns are kept in the order
-given by `rownames(annot.col)`. The heatmap is written to `grafname` as a PDF.
+\code{circlize::colorRamp2}. Rows are clustered; columns are kept in the order
+given by \code{rownames(annot.col)}. The heatmap is written to \code{grafname} as a PDF.
 
 For the grid-style table variant — boxed, colour-filled group bands over
-decimal-aligned numeric cells — see [doAnnotatedHeatmapGrid()].
+decimal-aligned numeric cells — see \code{\link[=doAnnotatedHeatmapGrid]{doAnnotatedHeatmapGrid()}}.
 }
 \examples{
 \dontrun{
@@ -112,5 +112,5 @@ doAnnotatedHeatmap(
 }
 }
 \seealso{
-[doAnnotatedHeatmapGrid()] for the grid-style table variant.
+\code{\link[=doAnnotatedHeatmapGrid]{doAnnotatedHeatmapGrid()}} for the grid-style table variant.
 }

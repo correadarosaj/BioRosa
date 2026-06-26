@@ -21,54 +21,54 @@ oSEAforest(
 )
 }
 \arguments{
-\item{obj}{an `eSET` from [oSEA()], or a data frame from [oSEAextract()]
-(must contain `name`, `adjp`, `or`, `CIl`, `CIu`; `nO` and `namespace` are
+\item{obj}{an \code{eSET} from \code{\link[=oSEA]{oSEA()}}, or a data frame from \code{\link[=oSEAextract]{oSEAextract()}}
+(must contain \code{name}, \code{adjp}, \code{or}, \code{CIl}, \code{CIu}; \code{nO} and \code{namespace} are
 used when present).}
 
 \item{top}{keep the top-N terms by odds ratio within each namespace (after
-filtering to `adjp < adjp.cutoff`). Default `10`.}
+filtering to \code{adjp < adjp.cutoff}). Default \code{10}.}
 
-\item{adjp.cutoff}{FDR threshold for inclusion. Default `0.05`.}
+\item{adjp.cutoff}{FDR threshold for inclusion. Default \code{0.05}.}
 
-\item{colormap}{colour map name passed to [oColormap()]. Default
-`"spectral.top"` (as used by OpenXGR).}
+\item{colormap}{colour map name passed to \code{\link[=oColormap]{oColormap()}}. Default
+\code{"spectral.top"} (as used by OpenXGR).}
 
 \item{color.title}{legend title for the colour scale. Default
-`expression(-log[10]("FDR"))`.}
+\code{expression(-log[10]("FDR"))}.}
 
-\item{zlim}{length-2 numeric limits for the colour scale, or `NULL` to take
-`c(0, ceiling(max(-log10(adjp))))`. Values outside are clamped.}
+\item{zlim}{length-2 numeric limits for the colour scale, or \code{NULL} to take
+\code{c(0, ceiling(max(-log10(adjp))))}. Values outside are clamped.}
 
-\item{shape}{plotting shape. Default `18` (filled diamond).}
+\item{shape}{plotting shape. Default \code{18} (filled diamond).}
 
-\item{size.range}{point-size range. Default `c(0, 1)` (matching OpenXGR).}
+\item{size.range}{point-size range. Default \code{c(0, 1)} (matching OpenXGR).}
 
-\item{slim}{length-2 size limits, or `NULL` to take
-`c(0, ceiling(max(nO)))`. Values outside are clamped.}
+\item{slim}{length-2 size limits, or \code{NULL} to take
+\code{c(0, ceiling(max(nO)))}. Values outside are clamped.}
 
-\item{size.title}{legend title for point size. Default `"Number\nof genes"`.}
+\item{size.title}{legend title for point size. Default \code{"Number\\nof genes"}.}
 
 \item{wrap.width}{wrap term labels to this width (characters), collapsing to
-the first line plus "..." when wrapped, or `NULL` to leave labels intact.
-Default `50`.}
+the first line plus "..." when wrapped, or \code{NULL} to leave labels intact.
+Default \code{50}.}
 
-\item{legend.direction}{`"vertical"` (default), `"horizontal"`, or `"auto"`.}
+\item{legend.direction}{\code{"vertical"} (default), \code{"horizontal"}, or \code{"auto"}.}
 
-\item{sortBy}{`"or"` (default) to order terms by odds ratio, or `"none"`.}
+\item{sortBy}{\code{"or"} (default) to order terms by odds ratio, or \code{"none"}.}
 }
 \value{
-A `ggplot` object (or `NULL` if no term passes the filters).
+A \code{ggplot} object (or \code{NULL} if no term passes the filters).
 }
 \description{
 Reproduces the OpenXGR enrichment forest plot exactly. Each enriched term is
-drawn as a diamond on the `log2(odds ratio)` axis with a horizontal range
-giving the 95% confidence interval (`log2(CIl)`..`log2(CIu)`). Diamonds are
-coloured by significance `-log10(FDR)` using the `spectral.top` colour map
+drawn as a diamond on the \verb{log2(odds ratio)} axis with a horizontal range
+giving the 95\% confidence interval (\code{log2(CIl)}..\code{log2(CIu)}). Diamonds are
+coloured by significance \code{-log10(FDR)} using the \code{spectral.top} colour map
 (light yellow -> red) and sized by the number of overlapping genes. Terms are
 ordered by odds ratio (highest at the top) and, when more than one namespace
-is present, faceted by namespace. The styling (`theme_classic`, small fonts,
+is present, faceted by namespace. The styling (\code{theme_classic}, small fonts,
 vertically stacked legends with point-size above the colour bar) mirrors the
-original `oSEAforest()`.
+original \code{oSEAforest()}.
 }
 \examples{
 \dontrun{

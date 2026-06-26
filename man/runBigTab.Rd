@@ -14,44 +14,45 @@ runBigTab(
 )
 }
 \arguments{
-\item{ebfit}{A list with `$coef` (numeric matrix, genes x contrasts) and
-`$p.value` (matrix of the same shape). Row names are gene identifiers.}
+\item{ebfit}{A list with \verb{$coef} (numeric matrix, genes x contrasts) and
+\verb{$p.value} (matrix of the same shape). Row names are gene identifiers.}
 
-\item{adj}{P-value adjustment method passed to `limma::decideTests`
-(`"BH"`, `"none"`, ...). Default `"BH"`; controls whether the status column
-is labelled `FDR` or `P`.}
+\item{adj}{P-value adjustment method passed to \code{limma::decideTests}
+(\code{"BH"}, \code{"none"}, ...). Default \code{"BH"}; controls whether the status column
+is labelled \code{FDR} or \code{P}.}
 
-\item{mcut}{Fold-change cutoff (linear scale) for the DEG call. Default `1.2`.}
+\item{mcut}{Fold-change cutoff (linear scale) for the DEG call. Default \code{1.2}.}
 
-\item{pcut}{P-value / FDR cutoff for the DEG call. Default `0.05`.}
+\item{pcut}{P-value / FDR cutoff for the DEG call. Default \code{0.05}.}
 
-\item{annot}{Logical. Prepend annotation columns (`SYMBOL` / `GENENAME`
-first) from `annotTab` or `ebfit$genes`. Default `FALSE`.}
+\item{annot}{Logical. Prepend annotation columns (\code{SYMBOL} / \code{GENENAME}
+first) from \code{annotTab} or \code{ebfit$genes}. Default \code{FALSE}.}
 
 \item{annotTab}{Optional annotation data frame indexed by the same gene IDs.}
 }
 \value{
 A data frame (the BigTab): one row per gene, the per-contrast column
-  blocks described above (plus annotation columns when `annot = TRUE`).
+blocks described above (plus annotation columns when \code{annot = TRUE}).
 }
 \description{
-`runBigTab()` assembles a **BigTab** — BioRosa's central per-gene,
-per-contrast results table — from an `ebfit` object (a list carrying a
-coefficient matrix `$coef` and a p-value matrix `$p.value`, genes x
-contrasts, e.g. from [runEbfit()] or a limma fit). For every contrast it
+\code{runBigTab()} assembles a \strong{BigTab} — BioRosa's central per-gene,
+per-contrast results table — from an \code{ebfit} object (a list carrying a
+coefficient matrix \verb{$coef} and a p-value matrix \verb{$p.value}, genes x
+contrasts, e.g. from \code{\link[=runEbfit]{runEbfit()}} or a limma fit). For every contrast it
 emits a consistent block of columns:
-
-* `lgFCH_<contrast>` — log2 fold change (the coefficient).
-* `FCH_<contrast>` — signed linear fold change, `sign(lgFCH) * 2^|lgFCH|`.
-* `pvals_<contrast>` — p-value.
-* `fdrs_<contrast>` — BH-adjusted p-value.
-* `StatusFCH<mcut><P|FDR><pcut>_<contrast>` — DEG call from
-  `limma::decideTests` (`-1` down, `0` n.s., `1` up).
+\itemize{
+\item \verb{lgFCH_<contrast>} — log2 fold change (the coefficient).
+\item \verb{FCH_<contrast>} — signed linear fold change, \verb{sign(lgFCH) * 2^|lgFCH|}.
+\item \verb{pvals_<contrast>} — p-value.
+\item \verb{fdrs_<contrast>} — BH-adjusted p-value.
+\item \verb{StatusFCH<mcut><P|FDR><pcut>_<contrast>} — DEG call from
+\code{limma::decideTests} (\code{-1} down, \code{0} n.s., \code{1} up).
+}
 
 Underscores in contrast names are converted to dots so the suffixes stay
 parseable by the heatmap and enrichment functions. The resulting table feeds
-[doAnnotatedHeatmap()], [doAnnotatedHeatmapGrid()], [process_degs()] and
-[enrichment_onestep()].
+\code{\link[=doAnnotatedHeatmap]{doAnnotatedHeatmap()}}, \code{\link[=doAnnotatedHeatmapGrid]{doAnnotatedHeatmapGrid()}}, \code{\link[=process_degs]{process_degs()}} and
+\code{\link[=enrichment_onestep]{enrichment_onestep()}}.
 }
 \examples{
 \dontrun{
@@ -60,5 +61,5 @@ BigTab <- runBigTab(ebfit, adj = "BH", mcut = 1.3, pcut = 0.05)
 }
 }
 \seealso{
-[runEbfit()], [process_degs()], [doAnnotatedHeatmapGrid()]
+\code{\link[=runEbfit]{runEbfit()}}, \code{\link[=process_degs]{process_degs()}}, \code{\link[=doAnnotatedHeatmapGrid]{doAnnotatedHeatmapGrid()}}
 }

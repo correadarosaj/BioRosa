@@ -41,107 +41,107 @@ doAnnotatedHeatmapGrid(
 \item{grafname}{Character. Path to the output PDF file.}
 
 \item{mat}{Numeric matrix of expression values, features (rows, named) x
-samples (columns, named). Must contain every feature in `rownames(BigTab)`
-and every sample in `rownames(annot.col)`.}
+samples (columns, named). Must contain every feature in \code{rownames(BigTab)}
+and every sample in \code{rownames(annot.col)}.}
 
 \item{annot.col}{Data frame of per-sample annotation. Its row names define the
 body column order.}
 
 \item{colsplitx}{Optional vector/factor used to split the body into column
-groups (e.g. a response or treatment factor). Default `NULL`.}
+groups (e.g. a response or treatment factor). Default \code{NULL}.}
 
-\item{column_ha}{Optional `ComplexHeatmap::HeatmapAnnotation` drawn above the
-body (caller-built clinical / phenotype tracks). Default `NULL`.}
+\item{column_ha}{Optional \code{ComplexHeatmap::HeatmapAnnotation} drawn above the
+body (caller-built clinical / phenotype tracks). Default \code{NULL}.}
 
 \item{BigTab}{Data frame indexed by feature name (row names) carrying the
 fold-change and p-value columns (see Details). Required.}
 
 \item{BigTabcols}{Optional character vector of contrast names to show, in the
-desired order. Default `NULL` uses every contrast found via `fch_prefix`.}
+desired order. Default \code{NULL} uses every contrast found via \code{fch_prefix}.}
 
 \item{fch_prefix, pval_prefix}{Character column-name prefixes used to locate
-the fold-change and p-value columns for each contrast. Defaults `"FCH_"`
-and `"pvals_"`.}
+the fold-change and p-value columns for each contrast. Defaults \code{"FCH_"}
+and \code{"pvals_"}.}
 
-\item{setname}{Character. Caption drawn at the bottom. Default `""`.}
+\item{setname}{Character. Caption drawn at the bottom. Default \code{""}.}
 
 \item{group_of}{Function mapping a contrast name to its group label. Default
 takes the first dot-token.}
 
 \item{sublab_of}{Optional function mapping a contrast name to its header
-sub-label. Default `NULL` derives it from the contrast remainder.}
+sub-label. Default \code{NULL} derives it from the contrast remainder.}
 
 \item{collapse_constant}{Logical. When deriving sub-labels automatically, drop
-leading dot-tokens that are constant across all contrasts. Default `TRUE`.}
+leading dot-tokens that are constant across all contrasts. Default \code{TRUE}.}
 
 \item{group_fill}{Optional named character vector of fill colours per group.
-Default `NULL` uses a built-in palette with an HCL fallback.}
+Default \code{NULL} uses a built-in palette with an HCL fallback.}
 
-\item{zcol}{A `circlize::colorRamp2` colour mapping for the body Z-scores.}
+\item{zcol}{A \code{circlize::colorRamp2} colour mapping for the body Z-scores.}
 
-\item{split_gap}{A `grid::unit` gap between body column slices.}
+\item{split_gap}{A \code{grid::unit} gap between body column slices.}
 
-\item{slice_border_gp, subsplit_border_gp}{`grid::gpar` for the slice border
+\item{slice_border_gp, subsplit_border_gp}{\code{grid::gpar} for the slice border
 and the within-slice divider, respectively.}
 
 \item{body_subsplit}{Optional vector (one value per body column) marking a
 sub-group; a divider line is drawn within each slice wherever it changes
-(e.g. Drug | Pbo within each response slice). Default `NULL`.}
+(e.g. Drug | Pbo within each response slice). Default \code{NULL}.}
 
 \item{body_title_fontsize, group_label_fontsize}{Font sizes for the body column
 titles and the group band labels.}
 
 \item{cell_fontsize, gene_fontsize, sublab_fontsize}{Font sizes for table cells,
-gene labels and sub-labels. `NULL` (default) auto-derives them.}
+gene labels and sub-labels. \code{NULL} (default) auto-derives them.}
 
 \item{table_cell_cm, row_cm, body_col_cm}{Cell width, row height and body column
-width in cm. `NULL` table/row values auto-derive from content.}
+width in cm. \code{NULL} table/row values auto-derive from content.}
 
-\item{wdt, hgt}{PDF width / height in inches. `0` (default) auto-derives.}
+\item{wdt, hgt}{PDF width / height in inches. \code{0} (default) auto-derives.}
 
-\item{rowclust}{Logical. Cluster the body rows. Default `TRUE`.}
+\item{rowclust}{Logical. Cluster the body rows. Default \code{TRUE}.}
 }
 \value{
-Invisibly, a list with the chosen canvas size (`wdt`, `hgt`), counts
-  (`n_genes`, `n_contrasts`), the parsed `groups`, and the resolved
-  `table_cell_cm`, `gene_fontsize` and `cell_fontsize`.
+Invisibly, a list with the chosen canvas size (\code{wdt}, \code{hgt}), counts
+(\code{n_genes}, \code{n_contrasts}), the parsed \code{groups}, and the resolved
+\code{table_cell_cm}, \code{gene_fontsize} and \code{cell_fontsize}.
 }
 \description{
-`doAnnotatedHeatmapGrid()` draws a publication-quality annotated heatmap and
+\code{doAnnotatedHeatmapGrid()} draws a publication-quality annotated heatmap and
 writes it to a PDF. The left part is a row-Z-scored expression body
-(features x samples) rendered with `ComplexHeatmap`; the right part is a
+(features x samples) rendered with \code{ComplexHeatmap}; the right part is a
 companion table -- itself styled as a clean grid -- in which every cell holds
 the signed fold-change plus a significance star for one contrast, all
 decimal-aligned down each column. Contrasts are gathered into groups, each
 drawn as a boxed, colour-filled header band sitting above a sub-label row.
 
-The function is *auto-adjusting*: with no size hints it scales per-row height,
+The function is \emph{auto-adjusting}: with no size hints it scales per-row height,
 the gene/cell fonts and the overall canvas to the gene-set size, and it parses
 the group bands and per-column sub-labels directly from the contrast names.
 This makes it agnostic to the comparison dimension -- the same call works for
-response (`R`/`NR`), treatment (`Drug`/`Pbo`), tissue
-(`Lesional`/`Nonlesional`), visit/timepoint contrasts, or any combination such
-as `response.treatment.visit`. Every auto value can be overridden by passing
+response (\code{R}/\code{NR}), treatment (\code{Drug}/\code{Pbo}), tissue
+(\code{Lesional}/\code{Nonlesional}), visit/timepoint contrasts, or any combination such
+as \code{response.treatment.visit}. Every auto value can be overridden by passing
 the matching argument.
 }
 \details{
-**Contrast table input.** Fold-changes and p-values are read from `BigTab` by
-name: for a contrast `"R.Drug.W2vsBL"` the function looks for columns
-`paste0(fch_prefix, contrast)` and `paste0(pval_prefix, contrast)` (default
-`"FCH_R.Drug.W2vsBL"` and `"pvals_R.Drug.W2vsBL"`). `FCH_*` is expected on the
-fold-change scale (`1.00` = no change). Matching by full name (rather than
+\strong{Contrast table input.} Fold-changes and p-values are read from \code{BigTab} by
+name: for a contrast \code{"R.Drug.W2vsBL"} the function looks for columns
+\code{paste0(fch_prefix, contrast)} and \code{paste0(pval_prefix, contrast)} (default
+\code{"FCH_R.Drug.W2vsBL"} and \code{"pvals_R.Drug.W2vsBL"}). \verb{FCH_*} is expected on the
+fold-change scale (\code{1.00} = no change). Matching by full name (rather than
 positional or token splitting) means contrast names may themselves contain
 dots or underscores.
 
-**Grouping rule (default).** The group of a contrast is its first dot-token
-(`group_of`); the header sub-label is the remainder with any dot-token that is
-constant across all shown contrasts removed (so a uniform arm like `Drug`
-disappears while `W2vsBL` stays). Pass `group_of` / `sublab_of` to override.
+\strong{Grouping rule (default).} The group of a contrast is its first dot-token
+(\code{group_of}); the header sub-label is the remainder with any dot-token that is
+constant across all shown contrasts removed (so a uniform arm like \code{Drug}
+disappears while \code{W2vsBL} stays). Pass \code{group_of} / \code{sublab_of} to override.
 
-**Significance stars** follow the cut-points `0.001 / 0.01 / 0.05 / 0.1` with
-symbols `***`, `**`, `*`, `+` and blank above `0.1`.
+\strong{Significance stars} follow the cut-points \code{0.001 / 0.01 / 0.05 / 0.1} with
+symbols \verb{***}, \verb{**}, \code{*}, \code{+} and blank above \code{0.1}.
 
-The function has the side effect of writing the heatmap to `grafname` as a
+The function has the side effect of writing the heatmap to \code{grafname} as a
 PDF and returns a small summary list invisibly.
 }
 \examples{
@@ -159,5 +159,5 @@ doAnnotatedHeatmapGrid(
 }
 }
 \seealso{
-[doAnnotatedHeatmap()] for the row-annotation (non-grid) variant.
+\code{\link[=doAnnotatedHeatmap]{doAnnotatedHeatmap()}} for the row-annotation (non-grid) variant.
 }

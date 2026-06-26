@@ -20,7 +20,7 @@
 #' @details The download requires network access and the relevant `.RDS` file to
 #'   exist on the host. For offline use, supply your own gene sets directly to
 #'   [oSEA()] (a named list of gene vectors), or use the bundled
-#'   [RXGR_example_set].
+#'   [guttman_pathways].
 #' @examples
 #' \dontrun{
 #' set <- oRDS("org.Hs.egKEGG")

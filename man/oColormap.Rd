@@ -10,22 +10,22 @@ oColormap(colormap = "spectral", interpolate = c("spline", "linear"))
 \item{colormap}{character string naming the palette.}
 
 \item{interpolate}{interpolation method passed to
-[grDevices::colorRampPalette()]: `"spline"` (default) or `"linear"`.}
+\code{\link[grDevices:colorRamp]{grDevices::colorRampPalette()}}: \code{"spline"} (default) or \code{"linear"}.}
 }
 \value{
-A function `f(n)` returning a character vector of `n` hex colours.
+A function \code{f(n)} returning a character vector of \code{n} hex colours.
 }
 \description{
 A faithful, self-contained reimplementation of the colour maps used by
-OpenXGR (via the `o`-prefixed function library). Returns a palette
-*function* `f(n)` that generates `n` interpolated colours, mirroring the
-behaviour of the original `oColormap()`.
+OpenXGR (via the \code{o}-prefixed function library). Returns a palette
+\emph{function} \code{f(n)} that generates \code{n} interpolated colours, mirroring the
+behaviour of the original \code{oColormap()}.
 }
 \details{
-Supported names include the `spectral` family used by the OpenXGR forest
-plot (`"spectral"`, `"spectral.top"`, `"spectral.bottom"`, `"spectral.both"`),
-plus a handful of common maps (`"jet"`, `"bwr"`, `"gbr"`, `"wyr"`,
-`"rainbow"`). `"brewer.*"` names map to the corresponding sequential ramps.
+Supported names include the \code{spectral} family used by the OpenXGR forest
+plot (\code{"spectral"}, \code{"spectral.top"}, \code{"spectral.bottom"}, \code{"spectral.both"}),
+plus a handful of common maps (\code{"jet"}, \code{"bwr"}, \code{"gbr"}, \code{"wyr"},
+\code{"rainbow"}). \code{"brewer.*"} names map to the corresponding sequential ramps.
 }
 \examples{
 pal <- oColormap("spectral.top")

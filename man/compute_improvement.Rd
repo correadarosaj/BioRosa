@@ -26,14 +26,14 @@ compute_improvement(
 \item{data}{Long data frame, one row per Subject x Visit x Tissue x Gene.}
 
 \item{gene_col, value_col, subject_col, visit_col, tissue_col}{Column names in
-`data` holding the gene/protein id, the (log-scale) expression value, the
+\code{data} holding the gene/protein id, the (log-scale) expression value, the
 subject id, the visit, and the tissue/group.}
 
-\item{arm_col}{Optional treatment-arm column name; `NULL` for a single arm.}
+\item{arm_col}{Optional treatment-arm column name; \code{NULL} for a single arm.}
 
 \item{baseline, lesional, nonlesional}{Level labels: the baseline visit in
-`visit_col`, and the lesional (disease) and non-lesional (control) levels in
-`tissue_col`.}
+\code{visit_col}, and the lesional (disease) and non-lesional (control) levels in
+\code{tissue_col}.}
 
 \item{genes}{Optional character vector of genes to restrict to before any
 computation (e.g. a pathway / panel).}
@@ -43,25 +43,25 @@ supplied the internal significance / fold-change filter is skipped and
 exactly these genes are used.}
 
 \item{fc_threshold}{Fold-change cutoff for the baseline lesional-vs-non-lesional
-dysregulation filter (default `1.5`, i.e. `|log2 Regulation| > log2(1.5)`).
-Ignored when `degs` is supplied.}
+dysregulation filter (default \code{1.5}, i.e. \verb{|log2 Regulation| > log2(1.5)}).
+Ignored when \code{degs} is supplied.}
 
 \item{p_cut, use_fdr}{Significance cutoff on the baseline lesional-vs-non-lesional
-t-test; set `use_fdr = TRUE` to threshold on BH-FDR rather than the raw
-p-value (default `p_cut = 0.05`). Ignored when `degs` is supplied.}
+t-test; set \code{use_fdr = TRUE} to threshold on BH-FDR rather than the raw
+p-value (default \code{p_cut = 0.05}). Ignored when \code{degs} is supplied.}
 }
 \value{
 A list with
-  \describe{
-    \item{`improvement`}{tidy data frame, one row per kept subject x gene x
-      visit x arm, with `Regulation`, `Reg.Type` ("Up"/"Down"), `Modulation`
-      and `Improvement` (percent).}
-    \item{`reference`}{per-gene baseline regulation table for the kept genes.}
-    \item{`n_genes`}{number of dysregulated genes retained.}
-  }
+\describe{
+\item{\code{improvement}}{tidy data frame, one row per kept subject x gene x
+visit x arm, with \code{Regulation}, \code{Reg.Type} ("Up"/"Down"), \code{Modulation}
+and \code{Improvement} (percent).}
+\item{\code{reference}}{per-gene baseline regulation table for the kept genes.}
+\item{\code{n_genes}}{number of dysregulated genes retained.}
+}
 }
 \description{
-`compute_improvement()` turns a long expression table (one row per
+\code{compute_improvement()} turns a long expression table (one row per
 Subject x Visit x Tissue x Gene) into a tidy table of per-subject,
 per-gene improvement values. For each gene it derives the baseline disease
 signature
@@ -71,13 +71,13 @@ signature
 then combines them into
 \deqn{Improvement_{ig} = -100 \times Modulation_{ig} / Regulation_g.}
 Genes are restricted to those dysregulated at baseline, either via an
-explicit `degs` set (the usual workflow: pull DEGs from a "BigTab") or by an
+explicit \code{degs} set (the usual workflow: pull DEGs from a "BigTab") or by an
 internal fold-change + significance filter on baseline lesional vs
 non-lesional expression.
 
 The lesional / non-lesional contrast is generic: for a healthy-control design
-set `tissue_col` to the group column, `lesional` to the disease group and
-`nonlesional` to the control group.
+set \code{tissue_col} to the group column, \code{lesional} to the disease group and
+\code{nonlesional} to the control group.
 }
 \examples{
 df <- expand.grid(SubjectID = paste0("S", 1:4),
@@ -90,5 +90,5 @@ ci <- compute_improvement(df, degs = c("G1", "G2"))
 head(ci$improvement)
 }
 \seealso{
-[aggregate_improvement()], [evaluate_improvement()]
+\code{\link[=aggregate_improvement]{aggregate_improvement()}}, \code{\link[=evaluate_improvement]{evaluate_improvement()}}
 }

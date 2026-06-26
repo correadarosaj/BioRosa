@@ -2,23 +2,23 @@
 % Please edit documentation in R/runEbfit.R
 \name{runEbfit}
 \alias{runEbfit}
-\title{Reshape tidy model results into an `ebfit` object}
+\title{Reshape tidy model results into an \code{ebfit} object}
 \usage{
 runEbfit(tb)
 }
 \arguments{
-\item{tb}{A data frame in long form with (at least) the columns `biomarker`,
-`contrasts`, `estimate`, and `p.value` — one row per biomarker x contrast.}
+\item{tb}{A data frame in long form with (at least) the columns \code{biomarker},
+\code{contrasts}, \code{estimate}, and \code{p.value} — one row per biomarker x contrast.}
 }
 \value{
-A list with `coef` and `p.value` numeric matrices (biomarkers x
-  contrasts), suitable as the `ebfit` argument of [runBigTab()].
+A list with \code{coef} and \code{p.value} numeric matrices (biomarkers x
+contrasts), suitable as the \code{ebfit} argument of \code{\link[=runBigTab]{runBigTab()}}.
 }
 \description{
-`runEbfit()` converts a long, tidy table of per-gene / per-contrast model
+\code{runEbfit()} converts a long, tidy table of per-gene / per-contrast model
 results (e.g. from a mixed-effects model fit one biomarker at a time) into the
-compact `ebfit` structure that [runBigTab()] expects: a list of two matrices,
-`coef` (estimates) and `p.value`, both with biomarkers as rows and contrasts
+compact \code{ebfit} structure that \code{\link[=runBigTab]{runBigTab()}} expects: a list of two matrices,
+\code{coef} (estimates) and \code{p.value}, both with biomarkers as rows and contrasts
 as columns.
 }
 \examples{
@@ -28,5 +28,5 @@ str(ebfit)
 }
 }
 \seealso{
-[runBigTab()]
+\code{\link[=runBigTab]{runBigTab()}}
 }

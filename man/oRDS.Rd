@@ -2,7 +2,7 @@
 % Please edit documentation in R/oRDS.R
 \name{oRDS}
 \alias{oRDS}
-\title{Load an OpenXGR annotation / gene-set collection (`SET` object)}
+\title{Load an OpenXGR annotation / gene-set collection (\code{SET} object)}
 \usage{
 oRDS(
   RDS = NULL,
@@ -11,34 +11,34 @@ oRDS(
 )
 }
 \arguments{
-\item{RDS}{character; the RDS base name, without the `.RDS` extension.}
+\item{RDS}{character; the RDS base name, without the \code{.RDS} extension.}
 
 \item{placeholder}{where to read from. Either a local directory path, or a
-URL beginning `http://` / `https://`. Defaults to the public OpenXGR data
-host `http://www.comptransmed.pro/bigdata_openxgr`.}
+URL beginning \verb{http://} / \verb{https://}. Defaults to the public OpenXGR data
+host \verb{http://www.comptransmed.pro/bigdata_openxgr}.}
 
 \item{verbose}{logical; print progress.}
 }
 \value{
-The loaded R object (typically a `SET`-like list), or `NULL` on
-  failure.
+The loaded R object (typically a \code{SET}-like list), or \code{NULL} on
+failure.
 }
 \description{
-OpenXGR stores its ontology and pathway annotations as pre-built `.RDS`
+OpenXGR stores its ontology and pathway annotations as pre-built \code{.RDS}
 objects. This loader reproduces that mechanism: given an RDS base name (e.g.
-`"org.Hs.egKEGG"`, `"org.Hs.egGOBP"`) it reads the object either from a local
+\code{"org.Hs.egKEGG"}, \code{"org.Hs.egGOBP"}) it reads the object either from a local
 directory or by downloading from a remote host -- exactly like the original
-`oRDS(RDS, placeholder = ...)`.
+\code{oRDS(RDS, placeholder = ...)}.
 }
 \details{
-The returned `SET` object is a list whose `$info` is a data frame with a
-list-column `member` (the genes annotated to each term) plus `name`, `id`,
-`namespace` and `distance`. It can be passed directly to [oSEA()].
+The returned \code{SET} object is a list whose \verb{$info} is a data frame with a
+list-column \code{member} (the genes annotated to each term) plus \code{name}, \code{id},
+\code{namespace} and \code{distance}. It can be passed directly to \code{\link[=oSEA]{oSEA()}}.
 
-The download requires network access and the relevant `.RDS` file to
-  exist on the host. For offline use, supply your own gene sets directly to
-  [oSEA()] (a named list of gene vectors), or use the bundled
-  [RXGR_example_set].
+The download requires network access and the relevant \code{.RDS} file to
+exist on the host. For offline use, supply your own gene sets directly to
+\code{\link[=oSEA]{oSEA()}} (a named list of gene vectors), or use the bundled
+\link{guttman_pathways}.
 }
 \examples{
 \dontrun{

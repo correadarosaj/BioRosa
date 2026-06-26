@@ -19,59 +19,58 @@ oSEA(
 \arguments{
 \item{data}{a character vector of query gene identifiers (e.g. gene symbols).}
 
-\item{set}{the gene-set collection. Either (a) a named `list` of character
-vectors (each element one gene set), or (b) a `SET`-like list as returned
-by [oRDS()], i.e. a list with `$info`, a data frame carrying a list-column
-`member` of genes and (optionally) columns `name`, `id`, `namespace`,
-`distance`.}
+\item{set}{the gene-set collection. Either (a) a named \code{list} of character
+vectors (each element one gene set), or (b) a \code{SET}-like list as returned
+by \code{\link[=oRDS]{oRDS()}}, i.e. a list with \verb{$info}, a data frame carrying a list-column
+\code{member} of genes and (optionally) columns \code{name}, \code{id}, \code{namespace},
+\code{distance}.}
 
 \item{background}{optional character vector defining the gene universe. If
-`NULL` (default), the universe is the union of all genes across `set` --
+\code{NULL} (default), the universe is the union of all genes across \code{set} --
 matching how OpenXGR derives the background from the annotation.}
 
 \item{size.range}{integer length-2: keep only gene sets whose size (within
-the universe) falls in this inclusive range. Default `c(10, 2000)`.}
+the universe) falls in this inclusive range. Default \code{c(10, 2000)}.}
 
 \item{min.overlap}{minimum number of overlapping genes required to keep a
-term. Default `3`.}
+term. Default \code{3}.}
 
-\item{test}{the test to use. Currently `"fisher"` (default). `"hypergeo"` and
-`"binomial"` are accepted as aliases that also report Fisher p-values for
+\item{test}{the test to use. Currently \code{"fisher"} (default). \code{"hypergeo"} and
+\code{"binomial"} are accepted as aliases that also report Fisher p-values for
 compatibility.}
 
-\item{p.tail}{`"one-tail"` (default) or `"two-tails"`.}
+\item{p.tail}{\code{"one-tail"} (default) or \code{"two-tails"}.}
 
-\item{p.adjust.method}{method passed to [stats::p.adjust()]. Default `"BH"`.}
+\item{p.adjust.method}{method passed to \code{\link[stats:p.adjust]{stats::p.adjust()}}. Default \code{"BH"}.}
 
 \item{verbose}{logical; print progress messages.}
 }
 \value{
-An object of S3 class `eSET`: a list with elements `data`,
-  `background`, and `info` (a data frame of per-term statistics, columns
-  `name, id, nA, nO, fc, zscore, pvalue, adjp, or, CIl, CIu, distance,
-  namespace, overlap`, sorted by `pvalue` then descending `or`).
-  Use [oSEAextract()] to obtain a flat results table.
+An object of S3 class \code{eSET}: a list with elements \code{data},
+\code{background}, and \code{info} (a data frame of per-term statistics, columns
+\verb{name, id, nA, nO, fc, zscore, pvalue, adjp, or, CIl, CIu, distance, namespace, overlap}, sorted by \code{pvalue} then descending \code{or}).
+Use \code{\link[=oSEAextract]{oSEAextract()}} to obtain a flat results table.
 }
 \description{
 Performs over-representation / set enrichment analysis of a query gene list
 against a collection of gene sets (ontology terms, pathways, ...), using
 Fisher's exact test. The statistics returned are identical in definition to
-those produced by the OpenXGR web server's `oSEA()`:
+those produced by the OpenXGR web server's \code{oSEA()}:
 }
 \details{
-For each term, with `X` = number of overlapping genes, `K` = number of query
-genes present in the universe, `M` = number of genes annotated to the term
-(within the universe), and `N` = universe size, a 2x2 contingency table is
-built as `matrix(c(X, K-X, M-X, N-M-K+X), nrow = 2)` and:
+For each term, with \code{X} = number of overlapping genes, \code{K} = number of query
+genes present in the universe, \code{M} = number of genes annotated to the term
+(within the universe), and \code{N} = universe size, a 2x2 contingency table is
+built as \code{matrix(c(X, K-X, M-X, N-M-K+X), nrow = 2)} and:
 \itemize{
-  \item \strong{pvalue}: \code{fisher.test(cTab, alternative = "greater")$p.value}
-        (one-tailed by default).
-  \item \strong{zscore}: \code{(X - K*M/N) / sqrt(K*M/N * (N-M)/N * (N-K)/(N-1))}
-        (theoretical hypergeometric mean/variance).
-  \item \strong{fc}: fold change, \code{X / (K*M/N)}.
-  \item \strong{or}, \strong{CIl}, \strong{CIu}: odds ratio and 95\% confidence
-        interval from a two-sided \code{fisher.test(cTab)}.
-  \item \strong{adjp}: FDR via \code{p.adjust(pvalue, method)} (BH by default).
+\item \strong{pvalue}: \code{fisher.test(cTab, alternative = "greater")$p.value}
+(one-tailed by default).
+\item \strong{zscore}: \code{(X - K*M/N) / sqrt(K*M/N * (N-M)/N * (N-K)/(N-1))}
+(theoretical hypergeometric mean/variance).
+\item \strong{fc}: fold change, \code{X / (K*M/N)}.
+\item \strong{or}, \strong{CIl}, \strong{CIu}: odds ratio and 95\\% confidence
+interval from a two-sided \code{fisher.test(cTab)}.
+\item \strong{adjp}: FDR via \code{p.adjust(pvalue, method)} (BH by default).
 }
 }
 \examples{

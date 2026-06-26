@@ -7,10 +7,10 @@
 testFunction()
 }
 \value{
-Invisibly, the string `"Hello, world!"` (printed as a side effect).
+Invisibly, the string \code{"Hello, world!"} (printed as a side effect).
 }
 \description{
-`testFunction()` is a trivial smoke test: it prints `"Hello, world!"`. It
+\code{testFunction()} is a trivial smoke test: it prints \code{"Hello, world!"}. It
 exists only to confirm that an installed/updated BioRosa can be loaded and
 that its functions are callable — useful right after a reinstall.
 }

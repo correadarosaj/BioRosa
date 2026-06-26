@@ -19,13 +19,13 @@ plot_improvement_genes(
 )
 }
 \arguments{
-\item{agg}{A gene-level aggregate from [aggregate_improvement()].}
+\item{agg}{A gene-level aggregate from \code{\link[=aggregate_improvement]{aggregate_improvement()}}.}
 
-\item{by_reg}{Facet by treatment and split Up / Down (`TRUE`) or pool
-directions with arms side-by-side (`FALSE`, default).}
+\item{by_reg}{Facet by treatment and split Up / Down (\code{TRUE}) or pool
+directions with arms side-by-side (\code{FALSE}, default).}
 
 \item{reference}{Treatment arm used as the comparator for the between-arm
-(red) stars in the overall view; `NULL` for none.}
+(red) stars in the overall view; \code{NULL} for none.}
 
 \item{mu0}{Null value for the within-group (black-star) test.}
 
@@ -38,21 +38,21 @@ orange for Drug / Placebo).}
 
 \item{reg_palette}{Named colours for Down / Up regulation.}
 
-\item{mean_color}{Colour of the horizontal mean line; `NULL` resolves to red
+\item{mean_color}{Colour of the horizontal mean line; \code{NULL} resolves to red
 on the overall view and white on the by-regulation view.}
 
-\item{week_labels}{When `TRUE`, relabel `"W4"` as `"Week 4"` on the x-axis
+\item{week_labels}{When \code{TRUE}, relabel \code{"W4"} as \code{"Week 4"} on the x-axis
 (the underlying data are untouched).}
 }
 \value{
-A [ggplot2::ggplot] object.
+A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 }
 \description{
 Draws a publication-quality boxplot of gene-level improvement (one box
-summarises many genes). In the **overall** view the treatment arms sit
+summarises many genes). In the \strong{overall} view the treatment arms sit
 side-by-side with black significance stars (one-sample test that the median
-improvement differs from `mu0`) and, when a `reference` arm is given, red
-stars (between-arm test). In the **by-regulation** view the panel is faceted
+improvement differs from \code{mu0}) and, when a \code{reference} arm is given, red
+stars (between-arm test). In the \strong{by-regulation} view the panel is faceted
 by treatment with Up = red and Down = blue boxes. Each box carries its median
 percentage and a thick mean line; the axis is scaled to the box whiskers so
 the Cauchy tails of per-gene improvement do not crush the boxes.
@@ -69,5 +69,5 @@ plot_improvement_genes(aggregate_improvement(imp, "gene"))
 }
 }
 \seealso{
-[plot_improvement_subjects()], [evaluate_improvement()]
+\code{\link[=plot_improvement_subjects]{plot_improvement_subjects()}}, \code{\link[=evaluate_improvement]{evaluate_improvement()}}
 }

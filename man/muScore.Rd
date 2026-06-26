@@ -9,29 +9,29 @@ muScore(mat)
 \arguments{
 \item{mat}{A numeric matrix or data frame coercible to one. Rows are
 subjects, columns are the variables to summarise (e.g. biomarkers,
-gene expression values). `NA` values are not handled specially and
-will propagate via `rank()`'s default behaviour.}
+gene expression values). \code{NA} values are not handled specially and
+will propagate via \code{rank()}'s default behaviour.}
 }
 \value{
-A named numeric vector of length `nrow(mat)`. Names are taken
-  from `rownames(mat)` (may be `NULL` if the matrix is unnamed).
+A named numeric vector of length \code{nrow(mat)}. Names are taken
+from \code{rownames(mat)} (may be \code{NULL} if the matrix is unnamed).
 }
 \description{
-For a numeric matrix `mat` of `n` subjects (rows) by `p` variables
-(columns), `muScore` returns one score per subject summarising where
-that subject ranks across all `p` variables. The score is a rank-based,
-tie-aware ordinal statistic: for each variable `v` and subject `i`,
-the contribution is the number of subjects strictly below `i` minus the
-number of subjects strictly above `i` on variable `v`. Summing across
-variables gives `muScore[i]`.
+For a numeric matrix \code{mat} of \code{n} subjects (rows) by \code{p} variables
+(columns), \code{muScore} returns one score per subject summarising where
+that subject ranks across all \code{p} variables. The score is a rank-based,
+tie-aware ordinal statistic: for each variable \code{v} and subject \code{i},
+the contribution is the number of subjects strictly below \code{i} minus the
+number of subjects strictly above \code{i} on variable \code{v}. Summing across
+variables gives \code{muScore[i]}.
 
-Equivalently, with `rank_min[i, v]` and `rank_max[i, v]` being the
-minimum- and maximum-ties ranks of subject `i` on variable `v`:
+Equivalently, with \code{rank_min[i, v]} and \code{rank_max[i, v]} being the
+minimum- and maximum-ties ranks of subject \code{i} on variable \code{v}:
 
 \deqn{L_{iv} - H_{iv} = \mathrm{rank\_min}[i,v] + \mathrm{rank\_max}[i,v] - (n + 1)}
 
-so the function runs in `O(n log n * p)` and handles ties without
-bias (a tie contributes `0`, not `+1` or `-1`). Higher scores mean
+so the function runs in \verb{O(n log n * p)} and handles ties without
+bias (a tie contributes \code{0}, not \code{+1} or \code{-1}). Higher scores mean
 the subject sits consistently high across the panel of variables;
 lower (more negative) scores mean consistently low. The score is
 zero-centred under permutation when there are no ties.

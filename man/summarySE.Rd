@@ -18,26 +18,26 @@ summarySE(
 
 \item{measurevar}{Character. Name of the column to summarise.}
 
-\item{groupvars}{Character vector of column names to group by. `NULL`
+\item{groupvars}{Character vector of column names to group by. \code{NULL}
 (default) summarises the whole data set.}
 
-\item{na.rm}{Logical. Drop `NA`s from the counts and statistics. Default
-`FALSE`.}
+\item{na.rm}{Logical. Drop \code{NA}s from the counts and statistics. Default
+\code{FALSE}.}
 
-\item{conf.interval}{Width of the confidence interval. Default `0.95`.}
+\item{conf.interval}{Width of the confidence interval. Default \code{0.95}.}
 
-\item{.drop}{Passed to `plyr::ddply`; drop empty group combinations. Default
-`TRUE`.}
+\item{.drop}{Passed to \code{plyr::ddply}; drop empty group combinations. Default
+\code{TRUE}.}
 }
 \value{
-A data frame with one row per group and columns `N`, the group mean
-  (named after `measurevar`), `sd`, `se`, and `ci`.
+A data frame with one row per group and columns \code{N}, the group mean
+(named after \code{measurevar}), \code{sd}, \code{se}, and \code{ci}.
 }
 \description{
-`summarySE()` computes, for each combination of grouping variables, the
+\code{summarySE()} computes, for each combination of grouping variables, the
 count, mean, standard deviation, standard error of the mean, and confidence
 interval of one measured variable. It is the widely used helper from the
-*Cookbook for R*, convenient for building error-bar summaries before plotting.
+\emph{Cookbook for R}, convenient for building error-bar summaries before plotting.
 }
 \examples{
 \dontrun{

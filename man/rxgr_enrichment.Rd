@@ -22,39 +22,39 @@ rxgr_enrichment(
 \item{data}{a character vector of query genes, or a path to a one-column
 text file of gene identifiers.}
 
-\item{set}{the gene-set collection: a named list of gene vectors, a `SET`
-object from [oRDS()], or `NULL` to use the bundled [guttman_pathways].}
+\item{set}{the gene-set collection: a named list of gene vectors, a \code{SET}
+object from \code{\link[=oRDS]{oRDS()}}, or \code{NULL} to use the bundled \link{guttman_pathways}.}
 
-\item{background}{optional gene universe; see [oSEA()].}
+\item{background}{optional gene universe; see \code{\link[=oSEA]{oSEA()}}.}
 
-\item{FDR.cutoff}{keep only terms with `adjp < FDR.cutoff` in the returned
-table and figures. Default `0.05` (use `1` to keep all).}
+\item{FDR.cutoff}{keep only terms with \code{adjp < FDR.cutoff} in the returned
+table and figures. Default \code{0.05} (use \code{1} to keep all).}
 
-\item{min.overlap}{minimum overlap to keep a term. Default `3`.}
+\item{min.overlap}{minimum overlap to keep a term. Default \code{3}.}
 
-\item{size.range}{gene-set size filter. Default `c(10, 2000)`.}
+\item{size.range}{gene-set size filter. Default \code{c(10, 2000)}.}
 
-\item{output.dir}{if non-`NULL`, a directory into which output files are
-written (created if needed). Default `NULL` (no files written).}
+\item{output.dir}{if non-\code{NULL}, a directory into which output files are
+written (created if needed). Default \code{NULL} (no files written).}
 
-\item{prefix}{file-name prefix for written outputs. Default `"EAgene"`.}
+\item{prefix}{file-name prefix for written outputs. Default \code{"EAgene"}.}
 
 \item{width, height}{figure size in inches. Defaults match OpenXGR.}
 
 \item{verbose}{logical.}
 }
 \value{
-Invisibly, a list with elements `eset` (the `eSET`), `table` (the
-  extracted data frame), `dotplot` and `forest` (ggplot objects), and
-  `files` (named paths of anything written).
+Invisibly, a list with elements \code{eset} (the \code{eSET}), \code{table} (the
+extracted data frame), \code{dotplot} and \code{forest} (ggplot objects), and
+\code{files} (named paths of anything written).
 }
 \description{
 One-call convenience wrapper that reproduces what the OpenXGR web server
-produces for a gene list: it runs [oSEA()], extracts the results table with
-[oSEAextract()], and renders the dotplot ([oSEAdotplot()]) and forest plot
-([oSEAforest()]). Optionally it writes the same output files OpenXGR offers
-for download: an enrichment table (`.txt` and `.xlsx`) and each figure as
-both `.pdf` and `.png`.
+produces for a gene list: it runs \code{\link[=oSEA]{oSEA()}}, extracts the results table with
+\code{\link[=oSEAextract]{oSEAextract()}}, and renders the dotplot (\code{\link[=oSEAdotplot]{oSEAdotplot()}}) and forest plot
+(\code{\link[=oSEAforest]{oSEAforest()}}). Optionally it writes the same output files OpenXGR offers
+for download: an enrichment table (\code{.txt} and \code{.xlsx}) and each figure as
+both \code{.pdf} and \code{.png}.
 }
 \examples{
 \dontrun{

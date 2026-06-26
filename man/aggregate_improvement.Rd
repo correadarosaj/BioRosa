@@ -11,22 +11,22 @@ aggregate_improvement(
 )
 }
 \arguments{
-\item{improvement}{The `improvement` data frame from [compute_improvement()].}
+\item{improvement}{The \code{improvement} data frame from \code{\link[=compute_improvement]{compute_improvement()}}.}
 
-\item{level}{`"subject"` (median across genes, per subject) or `"gene"`
+\item{level}{\code{"subject"} (median across genes, per subject) or \code{"gene"}
 (median across subjects, per gene).}
 
-\item{by_reg}{Keep the Up / Down regulation split (`TRUE`) or pool both
-directions (`FALSE`, default).}
+\item{by_reg}{Keep the Up / Down regulation split (\code{TRUE}) or pool both
+directions (\code{FALSE}, default).}
 }
 \value{
-A data frame with the grouping keys plus `Improvement` (median),
-  `MAD`, and `n_inner` (number of values collapsed).
+A data frame with the grouping keys plus \code{Improvement} (median),
+\code{MAD}, and \code{n_inner} (number of values collapsed).
 }
 \description{
-Reduces the per-subject, per-gene table from [compute_improvement()] to the
-unit of analysis used in the figures. At the **subject** level each subject
-becomes one point (the median improvement across genes); at the **gene** level
+Reduces the per-subject, per-gene table from \code{\link[=compute_improvement]{compute_improvement()}} to the
+unit of analysis used in the figures. At the \strong{subject} level each subject
+becomes one point (the median improvement across genes); at the \strong{gene} level
 each gene becomes one point (the median improvement across subjects). The MAD
 across the collapsed dimension is carried alongside as an uncertainty measure.
 }
@@ -41,6 +41,6 @@ imp <- compute_improvement(df, degs = c("G1", "G2"))$improvement
 aggregate_improvement(imp, "subject")
 }
 \seealso{
-[compute_improvement()], [plot_improvement_genes()],
-  [plot_improvement_subjects()]
+\code{\link[=compute_improvement]{compute_improvement()}}, \code{\link[=plot_improvement_genes]{plot_improvement_genes()}},
+\code{\link[=plot_improvement_subjects]{plot_improvement_subjects()}}
 }
