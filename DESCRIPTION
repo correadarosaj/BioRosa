@@ -32,6 +32,7 @@ Imports:
     openxlsx,
     ggplot2,
     ggrepel,
+    ggh4x,
     utils,
     data.table
 Suggests:
