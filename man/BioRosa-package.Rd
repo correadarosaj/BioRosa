@@ -33,6 +33,17 @@ decimal-aligned grid with boxed, colour-filled group bands.
 }
 }
 
+\section{Clinical-score trajectories}{
+
+\itemize{
+\item \code{\link[=doTrajectory]{doTrajectory()}} — observed per-patient and group-mean trajectories with
+error bars, from a long-format clinical table.
+\item \code{\link[=doTrajectoryModel]{doTrajectoryModel()}} — mixed-model estimated means (or change / \% change
+from baseline) with significance stars, computed from the model or read
+from a BigTab / p-value table.
+}
+}
+
 \section{Enrichment}{
 
 \itemize{

@@ -153,6 +153,72 @@ See `?doAnnotatedHeatmap`. Use the **grid** variant when you want grouped,
 colour-banded contrasts for a slide or figure; the **side-table** variant when
 you just need the per-contrast numbers beside the heatmap.
 
+# Clinical-score trajectories
+
+Alongside gene expression, BioRosa plots **longitudinal clinical scores**
+(EASI, IGA, mSWAT, DLQI, …) from a **long-format** table — one row per
+patient-visit with columns for the subject, the visit, the score, and the
+treatment arm. Two functions cover the descriptive and the model-based views.
+
+| Function | Shows |
+|---|---|
+| `doTrajectory()` | Observed data: per-patient "spaghetti" lines and/or a group-mean line with error bars. |
+| `doTrajectoryModel()` | Mixed-model **estimated means** (or change / % change from baseline) with error bars and **significance stars**. |
+
+Both accept `impute = c("none", "locf", "mice")` to fill missing visits
+(last-observation-carried-forward, or predictive-mean-matching multiple
+imputation) before plotting.
+
+## Observed trajectories
+
+```{r traj-observed}
+# Per-patient spaghetti + bold group-mean line, faceted by arm
+doTrajectory(clin, subject = "record_id", time = "Visit",
+             score = "EASI", group = "Trt",
+             time_levels = c("W0", "W4", "W8", "W16"))
+
+# The classic mean +/- SE trajectory (no spaghetti)
+doTrajectory(clin, subject = "record_id", time = "Visit",
+             score = "EASI", group = "Trt",
+             spaghetti = FALSE, error = "se")
+```
+
+## Mixed-model estimated means with stars
+
+`doTrajectoryModel()` fits `score ~ group * time` with a per-subject random
+intercept (`nlme::lme` by default, or `lme4::lmer`), then uses `emmeans` to get
+the estimated means and the contrasts behind the stars:
+
+* **within-arm** stars test each visit against `baseline` (drawn below each point);
+* **between-arm** stars test the difference in change-from-baseline versus the
+  `reference` arm at each visit (drawn above).
+
+```{r traj-model}
+res <- doTrajectoryModel(clin, subject = "record_id", time = "Visit",
+                         score = "EASI", group = "Trt", baseline = "W0",
+                         value = "change",        # or "mean", "pchange"
+                         reference = "Pbo",
+                         impute = "locf")
+res$plot          # publication-ready ggplot
+res$estimates     # per-arm/visit estimates, p-values, and star labels
+```
+
+## Reusing significance from a BigTab
+
+The stars are computed from the fitted model by default, but you can **override**
+them with p-values you already have — either a plain table (`time`, `p.value`,
+optionally `group`) or a **BigTab** row, reusing the same `pvals_<contrast>`
+columns that drive the heatmaps:
+
+```{r traj-stars}
+# Read pvals_Drug.W16vsBL, pvals_Pbo.W16vsBL, ... from a BigTab row
+res <- doTrajectoryModel(clin, subject = "record_id", time = "Visit",
+                         score = "EASI", group = "Trt", baseline = "W0",
+                         value = "change",
+                         pvals = BigTab, score_row = "EASI",
+                         baseline_label = "BL")   # the token in ...vsBL
+```
+
 # One-call enrichment: `enrichment_onestep()`
 
 `enrichment_onestep()` runs the full pathway-analysis battery in a single call
@@ -275,6 +341,7 @@ present <- intersect(guttman_pathways[["Immune Genes (EG)"]], rownames(expr_mat)
 
 * `?BioRosa` — package overview and a map of every workflow.
 * `?doAnnotatedHeatmap`, `?doAnnotatedHeatmapGrid` — the two annotated heatmaps.
+* `?doTrajectory`, `?doTrajectoryModel` — clinical-score trajectory plots.
 * `?enrichment_onestep` — the full enrichment pipeline and its options.
 * `?oSEA`, `?oSEAforest`, `?oSEAdotplot` — the OpenXGR-style engine.
 * `?runEbfit`, `?runBigTab`, `?process_degs` — building and summarising a BigTab.
