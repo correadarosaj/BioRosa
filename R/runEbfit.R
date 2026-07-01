@@ -20,11 +20,17 @@
 #' }
 #' @export
 runEbfit = function(tb){
-  coefs = reshape2::dcast(tb,biomarker~contrasts,value.var = 'estimate')%>%
-    column_to_rownames('biomarker')%>% as.matrix()
+  # Reshape one value column at a time into a biomarker x contrast matrix.
+  # Uses base-R row-name handling so the function is self-contained (no
+  # magrittr/tibble needing to be attached on the search path).
+  to_matrix <- function(value.var) {
+    wide <- reshape2::dcast(tb, biomarker ~ contrasts, value.var = value.var)
+    rn   <- wide$biomarker
+    wide$biomarker <- NULL
+    m <- as.matrix(wide)
+    rownames(m) <- rn
+    m
+  }
 
-  pvals = reshape2::dcast(tb,biomarker~contrasts,value.var = 'p.value')%>%
-    column_to_rownames('biomarker')%>% as.matrix()
-
-  return(list(coef = coefs , p.value = pvals))
+  return(list(coef = to_matrix('estimate'), p.value = to_matrix('p.value')))
 }
