@@ -44,7 +44,8 @@ Imports:
     readxl,
     Matrix,
     igraph,
-    jsonlite
+    jsonlite,
+    reshape2
 Suggests:
     testthat (>= 3.0.0),
     knitr,

@@ -23,7 +23,7 @@ FromEbfit2Table<-function(ebfit,adj='BH',mcut=2,pcut=0.05, annot=FALSE, annotTab
   pvals<-apply(pvals,2, reformatps)
   fdrs<-apply(fdrs,2, reformatps)
 
-  D<-decideTests(ebfit,method="separate",adjust.method=adj,p.value=pcut,lfc=log2(mcut))
+  D<-limma::decideTests(ebfit,method="separate",adjust.method=adj,p.value=pcut,lfc=log2(mcut))
   colnames(D)<-paste('StatusFCH',mcut,ifelse(adj=='none','P','FDR'),pcut,"_",ctrnames,sep='')
   Tab<-cbind(logFCHs,FCHs,pvals,fdrs,D); cn<-colnames(Tab)
 
