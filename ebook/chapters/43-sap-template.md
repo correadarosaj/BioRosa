@@ -21,7 +21,7 @@ O estudo fictício, que chamaremos de **RUBRA-301**:
 > minuciosas e uma lista de TLFs extensa. Use este capítulo como esqueleto
 > comentado, não como documento pronto para submeter.
 
-## 1. Sinopse do estudo
+## Sinopse do estudo
 
 > **Texto-modelo.** *O estudo RUBRA-301 é um ensaio de Fase III, multicêntrico,
 > randomizado, duplo-cego, controlado por placebo, de grupos paralelos, para
@@ -43,7 +43,7 @@ protocolo** amarra o SAP a um protocolo específico; (c) a frase sobre **assinar
 antes do unblinding** não é decorativa — é a declaração da pré-especificação que
 dá valor probatório a tudo que vem depois.
 
-## 2. Objetivos e endpoints
+## Objetivos e endpoints
 
 > **Texto-modelo.**
 >
@@ -62,7 +62,7 @@ não. Cada endpoint é definido de forma **operacional** — "redução ≥ 30%"
 semana 12", não "melhora dos sintomas". Essa precisão é o que permite ao
 programador implementar sem adivinhar.
 
-## 3. Populações de análise
+## Populações de análise
 
 > **Texto-modelo.**
 > - ***Full Analysis Set* (FAS):** todos os pacientes randomizados que receberam ao
@@ -84,7 +84,7 @@ como **sensibilidade** — coerente com um estudo de **superioridade**, onde a
 FAS/ITT é a barra conservadora e crível. (Num estudo de não-inferioridade, a PP
 teria papel muito mais central, como vimos no capítulo de métodos.)
 
-## 4. Endpoint primário: o modelo MMRM
+## Endpoint primário: o modelo MMRM
 
 > **Texto-modelo.** *A variação do escore de sintomas em relação ao baseline será
 > analisada por um modelo misto para medidas repetidas (MMRM) na população FAS. O
@@ -132,7 +132,7 @@ dissecá-lo:
 > `DDFM=KR`, ou o equivalente em R). É essa a prova de que o método está bem
 > especificado: ele é **implementável sem adivinhação**.
 
-## 5. Endpoints secundários-chave
+## Endpoints secundários-chave
 
 > **Texto-modelo.** *A proporção de respondedores na semana 12 será comparada entre
 > os grupos por um modelo de **regressão logística** ajustado por tratamento,
@@ -150,7 +150,7 @@ regra conservadora e comum — quem saiu conta como fracasso. E a frase final é
 decisiva: os secundários só "valem" como confirmatórios **dentro da hierarquia** —
 sem ela, seus p-valores seriam meramente descritivos.
 
-## 6. Multiplicidade: a hierarquia de testes
+## Multiplicidade: a hierarquia de testes
 
 > **Texto-modelo.** *Para controlar o family-wise error rate a um alfa bilateral de
 > 0,05, os endpoints confirmatórios serão testados em **sequência fixa
@@ -171,7 +171,7 @@ de dar certo vem primeiro. A última frase é a honestidade que o FDA exige: dep
 de uma falha, os demais viram exploratórios, e isso precisa estar dito **antes** de
 qualquer um ver os dados.
 
-## 7. Dados faltantes e análises de sensibilidade
+## Dados faltantes e análises de sensibilidade
 
 > **Texto-modelo.** *A análise primária por MMRM é válida sob a premissa de dados
 > faltantes MAR. A robustez dessa premissa será avaliada pelas seguintes análises
@@ -203,7 +203,7 @@ das estratégias para eventos intercorrentes, não o contrário.
 > programa específico; num SAP real, cada estratégia é justificada em prosa e
 > alinhada com o feedback da agência.
 
-## 8. Análises de segurança
+## Análises de segurança
 
 > **Texto-modelo.** *Todas as análises de segurança serão descritivas, por grupo de
 > tratamento, na população Safety. Os **eventos adversos** serão codificados pelo
@@ -225,7 +225,7 @@ positivos aos montes. Então resume-se e **inspeciona-se** — contagens, percen
 **SOC/PT** (a hierarquia do MedDRA) e **SAE** são vocabulário que você usará todos
 os dias.
 
-## 9. Análise interina
+## Análise interina
 
 > **Texto-modelo.** *Uma única análise interina de eficácia e futilidade será
 > conduzida quando aproximadamente 50% dos pacientes tiverem completado a semana 12.

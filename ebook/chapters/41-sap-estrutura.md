@@ -33,7 +33,7 @@ Ambos são úteis como "gabarito" mental; apenas cite a fonte correta.
 A ordem exata das seções varia, mas o conteúdo abaixo aparece em praticamente
 todo SAP. Vamos por partes.
 
-## 1. Introdução e escopo
+## Introdução e escopo
 
 Abre o documento situando o leitor: qual é o estudo (número do protocolo, título,
 fase), o produto investigado, e **o propósito do SAP**. Aqui você declara que o
@@ -46,7 +46,7 @@ lista de abreviaturas.
 referência cruzada ao protocolo (com versão e data), lista de documentos
 relacionados.
 
-## 2. Objetivos e endpoints
+## Objetivos e endpoints
 
 Reafirma os **objetivos** do estudo — primário, secundários e exploratórios — e,
 para cada objetivo, o **endpoint** correspondente. É aqui que a hierarquia de
@@ -57,7 +57,7 @@ importância começa a aparecer: qual pergunta o estudo existe para responder
 precisa — não "melhora da função pulmonar", mas "variação do FEV1 do *baseline* à
 semana 12". Cada endpoint aqui será, mais adiante, ligado a um método de análise.
 
-## 3. Desenho do estudo
+## Desenho do estudo
 
 Descreve a arquitetura do ensaio: randomizado ou não, cego ou aberto, paralelo ou
 *cross-over*, número de braços, razão de alocação, estratos de randomização,
@@ -68,7 +68,7 @@ desenho é comum e muito útil.
 cronograma de visitas e de tratamento. Nada de novo em relação ao protocolo — é um
 resumo fiel para dar contexto à análise.
 
-## 4. Hipóteses estatísticas
+## Hipóteses estatísticas
 
 Enuncia formalmente a **hipótese nula (H0)** e a **alternativa (H1)** do teste
 primário, o nível de significância (tipicamente *alfa* bilateral de 0,05) e se o
@@ -79,7 +79,7 @@ sempre escrutinado pelo FDA.
 **O que escrever:** H0 e H1 do endpoint primário, tipo e direção do teste, nível
 de *alfa*, e (se aplicável) a margem de não-inferioridade com sua justificativa.
 
-## 5. Determinação do tamanho amostral
+## Determinação do tamanho amostral
 
 Documenta o **cálculo de tamanho amostral** (*sample size*): o efeito assumido, a
 variabilidade esperada, o poder (*power*) desejado (usualmente 80% ou 90%), o
@@ -91,7 +91,7 @@ declarados.
 total, e a fonte das suposições (estudos anteriores, literatura). Se o tamanho é
 guiado por precisão em vez de poder, explique.
 
-## 6. Populações de análise
+## Populações de análise
 
 Define **quais pacientes entram em quais análises**. As populações típicas são:
 
@@ -111,7 +111,7 @@ Define **quais pacientes entram em quais análises**. As populações típicas s
 **O que escrever:** a definição operacional exata de cada população e **qual é a
 primária para eficácia** (em geral a ITT/mITT) e qual para segurança (a Safety).
 
-## 7. Dados: fontes e padrões
+## Dados: fontes e padrões
 
 Descreve de onde vêm os dados e como estão organizados. Na indústria regulada, isso
 significa **CDISC**: os dados coletados são estruturados em **SDTM** (*Study Data
@@ -129,7 +129,7 @@ especificação de ADaM, mas o SAP referencia e alinha com ela.
 > modelo de dados prontos para análise, derivado do SDTM. *ADSL* = dataset com uma
 > linha por sujeito, base de todas as populações e covariáveis.
 
-## 8. Convenções gerais e derivações
+## Convenções gerais e derivações
 
 Uma seção frequentemente subestimada, mas decisiva para a reprodutibilidade.
 Define as **regras transversais** que valem para o estudo inteiro:
@@ -148,7 +148,7 @@ Define as **regras transversais** que valem para o estudo inteiro:
 **O que escrever:** cada convenção de forma explícita e sem ambiguidade. É aqui
 que "dois estatísticos chegam ao mesmo número" se ganha ou se perde.
 
-## 9. Manejo de dados faltantes
+## Manejo de dados faltantes
 
 Declara **como o estudo trata os dados faltantes** (*missing data*) — abandono de
 pacientes, visitas perdidas, medidas ausentes. É uma seção que o FDA lê com lupa,
@@ -161,7 +161,7 @@ testam a robustez dessa escolha. O próximo capítulo aprofunda os métodos.
 manejo e as análises de sensibilidade previstas. Ligue tudo à estrutura de
 *estimands* (ICH E9(R1)).
 
-## 10. Métodos estatísticos por endpoint
+## Métodos estatísticos por endpoint
 
 O coração do SAP. Para **cada endpoint**, descreve o método de análise em detalhe
 implementável. Para o **endpoint primário**, isso significa: o modelo (por
@@ -174,7 +174,7 @@ o mesmo nível de detalhe, proporcional à sua importância.
 com modelo, população, e forma de apresentação do resultado. Este é o texto que o
 programador traduz em código.
 
-## 11. Multiplicidade
+## Multiplicidade
 
 Quando o estudo faz **mais de um teste confirmatório** (vários endpoints, várias
 doses, vários momentos), o erro tipo I se acumula. Esta seção descreve a
@@ -186,7 +186,7 @@ métodos.
 **O que escrever:** a ordem e a lógica dos testes confirmatórios e o procedimento
 formal que mantém o *alfa* global em 0,05.
 
-## 12. Análises interinas
+## Análises interinas
 
 Se o estudo tem uma **análise interina** (*interim analysis*) — uma olhada
 planejada nos dados antes do fim, para eficácia, futilidade ou segurança —, o SAP
@@ -197,7 +197,7 @@ acesso aos dados desblindados apenas para esse fim).
 **O que escrever:** número e momento das interinas, função de gasto de *alfa*,
 regras de parada, e a governança (papel do DSMB). Detalhes no próximo capítulo.
 
-## 13. Análises de subgrupos
+## Análises de subgrupos
 
 Descreve as análises por **subgrupos** pré-especificados (idade, sexo, região,
 gravidade da doença etc.). Deixa claro que, salvo raras exceções, subgrupos são
@@ -208,7 +208,7 @@ propósito é consistência do efeito, não descoberta de "onde o remédio funci
 mesmo modelo com um termo de interação) e a ressalva explícita do caráter
 exploratório.
 
-## 14. Análises de segurança
+## Análises de segurança
 
 Detalha como **eventos adversos** (AEs), exames laboratoriais, sinais vitais e ECG
 serão resumidos — quase sempre de forma **descritiva**, por grupo de tratamento, na
@@ -220,7 +220,7 @@ sistema-órgão e termo preferido; labs costumam usar tabelas de deslocamento
 *serious*), o plano para labs/sinais vitais/ECG, e o fato de que segurança é
 descritiva, não testada formalmente.
 
-## 15. Lista de TLFs planejados
+## Lista de TLFs planejados
 
 Fecha o SAP com a **lista das saídas** — *Tables, Listings and Figures* (TLFs):
 cada tabela, listagem e figura que será produzida, numerada, com título e a

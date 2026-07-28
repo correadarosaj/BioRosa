@@ -22,7 +22,7 @@ convenções que valem para todas.
 Uma tabela contínua bem-feita mostra as duas famílias juntas: `n`, `Mean (SD)`,
 `Median`, `Q1, Q3`, `Min, Max`. Assim o revisor escolhe qual usar.
 
-## 1. Disposição do paciente (*patient disposition / flow*)
+## Disposição do paciente (*patient disposition / flow*)
 
 A primeira tabela do CSR. Responde: quantos foram randomizados, quantos
 completaram, quantos descontinuaram e **por quê**. É a prestação de contas de
@@ -48,7 +48,7 @@ Discontinued treatment            xx (xx.x)   xx (xx.x)     xx (xx.x)
 Fonte: **ADSL**. População: em geral **All Randomized** para o topo (é a
 contagem que define os denominadores dos demais).
 
-## 2. Desvios de protocolo (*protocol deviations*)
+## Desvios de protocolo (*protocol deviations*)
 
 Sumariza os desvios importantes (*important protocol deviations*) por categoria
 — violações de critério de elegibilidade, desvios de medicação, de
@@ -68,7 +68,7 @@ Fonte: ADSL mais o dataset de desvios. Um paciente com dois desvios da mesma
 categoria conta **uma vez** na linha da categoria — cuidado com a contagem de
 sujeitos únicos.
 
-## 3. Demografia e características de baseline
+## Demografia e características de baseline
 
 O retrato dos participantes no início: idade, sexo, raça/etnia, peso, IMC e as
 características clínicas relevantes na linha de base. Serve para mostrar que os
@@ -97,7 +97,7 @@ BMI (kg/m2)
 
 Fonte: **ADSL**. População: **Safety** ou **ITT**, conforme o SAP.
 
-## 4. Exposição ao tratamento (*treatment exposure*)
+## Exposição ao tratamento (*treatment exposure*)
 
 Quanto de droga cada braço recebeu: duração da exposição (dias), dose
 cumulativa, categorias de duração. Contextualiza a segurança — 40 AEs em quem
@@ -120,7 +120,7 @@ Total patient-years                 xx.x           xx.x
 Fonte: **ADSL** (variáveis de exposição derivadas, tipo `TRTDURD`) ou um ADEX.
 População: **Safety**.
 
-## 5. Endpoint de eficácia primário
+## Endpoint de eficácia primário
 
 A tabela que o estudo inteiro existe para produzir. O formato depende do tipo
 de endpoint (contínuo, binário, tempo-até-evento), mas geralmente mostra o
@@ -144,7 +144,7 @@ LS Mean change (SE)                 -xx.x (xx.x)   -xx.x (xx.x)
 Fonte: **BDS** (ADEFF/ADQS). População: **ITT** (ou mITT), a população de
 eficácia definida no SAP.
 
-## 6. Eventos adversos (adverse events) — o coração da segurança
+## Eventos adversos (adverse events) — o coração da segurança
 
 Os **AEs** (*adverse events*) geram várias tabelas relacionadas. Duas ideias
 governam todas elas:
@@ -215,7 +215,7 @@ Tabelas separadas, no mesmo formato SOC/PT, filtrando respectivamente por
 **sério** (`AESER='Y'`) e por **descontinuação** (`AEACN='DRUG WITHDRAWN'` ou
 a flag equivalente). São de leitura obrigatória para o revisor de segurança.
 
-## 7. Laboratório — shift tables e valores fora da faixa
+## Laboratório — shift tables e valores fora da faixa
 
 Dados de laboratório geram dois formatos característicos:
 
@@ -241,7 +241,7 @@ High              xx        xx          xx        xx
 
 Fonte: **BDS** (ADLB). População: **Safety**.
 
-## 8. Sinais vitais e ECG
+## Sinais vitais e ECG
 
 Mesma lógica do laboratório, com BDS (ADVS para sinais vitais, ADEG para ECG):
 sumários de valor e de mudança em relação ao baseline por visita, mais tabelas
