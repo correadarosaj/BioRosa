@@ -144,7 +144,7 @@ porque o tema é hoje um dos mais valorizados e mais cobrados em entrevistas.
 
 > **Dica de carreira:** entender E9 e, principalmente, **E9(R1) e estimands** é
 > um diferencial concreto em entrevista. Muitos candidatos sabem "fazer a
-> análise"; poucos sabem articular **qual estimand** o estudo persegue e por que.
+> análise"; poucos sabem articular **qual estimand** o estudo persegue e por quê.
 > Saber explicar, com suas palavras, o que é um evento intercorrente e como ele
 > muda o efeito estimado te coloca imediatamente acima da média.
 

@@ -192,7 +192,7 @@ Se o estudo tem uma **análise interina** (*interim analysis*) — uma olhada
 planejada nos dados antes do fim, para eficácia, futilidade ou segurança —, o SAP
 descreve quando ela ocorre, qual método de *alpha spending* controla o erro
 acumulado, e quem a conduz (tipicamente um comitê independente, o DSMB/IDMC, com
-acesso aos dados cegos apenas para esse fim).
+acesso aos dados desblindados apenas para esse fim).
 
 **O que escrever:** número e momento das interinas, função de gasto de *alfa*,
 regras de parada, e a governança (papel do DSMB). Detalhes no próximo capítulo.
@@ -240,8 +240,9 @@ uma seção de método deste SAP.
 
 ## Resumo do capítulo
 
-- O SAP segue uma **estrutura reconhecível**; a **PHUSE** publica um template de
-  referência que muitas empresas adotam como base.
+- O SAP segue uma **estrutura reconhecível**; a **TransCelerate** publica um
+  template de SAP que muitas empresas adotam como base, enquanto a **PHUSE**
+  mantém white papers de análises e *displays* padronizados.
 - As seções de contexto — introdução, objetivos/endpoints, desenho, hipóteses e
   tamanho amostral — reafirmam e detalham o protocolo.
 - As **populações de análise** (ITT, mITT, per-protocol, Safety) definem quem entra

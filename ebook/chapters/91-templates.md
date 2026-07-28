@@ -42,7 +42,7 @@ SOC/PT e uma *shift table* de laboratório. Cada shell já traz título no forma
 O modelo da **tabela-resumo de 2–3 páginas** que abre todo protocolo clínico:
 título, fase, objetivos, desenho, população, tratamentos, endpoints, plano
 estatístico e duração. Útil tanto para ler protocolos alheios com rapidez quanto
-para montar um **estudo-sintético de portfólio** (Cap. 24).
+para montar um **estudo sintético de portfólio** (Cap. 24).
 
 - **Como usar:** preencha a sinopse primeiro, mesmo para um projeto fictício de
   portfólio. Ela força você a tomar as decisões de desenho antes de escrever o

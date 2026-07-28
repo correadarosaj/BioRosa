@@ -3,7 +3,7 @@
 *Modelo da sinopse (Protocol Synopsis): a tabela-resumo de 2–3 páginas que abre
 todo protocolo clínico e condensa o estudo inteiro. Preencha os `<placeholders>`.
 Use este modelo tanto para ler protocolos alheios com rapidez quanto para montar
-um estudo-sintético de portfólio (Cap. 24). Preencha a sinopse ANTES de escrever
+um estudo sintético de portfólio (Cap. 24). Preencha a sinopse ANTES de escrever
 o SAP — ela força as decisões de desenho na ordem real de trabalho.*
 
 ---

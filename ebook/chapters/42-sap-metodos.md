@@ -23,7 +23,7 @@ alegação:
 - Em estudos de **não-inferioridade**, a coisa se inverte: a ITT pode ser
   *anticonservadora*, porque diluir a diferença **favorece** a conclusão de
   "não pior". Por isso, nesses estudos, a **per-protocol** ganha peso e
-  frequentemente é co-primária — analisa-se em ambas e exige-se consistência.
+  frequentemente é coprimária — analisa-se em ambas e exige-se consistência.
 - A **Safety** é sempre a base da análise de segurança, analisada pelo tratamento
   **recebido**, não pelo alocado — porque, para efeitos adversos, o que importa é
   a que droga o paciente foi de fato exposto.

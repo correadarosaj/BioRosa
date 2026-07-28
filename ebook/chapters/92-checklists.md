@@ -105,7 +105,7 @@ Use enquanto se prepara para o mercado americano. Ver Cap. 3, 25 e 26.
 
 **Portfólio (a prova de que você sabe fazer)**
 
-- [ ] Projeto end-to-end público: protocolo-sintético → SAP → ADaMs → pacote de TLFs (Cap. 24).
+- [ ] Projeto end-to-end público: protocolo sintético → SAP → ADaMs → pacote de TLFs (Cap. 24).
 - [ ] Repositório no GitHub organizado, com README claro e código legível.
 - [ ] Ao menos uma tabela/figura reproduzida no padrão da indústria (usando os shells deste livro).
 
