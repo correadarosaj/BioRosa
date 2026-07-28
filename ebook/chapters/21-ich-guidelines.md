@@ -44,11 +44,16 @@ registrar e reportar ensaios que envolvem seres humanos. É o alicerce de tudo.
 
 A versão **E6(R2)** foi por muitos anos a referência em vigor; uma revisão maior,
 a **E6(R3)**, foi desenvolvida para modernizar a GCP diante de ensaios
-descentralizados, fontes de dados variadas e ambientes digitais.
+descentralizados, fontes de dados variadas e ambientes digitais. A E6(R3) foi
+**finalizada pelo ICH em janeiro de 2025**: o FDA publicou sua adoção como
+guidance final em **setembro de 2025** e a EMA a tornou **efetiva em 23 de julho
+de 2025**. O foco da revisão está exatamente nos temas que mais crescem na
+prática atual: **ensaios descentralizados**, **dados eletrônicos** e
+**monitoramento baseado em risco** (*risk-based monitoring*).
 
-> **Verificar:** o status de adoção da E6(R3) por cada região evolui; confirme
-> em ich.org e em fda.gov qual versão se aplica ao seu estudo antes de citá-la
-> num documento.
+> **Verificar (fonte):** cronogramas de adoção regional ainda evoluem; confirme
+> a versão vigente e a data efetiva na sua região em ich.org e fda.gov antes de
+> citá-la num documento regulado.
 
 **Por que importa para o estatístico:** GCP é o que torna os dados **confiáveis
 e auditáveis**. Ela sustenta princípios como integridade de dados e

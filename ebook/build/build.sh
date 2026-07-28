@@ -39,21 +39,50 @@ pdf_engine() {
   echo ""
 }
 
-build_pdf() {
-  local engine; engine="$(pdf_engine)"
-  if [ -z "$engine" ]; then
-    echo "AVISO: nenhum engine LaTeX (tectonic/xelatex) encontrado — PDF pulado." >&2
-    return 0
-  fi
-  echo "Gerando PDF com engine=$engine ..."
+build_html() {
+  echo "Gerando HTML ..."
+  local css_arg=()
+  [ -f "$ROOT/assets/print.css" ] && css_arg=(--css assets/print.css)
   pandoc "$META" "${CHAPTERS[@]}" \
     --from=markdown+smart \
-    --pdf-engine="$engine" \
+    --standalone --embed-resources \
     --toc --toc-depth=2 \
     --number-sections \
     --top-level-division=chapter \
+    --mathml \
+    "${css_arg[@]}" \
+    -o "$OUT_DIR/do-brasil-ao-fda.html"
+  echo "  -> $OUT_DIR/do-brasil-ao-fda.html"
+}
+
+# PDF via LaTeX (tectonic/xelatex). Requer bundle LaTeX disponível.
+build_pdf_latex() {
+  local engine; engine="$(pdf_engine)"
+  if [ -z "$engine" ]; then
+    echo "AVISO: nenhum engine LaTeX encontrado — use 'pdf' (via Chromium)." >&2
+    return 1
+  fi
+  echo "Gerando PDF com engine LaTeX=$engine ..."
+  pandoc "$META" "${CHAPTERS[@]}" \
+    --from=markdown+smart --pdf-engine="$engine" \
+    --toc --toc-depth=2 --number-sections \
+    --top-level-division=chapter \
     -o "$OUT_DIR/do-brasil-ao-fda.pdf"
   echo "  -> $OUT_DIR/do-brasil-ao-fda.pdf"
+}
+
+# PDF via Chromium (HTML -> PDF). Portátil, não exige LaTeX.
+build_pdf() {
+  build_html
+  if command -v node >/dev/null 2>&1 && [ -f "$ROOT/build/html2pdf.js" ]; then
+    echo "Gerando PDF via Chromium ..."
+    node "$ROOT/build/html2pdf.js" \
+      "$OUT_DIR/do-brasil-ao-fda.html" \
+      "$OUT_DIR/do-brasil-ao-fda.pdf"
+  else
+    echo "Chromium/node indisponível; tentando LaTeX ..." >&2
+    build_pdf_latex
+  fi
 }
 
 build_epub() {

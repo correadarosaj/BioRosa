@@ -101,10 +101,16 @@ outras coisas:
 - **Assinaturas eletrônicas** vinculadas de forma segura ao registro e ao
   signatário, de modo que não possam ser copiadas ou transferidas.
 
-> **Verificar:** o FDA emitiu guidances que modernizam e esclarecem a aplicação
-> do Part 11 (por exemplo, abordagens baseadas em risco e o uso de sistemas em
-> nuvem). Confirme a guidance vigente em fda.gov antes de afirmar requisitos
-> específicos a um cliente.
+O FDA modernizou a aplicação do Part 11 nesse sentido: a guidance final de
+**outubro de 2024**, *"Electronic Systems, Electronic Records, and Electronic
+Signatures in Clinical Investigations: Questions and Answers"*, **substituiu** a
+antiga de 2007 e consolida uma **abordagem baseada em risco** — inclusive para o
+uso de sistemas em nuvem e de terceiros. Na prática, o nível de controle e
+validação exigido passa a ser proporcional ao risco que o sistema representa
+para a integridade dos dados e a segurança do paciente.
+
+> **Verificar (fonte):** confirme a versão vigente dessa guidance em fda.gov
+> antes de afirmar requisitos específicos a um cliente.
 
 ## "Programa validado" e por que existe o double programming
 

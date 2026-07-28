@@ -1,0 +1,125 @@
+/* print.css — estilo de livro para o PDF (renderizado via Chromium) */
+
+@page {
+  size: 6in 9in;
+  margin: 2cm 1.8cm 2cm 1.8cm;
+}
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  font-family: "DejaVu Serif", Georgia, serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: #1a1a1a;
+  margin: 0;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ---- Títulos ---- */
+h1, h2, h3, h4 {
+  font-family: "DejaVu Sans", "Helvetica Neue", sans-serif;
+  color: #14315c;
+  line-height: 1.2;
+  page-break-after: avoid;
+  text-align: left;
+  hyphens: none;
+}
+
+/* Cada capítulo (h1) começa em página nova */
+h1 {
+  font-size: 20pt;
+  margin-top: 0;
+  padding-top: 0.4in;
+  page-break-before: always;
+  border-bottom: 2px solid #14315c;
+  padding-bottom: 0.15in;
+}
+
+/* Não quebrar página antes do PRIMEIRO h1 (página de rosto) */
+h1:first-of-type { page-break-before: avoid; }
+
+h2 { font-size: 14pt; margin-top: 1.3em; }
+h3 { font-size: 11.5pt; color: #2a4a72; margin-top: 1.1em; }
+
+p { margin: 0 0 0.6em 0; orphans: 2; widows: 2; }
+
+/* ---- Página de rosto (front matter .unnumbered) ---- */
+h1.unnumbered {
+  border: none;
+  text-align: center;
+  font-size: 30pt;
+  padding-top: 1.6in;
+  page-break-before: always;
+}
+h1#do-brasil-ao-fda { page-break-before: avoid; }
+
+/* ---- Código ---- */
+code {
+  font-family: "DejaVu Sans Mono", Consolas, monospace;
+  font-size: 8.6pt;
+  background: #f0f3f7;
+  padding: 0.05em 0.25em;
+  border-radius: 3px;
+}
+pre {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 8.2pt;
+  line-height: 1.35;
+  background: #f6f8fa;
+  border: 1px solid #dde3ea;
+  border-radius: 5px;
+  padding: 0.7em 0.9em;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  page-break-inside: avoid;
+  text-align: left;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* ---- Caixas de destaque (blockquotes) ---- */
+blockquote {
+  margin: 1em 0;
+  padding: 0.6em 1em;
+  border-left: 4px solid #2a6fb0;
+  background: #eef4fb;
+  color: #22303f;
+  font-style: normal;
+  border-radius: 0 4px 4px 0;
+  page-break-inside: avoid;
+}
+blockquote p { margin: 0.3em 0; }
+blockquote strong { color: #14315c; }
+
+/* ---- Tabelas ---- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 8.8pt;
+  margin: 1em 0;
+  page-break-inside: avoid;
+}
+th, td {
+  border: 1px solid #b8c2ce;
+  padding: 0.35em 0.5em;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: #e8eef5; font-family: "DejaVu Sans", sans-serif; }
+
+/* ---- Sumário (TOC gerado pelo pandoc) ---- */
+nav#TOC, #TOC {
+  page-break-after: always;
+}
+#TOC ul { list-style: none; padding-left: 1em; }
+#TOC > ul { padding-left: 0; }
+#TOC a { text-decoration: none; color: #14315c; }
+
+hr { border: none; border-top: 1px solid #cdd5df; margin: 1.5em 0; }
+
+a { color: #1a5fa8; text-decoration: none; }
+
+ul, ol { margin: 0.4em 0 0.8em 0; padding-left: 1.4em; }
+li { margin-bottom: 0.25em; }

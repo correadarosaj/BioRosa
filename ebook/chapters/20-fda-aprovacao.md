@@ -116,12 +116,18 @@ aprovação.
 Um estudo de Fase III projetado para ser a evidência principal de eficácia é
 chamado de **pivotal trial** (estudo pivotal). O FDA tipicamente espera
 evidência substancial de eficácia — historicamente, de mais de um estudo
-adequado e bem controlado, embora em certas situações um único estudo pivotal
-robusto possa bastar.
+adequado e bem controlado. Desde o **FDA Modernization Act de 1997 (FDAMA)**,
+porém, a lei admite explicitamente que **um único estudo pivotal acompanhado de
+evidência confirmatória** (*confirmatory evidence*) possa constituir essa
+evidência substancial em certas situações. O FDA detalha esse critério numa
+guidance específica sobre *substantial evidence* — cuja versão vigente, em
+meados de 2026, é ainda um **draft revisado (junho de 2026)**, ou seja, não é
+documento final.
 
-> **Verificar:** as circunstâncias exatas em que um único estudo pivotal é
-> aceito evoluem; confirme a guidance vigente sobre *substantial evidence* em
-> fda.gov antes de afirmar um requisito específico a um cliente.
+> **Verificar (fonte):** por se apoiar num draft ainda não finalizado, confirme
+> em fda.gov a versão vigente da guidance sobre *substantial evidence* e o
+> critério de estudo pivotal único antes de afirmar um requisito específico a um
+> cliente.
 
 **Papel da estatística:** é o auge da responsabilidade do bioestatístico. O
 **endpoint primário**, o tamanho de amostra, a estratégia de controle de erro

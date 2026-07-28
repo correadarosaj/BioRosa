@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 2560px; }
+  body {
+    font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif;
+    background: #0b1f3a;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Gradiente de fundo */
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(1200px 900px at 78% 12%, rgba(42,111,176,0.55), transparent 60%),
+      radial-gradient(1000px 800px at 10% 95%, rgba(20,90,140,0.45), transparent 55%),
+      linear-gradient(160deg, #0b1f3a 0%, #10294c 55%, #0a1930 100%);
+  }
+  /* Faixa/borda superior */
+  .accent-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 22px;
+    background: linear-gradient(90deg, #2a6fb0, #4fb0d8, #2a6fb0);
+  }
+  .content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 170px 130px 130px 130px;
+  }
+  .eyebrow {
+    font-size: 34px; letter-spacing: 8px; text-transform: uppercase;
+    color: #7fc4e6; font-weight: 700; margin-bottom: 46px;
+  }
+  .title {
+    font-size: 168px; line-height: 0.98; font-weight: 800;
+    letter-spacing: -2px;
+  }
+  .title .fda { color: #4fb0d8; }
+  .rule {
+    width: 240px; height: 10px; background: #4fb0d8;
+    margin: 60px 0 54px 0; border-radius: 5px;
+  }
+  .subtitle {
+    font-size: 52px; line-height: 1.28; font-weight: 400;
+    color: #dce8f5; max-width: 1180px;
+  }
+  .subtitle b { color: #ffffff; font-weight: 700; }
+  /* Motivo gráfico: curva normal */
+  .curve {
+    position: absolute; left: 0; right: 0; bottom: 760px;
+    opacity: 0.95;
+  }
+  /* rótulos do eixo sob a curva, evocando um forest/efeito */
+  .motif-label {
+    position: absolute; left: 130px; right: 130px; bottom: 700px;
+    text-align: center; color: #6f9fce; font-size: 30px; letter-spacing: 3px;
+    text-transform: uppercase; opacity: 0.65;
+  }
+  .tags {
+    margin-top: auto; display: flex; flex-wrap: wrap; gap: 22px;
+    margin-bottom: 60px;
+  }
+  .tag {
+    font-size: 38px; font-weight: 600; color: #0b1f3a;
+    background: #7fc4e6; padding: 16px 34px; border-radius: 999px;
+  }
+  .tag.alt { background: transparent; color: #9fd3ec; border: 3px solid #3a6da0; }
+  .author {
+    font-size: 54px; font-weight: 700; color: #ffffff;
+    border-top: 3px solid rgba(255,255,255,0.25); padding-top: 40px;
+  }
+  .author .role { display:block; font-size: 34px; font-weight: 400; color:#9fb6d0; margin-top: 12px; }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="accent-bar"></div>
+
+  <!-- curva normal decorativa -->
+  <svg class="curve" width="1600" height="360" viewBox="0 0 1600 360" fill="none">
+    <path d="M0,340 C 300,340 430,60 800,60 C 1170,60 1300,340 1600,340"
+          stroke="#4fb0d8" stroke-width="6" opacity="0.5"/>
+    <path d="M0,352 C 340,352 470,150 800,150 C 1130,150 1260,352 1600,352 L 1600,360 L 0,360 Z"
+          fill="#2a6fb0" opacity="0.18"/>
+    <line x1="800" y1="60" x2="800" y2="360" stroke="#4fb0d8" stroke-width="3" opacity="0.35" stroke-dasharray="10 12"/>
+  </svg>
+
+  <div class="motif-label">do protocolo à submissão</div>
+  <div class="content">
+    <div class="eyebrow">Guia Completo · Bioestatística Clínica</div>
+    <div class="title">Do Brasil<br>ao <span class="fda">FDA</span></div>
+    <div class="rule"></div>
+    <div class="subtitle">
+      O caminho do profissional brasileiro para trabalhar com
+      <b>pesquisa clínica</b> nos Estados Unidos — regulamentações,
+      protocolos, SAP, CDISC e TLFs.
+    </div>
+
+    <div class="tags">
+      <span class="tag">Regulamentações FDA/ICH</span>
+      <span class="tag alt">SAP</span>
+      <span class="tag alt">CDISC · SDTM/ADaM</span>
+      <span class="tag alt">TLFs</span>
+      <span class="tag alt">Carreira &amp; Vistos</span>
+    </div>
+
+    <div class="author">
+      [Seu Nome]
+      <span class="role">Bioestatística · Pesquisa Clínica</span>
+    </div>
+  </div>
+</body>
+</html>

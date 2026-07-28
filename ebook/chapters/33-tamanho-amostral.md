@@ -123,16 +123,26 @@ número total de eventos necessário, com alocação 1:1, é:
 
 $$ d = \frac{4\,(z_{1-\alpha/2} + z_{1-\beta})^2}{(\ln \text{HR})^2} $$
 
-onde HR é o *hazard ratio* que se quer detectar. O número de **pacientes** vem
-depois: você divide o número de eventos necessário pela probabilidade de um
-paciente ter o evento durante o estudo (que depende do risco basal, da duração do
+onde HR é o *hazard ratio* que se quer detectar. Repare que o resultado é um
+**número de eventos**, não de pacientes. O número de **pacientes** vem depois:
+você divide o número de eventos necessário pela probabilidade de um paciente ter
+o evento durante o estudo (que depende do risco basal, da duração do
 acompanhamento e do recrutamento). Por isso, estudos de sobrevivência com eventos
 raros exigem amostras grandes **e** seguimento longo.
 
-> **Verificar:** existem variações da fórmula de eventos (Schoenfeld, Freedman) e
-> ajustes por alocação desigual e recrutamento escalonado. Para um cálculo de
-> submissão, use um método validado (ex.: `nSurv`/`gsDesign` em R, ou
-> `proc power ... twosamplesurvival` em SAS) e documente as premissas.
+Uma variação clássica é a fórmula de **Freedman**, também para o número total de
+eventos com alocação 1:1:
+
+$$ d = (z_{1-\alpha/2} + z_{1-\beta})^2 \cdot \left(\frac{\text{HR}+1}{\text{HR}-1}\right)^2 $$
+
+Schoenfeld e Freedman costumam dar resultados próximos; a de **Freedman** tende a
+ser **levemente mais conservadora** (exige um pouco mais de eventos),
+especialmente quando o HR se afasta de 1.
+
+> **Verificar (fonte):** além dessas duas, há ajustes por alocação desigual e
+> recrutamento escalonado. Para um cálculo de submissão, use um método validado
+> (ex.: `nSurv`/`gsDesign` em R, ou `proc power ... twosamplesurvival` em SAS) e
+> documente as premissas.
 
 ## Visão geral: não-inferioridade
 

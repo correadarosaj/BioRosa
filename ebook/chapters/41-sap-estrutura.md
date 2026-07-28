@@ -7,19 +7,28 @@ fica cada cômodo, consegue entrar em qualquer SAP e se orientar em minutos. Est
 capítulo percorre as seções típicas e diz, para cada uma, **o que você precisa
 escrever**.
 
-## Existe um template de referência
+## Existem materiais de referência
 
-Antes de percorrer as seções: você não precisa inventar a estrutura do zero. A
-**PHUSE** (*Pharmaceutical Users Software Exchange*, uma associação da indústria
-voltada a padrões e boas práticas em programação e estatística clínica) publica um
-**template de SAP** de referência, desenvolvido de forma colaborativa pela
-comunidade e disponível gratuitamente no site da organização. Muitas empresas
-baseiam seus templates internos nele, com adaptações. Vale conhecê-lo como ponto
-de partida e como "gabarito" mental da estrutura.
+Antes de percorrer as seções: você não precisa inventar a estrutura do zero, mas
+vale entender de onde vêm os materiais de referência, porque é fácil confundi-los.
 
-> **Verificar:** cite a versão vigente do PHUSE SAP template ao referenciá-lo num
-> documento real; o material é atualizado periodicamente pelos grupos de trabalho
-> da PHUSE.
+A **PHUSE** (*Pharmaceutical Users Software Exchange*, uma associação da indústria
+voltada a padrões e boas práticas em programação e estatística clínica) **não
+publica um "template de SAP" único e global**. O que ela mantém, de forma
+colaborativa e gratuita, é uma coleção de *white papers* na linha **"Analyses &
+Displays Associated with..."** (associados a áreas terapêuticas e a tipos de
+análise específicos) e o repositório **phuse-scripts** no GitHub. São
+*deliverables* organizados **por tópico**, sem uma versão global única — pense
+neles como referências de "o que analisar e como exibir" em cada situação.
+
+O **template de SAP** propriamente dito, com a estrutura de seções que muitas
+empresas adotam, vem historicamente da **TransCelerate** — não confunda os dois.
+Ambos são úteis como "gabarito" mental; apenas cite a fonte correta.
+
+> **Verificar (fonte):** ao referenciar num documento real, confirme a versão
+> vigente do white paper da PHUSE (phuse.global / repositório phuse-scripts no
+> GitHub) ou do template da TransCelerate, conforme o caso — o material é
+> atualizado periodicamente pelos grupos de trabalho.
 
 A ordem exata das seções varia, mas o conteúdo abaixo aparece em praticamente
 todo SAP. Vamos por partes.

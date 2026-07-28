@@ -78,11 +78,17 @@ desse efeito histórico — para que "não-inferior ao ativo" não acabe signifi
 na prática, "não melhor que placebo". Essa é a ideia por trás dos métodos de
 **preservação de efeito** discutidos nos guidelines do ICH e do FDA.
 
-> **Verificar:** as abordagens específicas de justificação da margem (ex.: método
-> dos "95/95", fração de preservação de efeito) e os percentuais recomendados
-> constam de guidelines regulatórios (ICH E10; FDA guidance sobre
-> non-inferiority trials). Consulte a versão vigente antes de citar um número
-> específico.
+As abordagens específicas de justificação da margem constam de guidelines
+regulatórios — o **ICH E10** e a **FDA guidance final de novembro de 2016,
+*"Non-Inferiority Clinical Trials to Establish Effectiveness"***. Essa guidance
+descreve dois caminhos principais: o método **fixed-margin** (também chamado de
+**"95-95"**, porque usa o limite de confiança de 95% do efeito histórico do
+comparador e exige que os 95% do novo estudo o respeitem) e o **synthesis
+method**, que combina numa única estimativa a incerteza do estudo atual e a do
+efeito histórico.
+
+> **Verificar (fonte):** confirme a versão vigente dessa guidance em fda.gov e
+> os percentuais de preservação de efeito antes de citar um número específico.
 
 ### Equivalência
 
