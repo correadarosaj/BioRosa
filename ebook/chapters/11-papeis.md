@@ -25,7 +25,7 @@ sponsor e, em última instância, perante o FDA.
   quantidade que o estudo quer estimar);
 - escreve o **SAP** — o *Statistical Analysis Plan*, o documento que congela o
   plano de análise antes de os dados serem desbloqueados;
-- especifica as **shells** de tabelas (os moldes vazios das TLFs) e revisa os
+- especifica as **shells** de tabelas (os moldes vazios dos TLFs) e revisa os
   resultados que os programadores produzem;
 - interpreta os resultados e contribui para o **CSR** (*Clinical Study Report*,
   o relatório final do estudo) e para respostas a perguntas do FDA.

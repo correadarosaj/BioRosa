@@ -155,7 +155,7 @@ solidez de longo prazo:
    primário, população de análise e especificação de tabelas.
 5. **R + pharmaverse** — aprenda R e explore `admiral` e amigos; construa um
    **projeto de portfólio público** de ponta a ponta (dados de exemplo → ADaM →
-   uma TLF).
+   um TLF).
 6. **Git e SQL** — o suficiente para versionar seu trabalho e consultar bancos;
    não precisa de mais que o básico sólido no começo.
 7. **Inglês técnico** — treinado dentro dos passos acima, lendo tudo no original.

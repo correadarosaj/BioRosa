@@ -107,7 +107,7 @@ O SAP é um documento de time, com papéis bem definidos:
   escreve o SAP. É a peça central do seu trabalho.
 - **Revisores:** o estatístico sênior ou *biostatistics lead* do programa, o
   clínico (*medical/clinical lead*), o *data manager*, o programador estatístico
-  que vai implementar as TLFs, e frequentemente regulatório e *medical writing*.
+  que vai implementar os TLFs, e frequentemente regulatório e *medical writing*.
   Cada um lê com uma lente diferente — o clínico verifica se os *endpoints* fazem
   sentido médico; o programador, se as derivações são implementáveis.
 - **Aprovadores (signatários):** o SAP é formalmente **assinado**, geralmente pelo

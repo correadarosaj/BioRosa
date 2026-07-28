@@ -227,7 +227,7 @@ cada tabela, listagem e figura que será produzida, numerada, com título e a
 população a que se refere. Muitas empresas mantêm essa lista num documento anexo
 (o *TLF list* ou *mock-up shells*), mas o SAP a governa.
 
-**O que escrever:** o inventário completo e numerado das TLFs, cada uma amarrada a
+**O que escrever:** o inventário completo e numerado dos TLFs, cada um amarrado a
 uma seção de método deste SAP.
 
 > **Na prática:** o SAP é o **mapa dos TLFs**. Cada linha da lista de tabelas
