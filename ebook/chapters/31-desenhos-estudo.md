@@ -76,7 +76,7 @@ a margem δ é definida para garantir que, mesmo no pior caso do intervalo de
 confiança, o novo tratamento ainda mantenha uma fração clinicamente relevante
 desse efeito histórico — para que "não-inferior ao ativo" não acabe significando,
 na prática, "não melhor que placebo". Essa é a ideia por trás dos métodos de
-**preservação de efeito** discutidos nos guidelines do ICH e do FDA.
+**preservação de efeito** discutidos nas guidelines do ICH e do FDA.
 
 As abordagens específicas de justificação da margem constam de guidelines
 regulatórios — o **ICH E10** e a **FDA guidance final de novembro de 2016,

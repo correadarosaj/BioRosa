@@ -17,7 +17,7 @@ seu tour guiado.
 
 Protocolos seguem uma estrutura previsível. O ICH — *International Council for
 Harmonisation*, o organismo que harmoniza normas de pesquisa entre EUA, Europa
-e Japão — publicou o guideline **E6 (Good Clinical Practice, ou GCP)**, que
+e Japão — publicou a guideline **E6 (Good Clinical Practice, ou GCP)**, que
 lista os itens que um protocolo deve conter. Na prática, quase todo protocolo
 tem estas seções, nesta ordem aproximada:
 

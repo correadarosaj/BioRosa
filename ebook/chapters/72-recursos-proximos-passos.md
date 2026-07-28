@@ -68,7 +68,7 @@ específicas. Os mais reconhecidos na área:
 
 Para aprofundar com fontes primárias e corretas:
 
-- **ICH E9** — *Statistical Principles for Clinical Trials.* O guideline
+- **ICH E9** — *Statistical Principles for Clinical Trials.* A guideline
   fundamental sobre princípios estatísticos em ensaios. Leitura obrigatória.
 - **ICH E9(R1)** — o adendo que introduziu o framework de **estimands** e análise
   de sensibilidade. Domine este: estimands são tema quente em entrevistas e
