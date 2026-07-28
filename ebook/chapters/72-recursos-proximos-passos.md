@@ -95,6 +95,28 @@ Reproduzir uma tabela de um paper do PharmaSUG usando esses dados é um dos
 exercícios mais produtivos que existem: você aprende o padrão real e ainda ganha
 material para o portfólio.
 
+## Como o networking realmente funciona nessa área
+
+Muita gente qualificada trava porque trata networking como pedir emprego. Não é.
+Na comunidade clínica quantitativa, networking é **contribuir e aparecer** de
+forma consistente, e as oportunidades vêm como consequência. Formas concretas e
+de baixo atrito:
+
+- Responder (ou só acompanhar) dúvidas no **Slack do pharmaverse** e fóruns de
+  usuários — você aprende e fica visível ao mesmo tempo.
+- Comentar de forma útil em posts de pessoas da área no LinkedIn, em vez de só
+  curtir. Um comentário técnico e educado é lembrado.
+- Compartilhar o seu **projeto de portfólio** num post, contando o que aprendeu.
+  Isso atrai recrutadores e convida conversas.
+- Mandar mensagens de conexão **personalizadas** (nunca o template genérico) para
+  profissionais de CRO/pharma, dizendo com sinceridade que está migrando para a
+  área e admira o trabalho da pessoa.
+
+> **Na prática:** boa parte das vagas de entrada em CRO nunca chega a virar um
+> anúncio disputado — elas são preenchidas por alguém que já estava no radar de um
+> gerente ou recrutador. Estar "no radar" é exatamente o que meses de presença
+> consistente na comunidade constroem. Networking não é um evento; é um hábito.
+
 ## Um plano de 90 dias
 
 A tentação, ao fechar um livro assim, é querer fazer tudo de uma vez — e parar
