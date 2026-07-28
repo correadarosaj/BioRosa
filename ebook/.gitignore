@@ -1,3 +1,4 @@
 build/output/
 *.epub
 *.pdf
+node_modules/

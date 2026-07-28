@@ -77,14 +77,19 @@ contém, tipicamente:
 | **ADRG** | Reviewer's Guide do ADaM (PDF) |
 | **Programas de análise** | Os programas que geram os ADaM e/ou os resultados principais |
 
-Os datasets viajam num formato de transporte específico (historicamente o SAS
-Transport, `.xpt`) — um formato aberto e estável, escolhido justamente para que
-o FDA consiga abrir os dados independentemente do software usado pelo sponsor.
+Os datasets viajam num formato de transporte específico: o **SAS Transport
+versão 5** (*SAS XPORT v5*, arquivos `.xpt`) — um formato aberto e estável,
+escolhido justamente para que o FDA consiga abrir os dados independentemente do
+software usado pelo sponsor. Já os **metadados** vão no **Define-XML v2.1**, que
+o FDA recomenda para estudos **iniciados a partir de 15/03/2023**; as regras de
+conteúdo do SDTM seguem o **SDTM Implementation Guide (SDTMIG) v6.0**, de março
+de 2025. Há um formato mais novo, o **Dataset-JSON v1.1**, que está em **avaliação
+e pilotos** para eventualmente substituir o `.xpt` — mas **ainda não é
+obrigatório**.
 
-> **Verificar:** os detalhes de formato de transporte, versões aceitas e a
-> inclusão de programas evoluem. Confirme os requisitos vigentes nos documentos
-> de *Study Data Technical Conformance* do FDA e no *Data Standards Catalog*
-> antes de montar um pacote real.
+> **Verificar (fonte):** versões aceitas e datas de corte evoluem. Confirme os
+> requisitos vigentes nos documentos de *Study Data Technical Conformance* do FDA
+> e no *Data Standards Catalog* (fda.gov) antes de montar um pacote real.
 
 ## Conformidade: Pinnacle 21 e validação
 

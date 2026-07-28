@@ -187,7 +187,13 @@ de mundo real que não seguem o caminho regulado clássico.
 ## Faixas salariais (ordens de grandeza)
 
 Trate tudo abaixo como **ordem de grandeza** para comparar papéis entre si — não
-como números fixos, que variam por região, empresa e ano:
+como números fixos, que variam por região, empresa e ano. Como âncora pública, o
+**BLS** (*Bureau of Labor Statistics* dos EUA) reporta, para *Statisticians*
+(código SOC 15-2041), uma **mediana de US$103.300/ano** (dados de maio de 2024) e
+projeta **crescimento de 8% entre 2024 e 2034** — bem acima da média das
+ocupações. No mercado de bioestatística, faixas típicas ficam por volta de
+**US$90–120 mil** na entrada e **US$130–180 mil ou mais** em níveis sênior; para
+programação estatística, o início costuma ser parecido ou um pouco menor.
 
 - **Statistical Programmer** e **Biostatistician** costumam ter faixas
   **parecidas** nos níveis iniciais e intermediários, ambos entre os cargos bem
@@ -200,9 +206,9 @@ como números fixos, que variam por região, empresa e ano:
 - **Clinical Data Scientist** varia muito — pode alcançar as faixas mais altas
   quando o papel é sênior e técnico, mas o título por si só não garante isso.
 
-> **Verificar:** confirmar faixas salariais atuais em fontes de mercado (BLS,
-> pesquisas salariais de recrutadores de pharma) antes de publicar quaisquer
-> números específicos.
+> **Verificar (fonte):** salários mudam a cada ano e por região. Antes de citar
+> números específicos a alguém, confira o dado mais recente no BLS
+> (bls.gov/ooh) e em pesquisas salariais de recrutadores de pharma.
 
 ## Como escolher entre biostat e programming
 
