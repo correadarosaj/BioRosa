@@ -59,7 +59,7 @@ existência** da medida do endpoint. E aqui está o ponto crucial: **dependendo 
 como você lida com cada um, o "mesmo" endpoint mede coisas diferentes**. "Mudança
 de pressão até a semana 12" é ambíguo até você dizer o que fez com esses casos.
 
-O framework de **estimands**, formalizado no **ICH E9(R1)** (uma adenda ao
+O framework de **estimands**, formalizado no **ICH E9(R1)** (uma adenda à
 guideline E9, publicada em 2019), existe para acabar com essa ambiguidade. Ele
 força você a definir, **antes de coletar dados**, exatamente qual quantidade está
 estimando.

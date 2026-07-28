@@ -20,7 +20,7 @@ aqui.
 | Termo / Sigla | Forma completa (EN) | Definição (PT) |
 |---|---|---|
 | **ADAE** | AE Analysis Dataset | Dataset ADaM de análise dos **eventos adversos**, derivado do domínio AE do SDTM, em estrutura de ocorrência (OCCDS). Alimenta as tabelas de segurança. Ver Cap. 18 e 21. |
-| **ADaM** | Analysis Data Model | Padrão CDISC para os datasets **de análise** — os dados já derivados e prontos para gerar as TLFs. Deriva do SDTM e prioriza rastreabilidade. Ver Cap. 18. |
+| **ADaM** | Analysis Data Model | Padrão CDISC para os datasets **de análise** — os dados já derivados e prontos para gerar os TLFs. Deriva do SDTM e prioriza rastreabilidade. Ver Cap. 18. |
 | **ADLB** | Laboratory Analysis Dataset | Dataset ADaM de análise dos **resultados laboratoriais**, derivado do domínio LB, em estrutura BDS. Ver Cap. 18. |
 | **ADRG** | Analysis Data Reviewer's Guide | Documento que acompanha os datasets ADaM na submissão, explicando decisões de derivação e desvios ao revisor do FDA. Ver Cap. 19. |
 | **ADSL** | Subject-Level Analysis Dataset | Dataset ADaM com **uma linha por sujeito**. É a espinha dorsal do ADaM: carrega populações de análise, braços de tratamento, datas-chave e covariáveis. Ver Cap. 18. |
@@ -42,7 +42,7 @@ aqui.
 | **CDISC** | Clinical Data Interchange Standards Consortium | Organização que define os padrões de dados clínicos (CDASH, SDTM, ADaM, Define-XML, Controlled Terminology) exigidos pelo FDA. Ver Cap. 16. |
 | **CDM** | Clinical Data Management | Gestão de dados clínicos: função responsável por coletar, limpar e validar os dados do estudo até o database lock. Ver Cap. 12. |
 | **CFR (21 CFR Part 11)** | Code of Federal Regulations, Title 21, Part 11 | Regulamento do FDA sobre **registros e assinaturas eletrônicas** — base para validação de sistemas e trilha de auditoria. Ver Cap. 7. |
-| **CI / IC** | Confidence Interval / Intervalo de Confiança | Faixa de valores plausíveis para um parâmetro estimado (ex.: IC 95%). Acompanha quase toda estimativa nas TLFs. Ver Cap. 11. |
+| **CI / IC** | Confidence Interval / Intervalo de Confiança | Faixa de valores plausíveis para um parâmetro estimado (ex.: IC 95%). Acompanha quase toda estimativa nos TLFs. Ver Cap. 11. |
 | **CM** | Concomitant Medications | Domínio SDTM das medicações concomitantes usadas pelo participante durante o estudo. |
 | **CRF** | Case Report Form | Formulário (hoje quase sempre eletrônico, *eCRF*) onde os dados de cada participante são registrados no centro de pesquisa. Ver Cap. 8. |
 | **CRO** | Contract Research Organization | Empresa que executa pesquisa clínica sob contrato para os sponsors. Frequentemente a porta de entrada mais acessível para quem vem de fora. Ver Cap. 1. |
