@@ -68,6 +68,7 @@ build_epub() {
     --number-sections \
     --top-level-division=chapter \
     --split-level=1 \
+    --mathml \
     "${css_arg[@]}" "${cover_arg[@]}" \
     -o "$OUT_DIR/do-brasil-ao-fda.epub"
   echo "  -> $OUT_DIR/do-brasil-ao-fda.epub"
