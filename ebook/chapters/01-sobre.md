@@ -1,6 +1,6 @@
 # Sobre este livro {.unnumbered}
 
-## Para quem é este livro
+## Para quem é este livro {.unnumbered}
 
 Este livro foi escrito para você que:
 
@@ -20,7 +20,7 @@ Você **não** precisa ser PhD. Você **não** precisa já falar inglês fluente
 (embora vá precisar desenvolvê-lo). Você **não** precisa ter experiência prévia
 em pharma. O que você precisa é de um mapa — e é isso que este livro entrega.
 
-## O que você vai aprender
+## O que você vai aprender {.unnumbered}
 
 Ao final, você terá uma compreensão prática e conectada de todo o fluxo de
 trabalho estatístico em um ensaio clínico regulado, além da estratégia para
@@ -42,7 +42,7 @@ entrar nesse mercado:
 7. **Carreira** — como montar portfólio, currículo e passar na entrevista
    técnica americana, com um plano de ação de 90 dias.
 
-## Como usar este livro
+## Como usar este livro {.unnumbered}
 
 Você pode ler de capa a capa — é a forma recomendada na primeira vez, porque
 cada parte constrói sobre a anterior. Mas cada capítulo também funciona como
@@ -64,7 +64,7 @@ Os **apêndices** trazem um glossário PT/EN completo, templates prontos (SAP,
 shells de TLF, sinopse de protocolo) e checklists que você pode usar no trabalho
 real.
 
-## Uma nota sobre precisão e responsabilidade
+## Uma nota sobre precisão e responsabilidade {.unnumbered}
 
 A pesquisa clínica é um campo **regulado e vivo**. As diretrizes citadas aqui
 (FDA, ICH, CDISC) são atualizadas periodicamente, e as regras de imigração dos
@@ -73,7 +73,7 @@ aplicar qualquer coisa em um trabalho real — ou de tomar uma decisão de visto
 confirme a versão vigente na fonte oficial e, no caso de imigração, consulte um
 advogado. Veja o aviso legal nas primeiras páginas.
 
-## Sobre o autor
+## Sobre o autor {.unnumbered}
 
 Joel Corrêa da Rosa, PhD, é bioestatístico com **15 anos de experiência nos
 Estados Unidos** e integra o corpo docente (*Research Track — Quantitative
