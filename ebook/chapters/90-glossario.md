@@ -101,7 +101,7 @@ aqui.
 | **OPT** | Optional Practical Training | Autorização de trabalho temporária para estudantes internacionais nos EUA após a formatura (via F-1). Uma porta de entrada comum. Ver Cap. 3. |
 | **PARAM / PARAMCD** | Parameter / Parameter Code | Variáveis ADaM (BDS) que identificam o parâmetro analisado: `PARAM` é o texto descritivo, `PARAMCD` é o código curto. Ver Cap. 18. |
 | **PD** | Pharmacodynamics | Farmacodinâmica: o que a droga faz ao organismo (efeitos e mecanismo de ação). Contraparte da PK. Ver Cap. 10. |
-| **Per-protocol (PP)** | Per-Protocol population | População de análise que inclui apenas os sujeitos que **seguiram o protocolo** sem desvios majoritários. Usada como sensibilidade da ITT. Ver Cap. 14. |
+| **Per-protocol (PP)** | Per-Protocol population | População de análise que inclui apenas os sujeitos que **seguiram o protocolo** sem desvios maiores. Usada como sensibilidade da ITT. Ver Cap. 14. |
 | **PHUSE** | Pharmaceutical Users Software Exchange | Comunidade global de profissionais de dados clínicos; publica padrões de qualidade (ex.: whitepapers e o repositório de *TLF standards*). Ótima fonte gratuita. Ver Cap. 26. |
 | **Pinnacle 21** | Pinnacle 21 (Community / Enterprise) | Ferramenta de validação de conformidade CDISC (SDTM/ADaM/Define-XML) usada de fato pela indústria e pelo FDA. A versão Community é gratuita. Ver Cap. 19. |
 | **PK** | Pharmacokinetics | Farmacocinética: o que o organismo faz com a droga (absorção, distribuição, metabolismo e excreção). Ver Cap. 10. |

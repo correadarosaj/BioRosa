@@ -89,7 +89,7 @@ clássicas:
 > acontecer depois. É a espinha dorsal da análise confirmatória de eficácia.
 
 Em estudos de **superioridade**, a ITT costuma ser a análise primária. Em
-estudos de **não inferioridade**, a divergência entre ITT e per-protocol merece
+estudos de **não-inferioridade**, a divergência entre ITT e per-protocol merece
 atenção especial, porque a ITT pode mascarar uma diferença real.
 
 ### Multiplicidade

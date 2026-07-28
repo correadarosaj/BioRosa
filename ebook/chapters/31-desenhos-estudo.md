@@ -56,8 +56,8 @@ aceitável**. Por que alguém iria querer provar só isso?
 
 Porque muitas vezes o novo tratamento tem outra vantagem — é mais barato, mais
 seguro, mais cômodo (uma pílula em vez de injeção), ou tem menos efeitos
-colaterais. Não precisa ser *mais eficaz*; basta **não ser meaningfully menos
-eficaz**, e aí as outras vantagens justificam seu uso. Além disso, quando já
+colaterais. Não precisa ser *mais eficaz*; basta **não ser menos eficaz de forma
+clinicamente relevante**, e aí as outras vantagens justificam seu uso. Além disso, quando já
 existe um tratamento eficaz para a doença, dar **placebo** aos pacientes pode
 ser antiético — então o comparador tem que ser o tratamento ativo, e a pergunta
 natural vira "o novo é pelo menos tão bom quanto o padrão?".
