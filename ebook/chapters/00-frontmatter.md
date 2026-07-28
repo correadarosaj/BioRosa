@@ -12,7 +12,7 @@ CDISC (SDTM/ADaM) · TLFs
 
 ### Direitos autorais {.unnumbered .unlisted}
 
-© 2026 Joel Correa da Rosa. Todos os direitos reservados.
+© 2026 Joel Corrêa da Rosa. Todos os direitos reservados.
 
 Nenhuma parte desta obra pode ser reproduzida, distribuída ou transmitida por
 qualquer meio, eletrônico ou mecânico, incluindo fotocópia, gravação ou

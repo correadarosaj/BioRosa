@@ -75,7 +75,7 @@ advogado. Veja o aviso legal nas primeiras páginas.
 
 ## Sobre o autor
 
-Joel Correa da Rosa, PhD, é bioestatístico com **15 anos de experiência nos
+Joel Corrêa da Rosa, PhD, é bioestatístico com **15 anos de experiência nos
 Estados Unidos** e integra o corpo docente (*Research Track — Quantitative
 Sciences*) do Departamento de Dermatologia da Icahn School of Medicine at Mount
 Sinai, em Nova York. Sua atuação une bioestatística e ciências quantitativas à

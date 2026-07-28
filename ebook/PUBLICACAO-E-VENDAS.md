@@ -116,6 +116,24 @@ Ganchos de título/subtítulo para testar (A/B) na Hotmart: "Do Brasil ao FDA",
 "Bioestatística Clínica para o Mercado Americano", "A Ponte para a Pharma dos
 EUA".
 
+### Sobre o autor — versão curta (para a página de vendas / LinkedIn)
+
+Use este parágrafo no bloco "sobre o autor" da página de vendas (KDP e Hotmart)
+e como resumo de LinkedIn. Autoridade do autor é um dos maiores gatilhos de
+conversão para um produto técnico como este:
+
+> **Joel Corrêa da Rosa, PhD** — Bioestatístico com **15 anos de experiência nos
+> Estados Unidos** (Icahn School of Medicine at Mount Sinai, Nova York). Atua em
+> pesquisa clínica e translacional, multi-ômica e ensaios clínicos, com R,
+> Python, GraphPad Prism e PLINK. Coautor de artigos de alto impacto em
+> dermatologia e imunologia. Escreveu este guia para abrir caminho a outros
+> profissionais brasileiros no mercado americano.
+
+Versão de uma linha (bio de LinkedIn / assinatura):
+
+> *Bioestatístico há 15 anos nos EUA (Mount Sinai) · pesquisa clínica, ensaios e
+> multi-ômica · R · Python · autor de "Do Brasil ao FDA".*
+
 ---
 
 ## 4. Impostos e recebimento (leia com atenção)

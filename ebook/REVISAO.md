@@ -43,9 +43,9 @@ fontes oficiais e incorporados ao texto** com a informação vigente em julho de
 
 Estas são pessoais/administrativas — não posso preenchê-las por você:
 
-- [x] **Nome do autor** — "Joel Correa da Rosa, PhD" inserido em `metadata.yaml`,
-      `chapters/00-frontmatter.md`, `chapters/01-sobre.md` e na capa.
-      *(Confirmar: grafia com/sem acento "Corrêa"? manter "PhD"?)*
+- [x] **Nome do autor** — "Joel Corrêa da Rosa, PhD" (grafia PT confirmada, com
+      acento) inserido em `metadata.yaml`, `chapters/00-frontmatter.md`,
+      `chapters/01-sobre.md` e na capa.
 - [x] **Bio "Sobre o autor"** — escrita em `chapters/01-sobre.md` a partir dos
       feitos do currículo (Mount Sinai, IL-13/tralokinumabe, NIH, patente em tape
       strips). *(Revisar dados e ajustar tom se desejar.)*
