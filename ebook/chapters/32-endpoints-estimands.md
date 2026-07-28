@@ -69,21 +69,21 @@ estimando.
 O ICH E9(R1) define um estimand por **cinco atributos**. Especifique os cinco e
 sua pergunta fica sem ambiguidade:
 
-1. **População** (*population*): quais pacientes? Definida pelos critérios de
+1. **Tratamento** (*treatment*): o tratamento de interesse e o comparador — ex.:
+   medicamento X vs. placebo, nas condições especificadas.
+2. **População** (*population*): quais pacientes? Definida pelos critérios de
    elegibilidade — ex.: adultos hipertensos com pressão sistólica acima de certo
    valor.
-2. **Variável (endpoint)** (*variable/endpoint*): a medida em cada paciente —
+3. **Variável (endpoint)** (*variable/endpoint*): a medida em cada paciente —
    ex.: mudança na pressão sistólica da semana 0 à 12.
-3. **Eventos intercorrentes** (*intercurrent events*) e a **estratégia** para
+4. **Eventos intercorrentes** (*intercurrent events*) e a **estratégia** para
    lidar com cada um — o atributo novo e mais importante, detalhado abaixo.
-4. **Resumo populacional** (*population-level summary*): como se resume a
+5. **Resumo populacional** (*population-level summary*): como se resume a
    variável para comparar os grupos — ex.: a **diferença de médias** entre X e
    placebo, ou um hazard ratio, ou um odds ratio.
 
-Isso dá cinco itens porque a população, a variável, os eventos intercorrentes
-(com suas estratégias) e o resumo se combinam para descrever uma única quantidade
-bem definida — o estimand. Mude qualquer atributo e você está estimando outra
-coisa.
+Os cinco atributos se combinam para descrever uma única quantidade bem definida —
+o estimand. Mude qualquer um deles e você está estimando outra coisa.
 
 ## As cinco estratégias para eventos intercorrentes
 
