@@ -102,7 +102,7 @@ repetível". Três disciplinas sustentam isso:
   "pareça" certa, é motivo de reprovação.
 - **Versionamento:** o código dos TLFs é controlado (Git ou o sistema da
   empresa), com histórico de mudanças. Cada versão da tabela rastreia até a
-  versão do código e à versão do ADaM que a gerou.
+  versão do código e a versão do ADaM que a gerou.
 - **Reprodutibilidade:** rodar de novo, na mesma entrada, tem de dar
   **exatamente** o mesmo resultado. É isso que permite ao revisor do FDA
   reexecutar seu código sobre seus dados e chegar ao seu número — o coração de

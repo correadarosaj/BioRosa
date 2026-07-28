@@ -149,7 +149,7 @@ reconciliar unidades quando sites diferentes coletam em unidades diferentes. O
   onde a CT pede `M` é uma não conformidade.
 - **Datas fora do ISO 8601.** As variáveis `--DTC` usam formato ISO 8601
   (`AAAA-MM-DD` e derivados). Datas em outro formato quebram a validação.
-- **Esquerdar o `--SEQ`.** Cada registro precisa de sequência única por sujeito
+- **Esquecer o `--SEQ`.** Cada registro precisa de sequência única por sujeito
   dentro do domínio.
 
 > **Atenção:** o **USUBJID** é sagrado. Ele é a chave que costura o mesmo

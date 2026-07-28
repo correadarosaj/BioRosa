@@ -86,7 +86,7 @@ como se pensa antes de tocar nos dados. Inclua:
   (população, variável, evento intercorrente, resumo populacional);
 - o **método** para o endpoint primário (ex.: um MMRM — *Mixed Model for
   Repeated Measures*) e como você trataria dados faltantes;
-- a lista dos **outputs** planejados (as TLFs que você vai gerar).
+- a lista dos **outputs** planejados (os TLFs que você vai gerar).
 
 > **Na prática:** manter o mini-SAP e os TLFs coerentes é o exercício mais
 > valioso do projeto inteiro. Se o SAP promete uma tabela de demografia por

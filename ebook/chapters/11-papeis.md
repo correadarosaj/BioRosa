@@ -43,7 +43,7 @@ planos. O biostatistician escreve e valida análises, mas em muitas empresas
 delega a produção em massa de TLFs aos programadores.
 
 **Formação usual:** mestrado ou doutorado em **Bioestatística**, Estatística,
-Epidemiologia ou área afim. É o papel onde credencial acadêmica pesa mais — um
+Epidemiologia ou área afim. É o papel em que credencial acadêmica pesa mais — um
 mestrado costuma ser o piso esperado, e o PhD abre as portas mais rápido para
 funções de desenho de estudo.
 
@@ -228,7 +228,7 @@ programação estatística, o início costuma ser parecido ou um pouco menor.
   quatro principais são Biostatistician, Statistical Programmer, Clinical Data
   Manager e Clinical Data Scientist.
 - O **Biostatistician** é o dono dos métodos (SAP, desenho, estimand,
-  interpretação) e é o papel onde credencial acadêmica pesa mais.
+  interpretação) e é o papel em que credencial acadêmica pesa mais.
 - O **Statistical Programmer** constrói datasets CDISC (SDTM/ADaM) e TLFs com
   rigor de dupla programação; é a **porta de entrada mais acessível** para quem
   vem de fora, com mais vagas e mais oportunidades remotas.

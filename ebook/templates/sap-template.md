@@ -126,11 +126,11 @@ total. Cite o método/software e as premissas. Deve bater com o protocolo.]*
 |---|---|---|
 | Randomized / ITT | Todos os sujeitos randomizados, analisados no braço alocado. | Eficácia primária |
 | mITT (se aplicável) | `<critério, ex.: ≥1 dose e ≥1 avaliação pós-baseline>` | `< >` |
-| Per-Protocol (PP) | Sujeitos sem desvios majoritários pré-especificados. | Sensibilidade da eficácia |
+| Per-Protocol (PP) | Sujeitos sem desvios maiores pré-especificados. | Sensibilidade da eficácia |
 | Safety | Todos que receberam ≥1 dose, analisados pelo tratamento **recebido**. | Todas as análises de segurança |
 
 *[Descreva também como serão listados e classificados os desvios de protocolo
-majoritários que excluem da PP.]*
+maiores que excluem da PP.]*
 
 ## 11. Considerações gerais de análise
 

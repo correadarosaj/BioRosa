@@ -135,7 +135,7 @@ Aqui o código entra em cena, e o trabalho se divide em dois:
 Os TLFs seguem uma numeração padronizada que vem do **ICH E3**, a guideline que
 define a estrutura do **CSR** (*Clinical Study Report*, o relatório final do
 estudo). No CSR, as tabelas de eficácia e segurança ficam na **Seção 14**, e por
-convecção histórica os grupos são:
+convenção histórica os grupos são:
 
 | Numeração | Conteúdo |
 |---|---|
