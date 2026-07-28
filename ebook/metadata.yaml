@@ -1,0 +1,38 @@
+---
+title: "Do Brasil ao FDA"
+subtitle: "Guia Completo de Bioestatística Clínica para Profissionais Brasileiros que Querem Trabalhar nos Estados Unidos — Regulamentações, Protocolos, SAP, CDISC e TLFs"
+author: "[Seu Nome — preencher]"
+lang: pt-BR
+date: "2026"
+rights: "© 2026. Todos os direitos reservados."
+publisher: "BioRosa"
+subject: "Bioestatística; Pesquisa Clínica; CDISC; Regulação FDA; Carreira"
+keywords:
+  - bioestatística
+  - pesquisa clínica
+  - SAP
+  - CDISC
+  - SDTM
+  - ADaM
+  - TLF
+  - FDA
+  - carreira internacional
+description: >
+  Guia prático e completo, em português, para profissionais brasileiros de
+  bioestatística e programação estatística que desejam atuar na indústria
+  farmacêutica e em CROs nos Estados Unidos. Cobre o cenário regulatório
+  (FDA/ICH/GCP), protocolos de pesquisa clínica, redação de Statistical
+  Analysis Plans (SAP), os padrões CDISC (SDTM/ADaM/Define-XML) e a produção
+  de TLFs, além da estratégia de transição de carreira (vistos, currículo e
+  entrevistas).
+toc: true
+toc-depth: 2
+numbersections: true
+linkcolor: "RoyalBlue"
+urlcolor: "RoyalBlue"
+geometry: "margin=2.5cm"
+fontsize: 11pt
+mainfont: "DejaVu Serif"
+sansfont: "DejaVu Sans"
+monofont: "DejaVu Sans Mono"
+---

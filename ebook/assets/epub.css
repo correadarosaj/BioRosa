@@ -1,0 +1,60 @@
+/* epub.css — estilo básico e legível para o EPUB */
+
+body {
+  font-family: Georgia, "DejaVu Serif", serif;
+  line-height: 1.55;
+  margin: 5%;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Helvetica Neue", "DejaVu Sans", sans-serif;
+  line-height: 1.2;
+  page-break-after: avoid;
+}
+
+h1 { font-size: 1.8em; margin-top: 1.2em; }
+h2 { font-size: 1.4em; color: #1a3d6d; }
+h3 { font-size: 1.15em; color: #244; }
+
+code, pre {
+  font-family: "DejaVu Sans Mono", Consolas, monospace;
+  font-size: 0.9em;
+}
+
+pre {
+  background: #f4f6f8;
+  padding: 0.8em;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+blockquote {
+  border-left: 4px solid #1a3d6d;
+  margin-left: 0;
+  padding-left: 1em;
+  color: #333;
+  font-style: italic;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+  margin: 1em 0;
+}
+
+th, td {
+  border: 1px solid #bbb;
+  padding: 0.4em 0.6em;
+  text-align: left;
+}
+
+th { background: #eef2f7; }
+
+/* Caixas de destaque via blockquote com marcador no texto */
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 2em 0;
+}
