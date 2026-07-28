@@ -1,20 +1,16 @@
-# Do Brasil ao FDA {.unnumbered}
+# Créditos e informações legais {.unnumbered .unlisted}
 
-**Guia Completo de Bioestatística Clínica para Profissionais Brasileiros que
-Querem Trabalhar nos Estados Unidos**
+**Do Brasil ao FDA** — Guia Completo de Bioestatística Clínica para
+Profissionais Brasileiros que Querem Trabalhar nos Estados Unidos
 
 Regulamentações · Protocolos de Pesquisa Clínica · Statistical Analysis Plans ·
 CDISC (SDTM/ADaM) · TLFs
-
----
-
-*[Seu Nome — preencher]*
 
 1ª edição · 2026
 
 ---
 
-### Direitos autorais {.unnumbered}
+### Direitos autorais {.unnumbered .unlisted}
 
 © 2026 [Seu Nome]. Todos os direitos reservados.
 
@@ -29,7 +25,7 @@ ISBN: *[preencher ao publicar — ver Apêndice B / KDP]*
 
 ---
 
-### Aviso legal {.unnumbered}
+### Aviso legal {.unnumbered .unlisted}
 
 Este livro tem finalidade **educacional e informativa**. Ele reflete práticas,
 padrões e diretrizes vigentes do setor de pesquisa clínica no momento da
@@ -51,7 +47,7 @@ citados apenas para fins ilustrativos e educacionais.
 
 ---
 
-### Dedicatória {.unnumbered}
+### Dedicatória {.unnumbered .unlisted}
 
 *Para cada profissional brasileiro que olhou para uma vaga internacional e
 pensou "isso não é para mim" — este livro é a prova de que é.*

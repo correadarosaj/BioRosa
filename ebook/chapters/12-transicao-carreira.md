@@ -38,7 +38,12 @@ bioestatística e programação. O empregador é quem **patrocina** (*sponsors*)
 petição.
 
 O grande obstáculo é a **loteria**. A demanda por H-1B excede em muito o número
-de vistos disponíveis por ano, então há um **sorteio anual** (o *H-1B cap*).
+de vistos disponíveis por ano, então há um **teto anual** (o *H-1B cap*) de
+**65.000** vagas, mais **20.000** reservadas a quem tem **mestrado ou grau
+superior** de instituição dos EUA. Como a procura ultrapassa esse limite, faz-se
+um **registro eletrônico** seguido de **sorteio**. Desde o ano fiscal de 2025 a
+seleção é **beneficiary-centric** (por pessoa, não por registro), o que reduziu
+inscrições duplicadas. A taxa de registro passou para **US$215** por beneficiário.
 Você pode ter a oferta de emprego perfeita e ainda assim não ser sorteado — e
 aí espera o próximo ciclo. É uma questão de sorte, não de mérito.
 
@@ -48,9 +53,16 @@ aí espera o próximo ciclo. É uma questão de sorte, não de mérito.
 > vale perguntar cedo se a empresa **patrocina visto** — muitas descrições de
 > vaga dizem explicitamente.
 
-> **Verificar:** confirmar com advogado o calendário e as regras vigentes do
-> registro do H-1B cap e eventuais mudanças na regra de seleção (o processo já
-> passou por revisões recentes).
+> **Em mudança recente (confirme com advogado):** dois pontos estão em fluxo em
+> meados de 2026 e podem mudar o custo e a lógica de seleção do H-1B:
+> uma **proclamação de setembro de 2025** instituiu uma taxa de **US$100.000**
+> para **certas petições H-1B novas** — medida **sob litígio** e que, pelo texto,
+> **não se aplica** a extensões nem a *change of status* de quem já está nos EUA;
+> e uma **regra de seleção ponderada por salário** (*wage-based*) ficou
+> **efetiva em 27/02/2026** para o ciclo do FY2027, favorecendo ofertas de
+> salário mais alto. Como ambas são recentes e podem ser alteradas por decisão
+> judicial ou nova regulamentação, **confirme as regras vigentes com um advogado
+> de imigração** e em uscis.gov antes de tomar qualquer decisão.
 
 Há uma isenção importante da loteria: posições em **universidades e institutos
 de pesquisa sem fins lucrativos** frequentemente são **cap-exempt** (isentas do
@@ -65,9 +77,13 @@ comprovar reconhecimento por meio de publicações, prêmios, participação com
 revisor, palestras, cartas de referência de especialistas, contribuições
 originais reconhecidas, e assim por diante.
 
-Para quem vem da **academia** (mestrado/PhD com publicações), o O-1 pode ser
-mais alcançável do que parece — vale conversar com um advogado sobre montar o
-dossiê ao longo do tempo, tratando prêmios e publicações como ativos de carreira.
+O O-1 é um visto **não imigrante** (temporário) e, ao contrário do EB-2 NIW,
+**não permite autopetição**: exige um **patrocinador ou agente nos EUA** que
+apresente a petição por você. Para quem vem da **academia** (mestrado/PhD com
+publicações), ele pode ser mais alcançável do que parece — vale conversar com um
+advogado de imigração sobre montar o dossiê ao longo do tempo, tratando prêmios e
+publicações como ativos de carreira. Tanto o O-1 quanto o EB-2 NIW são decididos
+**caso a caso**, então uma avaliação individual do seu perfil é indispensável.
 
 ### EB-2 NIW — o green card por interesse nacional
 
@@ -104,14 +120,18 @@ período trabalhando na unidade de origem.
 
 Uma rota clássica é **estudar nos EUA**. Com o visto de estudante **F-1**, após
 concluir um curso elegível você pode trabalhar temporariamente sob o **OPT**
-(*Optional Practical Training*). Como bioestatística e áreas afins são campos
-**STEM**, você pode se qualificar para uma **extensão STEM OPT**, ganhando um
-período total de trabalho autorizado bastante maior — tempo durante o qual o
-empregador pode patrociná-lo para o H-1B (com mais chances de passar pela
-loteria ao longo de múltiplos anos).
+(*Optional Practical Training*) por **12 meses**. Como **Estatística e
+Bioestatística são áreas STEM** (família de códigos CIP 27), você pode se
+qualificar para uma **extensão STEM OPT de mais 24 meses** — totalizando **até 36
+meses** de trabalho autorizado, tempo durante o qual o empregador pode
+patrociná-lo para o H-1B (com mais chances de passar pela loteria ao longo de
+múltiplos anos). A extensão STEM exige alguns requisitos: diploma **STEM elegível**
+de escola certificada pelo **SEVP**, empregador inscrito no **E-Verify** e um
+plano de treinamento formal, o **Form I-983**.
 
-> **Verificar:** confirmar com advogado/DSO a duração vigente do OPT e da
-> extensão STEM e os requisitos de elegibilidade, que podem mudar.
+> **Verificar (fonte):** durações e requisitos de elegibilidade do OPT/STEM OPT
+> podem mudar. Confirme as regras vigentes com o **DSO** da sua escola e um
+> advogado de imigração, e em uscis.gov, antes de contar com prazos específicos.
 
 Fazer um mestrado em Bioestatística nos EUA é caro, mas resolve três problemas
 de uma vez: credencial reconhecida localmente, autorização de trabalho via
@@ -145,12 +165,14 @@ Nos EUA não existe um processo único de "revalidação" como o brasileiro para
 maioria das profissões de dados — bioestatística e programação **não são
 profissões regulamentadas** que exijam licença. O que costuma acontecer é uma
 **avaliação de equivalência** (*credential evaluation*) feita por agências
-especializadas (como WES, ECE e outras), que traduzem o seu diploma brasileiro
-para o equivalente americano. Empregadores e universidades pedem isso com
-frequência.
+especializadas, que traduzem o seu diploma brasileiro para o equivalente
+americano. Empregadores e universidades pedem isso com frequência. A recomendação
+geral é usar um avaliador **membro da NACES** (*National Association of Credential
+Evaluation Services*) — a **WES** e a **ECE** são dois membros bastante aceitos.
 
-> **Verificar:** confirmar quais agências de *credential evaluation* são aceitas
-> pelo empregador ou pela universidade-alvo antes de contratar o serviço.
+> **Verificar (fonte):** ainda assim, confirme com o empregador ou a
+> universidade-alvo qual avaliador específico eles aceitam antes de contratar o
+> serviço; a lista de membros vigente está em naces.org.
 
 A boa notícia: como a área não é licenciada, o que mais pesa é a **evidência de
 que você sabe fazer o trabalho** — portfólio, experiência regulada, domínio de
