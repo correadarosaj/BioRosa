@@ -199,7 +199,7 @@ mudança foi motivada pelos resultados.
 - **Objetivo**, **endpoint** e **estimand** são três níveis de precisão
   crescente: a pergunta, a régua e a quantidade-alvo exata (incluindo o que
   fazer com eventos intercorrentes).
-- Mudanças no protocolo se fazem por **emenda**, com re-aprovação ética; mexer em
+- Mudanças no protocolo se fazem por **emenda**, com reaprovação ética; mexer em
   elementos estatísticos centrais depois de ver dados de eficácia é delicado.
 - A principal lição de carreira: o estatístico agrega mais valor **no desenho**,
   não só na análise — as decisões que definem o estudo são tomadas na fase de

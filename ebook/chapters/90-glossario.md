@@ -142,3 +142,58 @@ aqui.
 > ADSL, TLF, shell, DBL, AE/SAE/TEAE, ITT, MedDRA, define, USUBJID, PARAMCD,
 > baseline, QC, GCP, ICH E9, endpoint, estimand e sponsor. Domine esses e o resto
 > vem com o contexto.
+
+## Variáveis e domínios CDISC de referência rápida
+
+Uma consulta rápida para quando bater dúvida sobre um código de domínio SDTM ou
+o nome de uma variável num dataset. Não é exaustivo — é o que mais aparece no
+dia a dia.
+
+**Domínios SDTM**
+
+| Nome | Significado |
+|---|---|
+| **DM** | *Demographics* — demografia; uma linha por sujeito (idade, sexo, raça, braço de tratamento). |
+| **AE** | *Adverse Events* — eventos adversos registrados durante o estudo. |
+| **CM** | *Concomitant Medications* — medicações concomitantes usadas pelo participante. |
+| **EX** | *Exposure* — exposição ao tratamento do estudo (dose, datas de administração). |
+| **LB** | *Laboratory* — resultados de exames laboratoriais (hematologia, bioquímica, urinálise). |
+| **VS** | *Vital Signs* — sinais vitais (pressão, frequência cardíaca, temperatura, peso). |
+| **MH** | *Medical History* — histórico médico prévio do participante. |
+| **EG** | *ECG Test Results* — resultados de eletrocardiograma. |
+| **DS** | *Disposition* — situação/desfecho do participante no estudo (conclusão, descontinuação e motivo). |
+| **QS** | *Questionnaires* — respostas de questionários e escalas (inclui muitos PROs). |
+| **TA** | *Trial Arms* — braços e sequência de tratamento planejados do estudo (trial design). |
+| **TS** | *Trial Summary* — parâmetros-resumo do estudo (metadados do desenho, um registro por parâmetro). |
+
+**Variáveis comuns (SDTM e ADaM)**
+
+| Nome | Significado |
+|---|---|
+| **STUDYID** | (SDTM) Identificador do estudo. |
+| **DOMAIN** | (SDTM) Código de duas letras do domínio (ex.: DM, AE, VS). |
+| **USUBJID** | (SDTM) Identificador único do sujeito em todos os datasets do estudo/programa. |
+| **SUBJID** | (SDTM) Identificador do sujeito dentro do centro/estudo (não único no programa). |
+| **--SEQ** | (SDTM) Número sequencial que torna cada registro único dentro do domínio (ex.: `AESEQ`, `VSSEQ`). |
+| **VSTESTCD** | (SDTM) Código curto do teste de sinal vital (ex.: `SYSBP`, `DIABP`). |
+| **VSORRES** | (SDTM) Resultado do sinal vital no valor e unidade originais. |
+| **VSSTRESN** | (SDTM) Resultado do sinal vital padronizado, em formato numérico. |
+| **LBORRES** | (SDTM) Resultado laboratorial no valor e unidade originais. |
+| **AEDECOD** | (SDTM) Termo preferido (PT) do MedDRA para o evento adverso. |
+| **AEBODSYS** | (SDTM) System Organ Class (SOC) do MedDRA para o evento adverso. |
+| **AESER** | (SDTM) Flag de evento adverso grave — SAE (Y/N). |
+| **PARAM** | (ADaM) Descrição textual do parâmetro analisado. |
+| **PARAMCD** | (ADaM) Código curto do parâmetro (chave de programação). |
+| **AVAL** | (ADaM) Valor de análise numérico. |
+| **AVALC** | (ADaM) Valor de análise em texto (contraparte de `AVAL`). |
+| **AVISIT** | (ADaM) Visita de análise (ponto de tempo nominal). |
+| **BASE** | (ADaM) Valor de baseline do parâmetro. |
+| **CHG** | (ADaM) Mudança em relação ao baseline (`AVAL` − `BASE`). |
+| **ABLFL** | (ADaM) Flag que marca o registro usado como baseline (Y). |
+| **TRTP / TRTA** | (ADaM) Tratamento planejado (*planned*) / efetivamente recebido (*actual*). |
+| **TRT01P** | (ADaM) Tratamento planejado no período 1. |
+| **ITTFL** | (ADaM) Flag de inclusão na população ITT (Y/N). |
+| **SAFFL** | (ADaM) Flag de inclusão na população de segurança (Y/N). |
+| **TRTEMFL** | (ADaM) Flag de evento adverso emergente do tratamento — TEAE (Y/N). |
+| **TRTSDT** | (ADaM) Data de início do tratamento. |
+| **TRTEDT** | (ADaM) Data de fim do tratamento. |
