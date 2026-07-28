@@ -20,9 +20,7 @@ outra Parte deste livro):
 O objetivo: idade (`Mean (SD)`, `Median`, `Min, Max`) e sexo (`n (%)`), por
 braço, na Safety Population.
 
-### Em SAS
-
-A abordagem clássica em SAS é **calcular** as estatísticas com uma PROC
+**Em SAS.** A abordagem clássica em SAS é **calcular** as estatísticas com uma PROC
 (`MEANS`/`SUMMARY` para contínuas, `FREQ` para categóricas), empilhar os
 resultados num dataset e **renderizar** com **PROC REPORT**. Mostrando as peças
 de cálculo, sem a montagem completa:
@@ -54,9 +52,7 @@ literalmente célula a célula e controla a formatação com `PROC REPORT`. É
 verboso, mas dá controle total sobre cada caractere — motivo de o FDA ter
 convivido com SAS por décadas.
 
-### Em R
-
-Em R, a rota mais direta para tabelas descritivas é o pacote **gtsummary**, que
+**Em R.** Em R, a rota mais direta para tabelas descritivas é o pacote **gtsummary**, que
 com uma única chamada produz a tabela inteira já formatada:
 
 ```r
@@ -82,7 +78,7 @@ adsl |>
 Uma chamada, a tabela pronta. A diferença de filosofia é gritante: SAS
 **constrói** a tabela; gtsummary **declara** a tabela e a biblioteca a monta.
 
-### Resultado esperado (as duas produzem)
+**Resultado esperado (as duas produzem):**
 
 | Characteristic | Placebo (N=98) | Drug 10 mg (N=101) | Overall (N=199) |
 |---|---|---|---|
@@ -99,9 +95,7 @@ O objetivo: número de **pacientes** (contagem única) com qualquer TEAE, TEAE
 sério e assim por diante, por braço, na Safety Population. O detalhe crítico é
 a **contagem de sujeitos únicos**: um paciente com cinco AEs conta uma vez.
 
-### Em SAS
-
-O truque é reduzir o ADAE a um paciente por linha por categoria antes de contar.
+**Em SAS.** O truque é reduzir o ADAE a um paciente por linha por categoria antes de contar.
 Usa-se `PROC SQL` com `COUNT(DISTINCT USUBJID)` ou uma deduplicação com
 `PROC SORT NODUPKEY`, e depois `PROC FREQ`:
 
@@ -133,9 +127,7 @@ O ponto de atenção é o **denominador**: ele vem do `ADSL` (todos os pacientes
 de segurança), **não** do `ADAE` (só os que tiveram algum evento). Confundir os
 dois é um erro clássico que infla os percentuais.
 
-### Em R
-
-Aqui vale mostrar o ecossistema **pharmaverse**: os pacotes **rtables** e
+**Em R.** Aqui vale mostrar o ecossistema **pharmaverse**: os pacotes **rtables** e
 **tern** foram desenhados especificamente para tabelas clínicas regulatórias.
 Para um overview simples, gtsummary também resolve, contando pacientes únicos:
 
@@ -172,7 +164,7 @@ denominador. Em `rtables`/`tern`, o mesmo se faz com layouts explícitos
 (`analyze`, `summarize_row_groups`) — mais verboso, porém mais próximo do
 controle fino que ambientes regulados exigem em tabelas complexas de AE.
 
-### Resultado esperado
+**Resultado esperado:**
 
 | Event category | Placebo (N=98) | Drug 10 mg (N=101) |
 |---|---|---|

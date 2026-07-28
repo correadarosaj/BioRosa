@@ -21,24 +21,18 @@ e Japão — publicou a guideline **E6 (Good Clinical Practice, ou GCP)**, que
 lista os itens que um protocolo deve conter. Na prática, quase todo protocolo
 tem estas seções, nesta ordem aproximada:
 
-### Título e sinopse
-
-O **título** identifica o estudo e costuma codificar o desenho: fase, população,
+**Título e sinopse.** O **título** identifica o estudo e costuma codificar o desenho: fase, população,
 intervenção, comparador. A **sinopse** (*synopsis*) é um resumo de 2 a 5 páginas
 que condensa o estudo inteiro — objetivos, desenho, tamanho amostral, endpoints.
 Muitas vezes é a única parte que executivos e revisores leem primeiro. Se você
 souber escrever uma boa sinopse, você entendeu o estudo.
 
-### Contexto e justificativa (background e rationale)
-
-O **background** revisa o que já se sabe: a doença, os tratamentos existentes,
+**Contexto e justificativa (background e rationale).** O **background** revisa o que já se sabe: a doença, os tratamentos existentes,
 os dados pré-clínicos e de fases anteriores. O **rationale** (justificativa)
 responde à pergunta "por que este estudo, com este desenho, agora?". É aqui que
 se ancora, por exemplo, a escolha do comparador ou da dose.
 
-### Objetivos e endpoints
-
-Esta é a seção que mais interessa ao estatístico, e vamos voltar a ela em
+**Objetivos e endpoints.** Esta é a seção que mais interessa ao estatístico, e vamos voltar a ela em
 detalhe. Os **objetivos** (*objectives*) dizem o que o estudo quer descobrir; os
 **endpoints** (desfechos) dizem como isso será medido. Separam-se em:
 
@@ -49,45 +43,33 @@ detalhe. Os **objetivos** (*objectives*) dizem o que o estudo quer descobrir; os
 - **Exploratórios** (*exploratory*): hipóteses de geração de conhecimento, sem
   controle formal de erro — servem para orientar estudos futuros.
 
-### Desenho do estudo
-
-O **desenho** (*study design*) descreve a arquitetura: grupos paralelos ou
+**Desenho do estudo.** O **desenho** (*study design*) descreve a arquitetura: grupos paralelos ou
 crossover, randomizado ou não, cego ou aberto, número de braços, duração,
 número de visitas. Um diagrama de fluxo (*study schema*) quase sempre acompanha.
 O próximo capítulo é inteiramente dedicado a desenhos.
 
-### População e critérios de elegibilidade
-
-Define **quem** pode entrar. Os **critérios de inclusão** (*inclusion criteria*)
+**População e critérios de elegibilidade.** Define **quem** pode entrar. Os **critérios de inclusão** (*inclusion criteria*)
 dizem quem é elegível (ex.: adultos com determinado diagnóstico confirmado); os
 **critérios de exclusão** (*exclusion criteria*) dizem quem fica de fora (ex.:
 gestantes, comorbidade grave, uso de certo medicamento). Juntos, definem a
 população-alvo — e, portanto, para quem os resultados vão valer.
 
-### Tratamentos
-
-Descreve as **intervenções** (*treatments/interventions*): o produto em
+**Tratamentos.** Descreve as **intervenções** (*treatments/interventions*): o produto em
 investigação, a dose, a via, o esquema, e o comparador (placebo ou tratamento
 ativo). Inclui regras de ajuste de dose, medicação concomitante permitida e
 proibida, e critérios de descontinuação.
 
-### Cronograma de avaliações (schedule of assessments)
-
-O **schedule of assessments** (cronograma de avaliações) é uma tabela grande que
+**Cronograma de avaliações (schedule of assessments).** O **schedule of assessments** (cronograma de avaliações) é uma tabela grande que
 lista, para cada visita, tudo o que será feito: exames, coletas de sangue,
 questionários, medidas de eficácia e de segurança. Para o estatístico e o
 programador, essa tabela é ouro: ela define **quais variáveis existem e em quais
 momentos** — a base do futuro dataset.
 
-### Considerações estatísticas
-
-A **seção de considerações estatísticas** (*statistical considerations*) é o
+**Considerações estatísticas.** A **seção de considerações estatísticas** (*statistical considerations*) é o
 coração quantitativo do protocolo. Voltamos a ela na próxima seção, porque é
 onde você vai passar boa parte da sua vida profissional.
 
-### Ética e consentimento
-
-Descreve a proteção dos participantes: aprovação por um **IRB** (*Institutional
+**Ética e consentimento.** Descreve a proteção dos participantes: aprovação por um **IRB** (*Institutional
 Review Board*) ou comitê de ética, o processo de **consentimento informado**
 (*informed consent*), confidencialidade e o comitê independente de monitoramento
 de segurança (**DSMB**, *Data Safety Monitoring Board*) quando existe.
