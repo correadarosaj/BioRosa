@@ -108,6 +108,30 @@ repetível". Três disciplinas sustentam isso:
   reexecutar seu código sobre seus dados e chegar ao seu número — o coração de
   por que R e SAS são aceitos.
 
+## Como o QC se encaixa no cronograma
+
+Um mal-entendido comum de quem chega de fora é imaginar o QC como um carimbo no
+final, feito às pressas na véspera da entrega. Na prática bem organizada, é o
+contrário: o QC caminha **em paralelo** com a produção. Enquanto o production
+programmer escreve a tabela de demografia, o QC programmer já está montando a
+sua versão independente a partir do mesmo shell. As duas se encontram, comparam
+e resolvem discrepâncias antes de o output ser considerado pronto.
+
+Isso muda o ritmo de trabalho de um jeito que vale internalizar desde o começo:
+o *database lock* não é a largada da produção nem do QC — os dois já correram
+contra dados de teste e dados parciais (*dry runs*) muito antes. O lock apenas
+troca a entrada pelos dados reais e definitivos, e dispara a rodada final. Um
+time que só começa o QC depois que tudo foi produzido está, por definição,
+atrasado e sob risco de deixar erro passar por pressa.
+
+> **Na prática:** a métrica silenciosa de um bom programador de QC não é
+> "encontrar muitos erros" nem "nunca encontrar nenhum" — é a **rastreabilidade
+> do que foi verificado**. Ao pegar uma discrepância entre produção e QC, o
+> reflexo certo não é "conserto o meu código até bater com o dele", e sim
+> **investigar qual dos dois está certo** contra o shell, o SAP e o ADaM. Às
+> vezes é a produção que erra; às vezes é o QC. Descobrir e documentar qual é
+> qual é o trabalho — não fazer os números baterem a qualquer custo.
+
 ## Entrega e handoff
 
 Quando produção e QC batem, a tabela é **assinada** como validada e liberada
