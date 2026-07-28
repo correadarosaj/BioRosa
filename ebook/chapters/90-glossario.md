@@ -94,7 +94,7 @@ aqui.
 | **MMRM** | Mixed Model for Repeated Measures | Modelo misto para medidas repetidas — método de referência para dados longitudinais contínuos, que usa todos os dados observados sem imputação explícita. Ver Cap. 14. |
 | **MNAR** | Missing Not At Random | Mecanismo de dados faltantes em que a falta depende do **próprio valor não observado** — o caso mais problemático, que exige análises de sensibilidade. Ver Cap. 14. |
 | **NDA** | New Drug Application | Pedido de aprovação de comercialização de um **medicamento** ao FDA. Contraparte do BLA (para biológicos). Ver Cap. 5. |
-| **NI** | Non-Inferiority | Não inferioridade: desenho/hipótese que busca demonstrar que um tratamento não é pior que o comparador por mais do que uma margem pré-especificada. Ver Cap. 9. |
+| **NI** | Non-Inferiority | Não-inferioridade: desenho/hipótese que busca demonstrar que um tratamento não é pior que o comparador por mais do que uma margem pré-especificada. Ver Cap. 9. |
 | **NIH** | National Institutes of Health | Principal agência de pesquisa biomédica dos EUA; financia muitos estudos acadêmicos via *grants*. Ver Cap. 1. |
 | **NIW** | National Interest Waiver | Dispensa de interesse nacional dentro da categoria EB-2: permite pedir o green card sem oferta de emprego nem certificação trabalhista. Ver Cap. 3. |
 | **OCCDS** | Occurrence Data Structure | Estrutura ADaM para dados de **ocorrência** (eventos adversos, medicações concomitantes) — uma linha por evento registrado. Ver Cap. 18. |

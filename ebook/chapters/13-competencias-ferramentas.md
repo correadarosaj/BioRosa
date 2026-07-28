@@ -21,7 +21,7 @@ entrar nesse mercado, comece por ela. Por quê?
 - **Ambiente validado:** empresas reguladas investem pesado em *validar* suas
   ferramentas (provar que produzem resultados corretos e reproduzíveis). O SAS
   chega com essa validação e o suporte comercial que a indústria exige.
-- **Massa crítica:** a maior parte do código legado, dos macros internos e das
+- **Massa crítica:** a maior parte do código legado, das macros internas e das
   vagas ainda pede SAS. Saber SAS é o que mais rápido te torna **empregável**
   hoje.
 
