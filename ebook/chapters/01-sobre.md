@@ -64,6 +64,31 @@ Os **apêndices** trazem um glossário PT/EN completo, templates prontos (SAP,
 shells de TLF, sinopse de protocolo) e checklists que você pode usar no trabalho
 real.
 
+## O vocabulário do mercado é em inglês {.unnumbered}
+
+Desde já, um aviso que vai te acompanhar o livro inteiro: você vai encontrar
+**muitos termos em inglês** — *Statistical Analysis Plan*, *dataset*, *endpoint*,
+*shell*, *estimand*, *double programming* — e dezenas de siglas (SAP, CDISC,
+SDTM, ADaM, TLF, DSMB…). Isso é **intencional**.
+
+Na pesquisa clínica regulada, a língua de trabalho é o inglês, e esses termos
+**não são traduzidos** no dia a dia — nem nas empresas brasileiras que atendem o
+mercado americano. Uma vaga vai pedir *"experience with SDTM and ADaM"*; um
+colega vai perguntar se você *"já congelou o SAP"*. Aprender o vocabulário na
+forma como ele realmente aparece **é parte de estar pronto para o mercado** — tão
+importante quanto a técnica em si.
+
+Por isso, a estratégia deste livro é te expor a esse vocabulário aos poucos e com
+apoio: cada termo novo vem com a explicação em português na **primeira vez** que
+aparece; muitos títulos de seção trazem o termo em inglês entre parênteses,
+justamente para você fixar a forma usada no campo; e **tudo** está reunido no
+**Glossário PT/EN** (Apêndice A) para consulta rápida.
+
+Um conselho: **não pule esses termos nem tente traduzi-los mentalmente toda vez.**
+Vá se acostumando com eles no original. Quando *"vou rodar o ADaM e gerar os
+TLFs"* soar natural para você, terá dado um passo concreto rumo ao mercado
+americano.
+
 ## Uma nota sobre precisão e responsabilidade {.unnumbered}
 
 A pesquisa clínica é um campo **regulado e vivo**. As diretrizes citadas aqui

@@ -36,7 +36,7 @@ As guidelines são organizadas em famílias por letra:
 > própria adoção via guidance). Citar a revisão errada em um documento
 > regulado é um erro de credibilidade.
 
-## E6 — Good Clinical Practice (GCP)
+## E6 — Boas Práticas Clínicas (Good Clinical Practice, GCP)
 
 A **E6** define as **Boas Práticas Clínicas** (*Good Clinical Practice*, ou
 **GCP**): o padrão ético e científico internacional para desenhar, conduzir,
@@ -102,7 +102,7 @@ como Bonferroni, procedimentos hierárquicos (*fixed-sequence*), Hochberg e
 *gatekeeping* são as ferramentas; o ponto conceitual é: a estratégia é
 **definida antes** de ver os dados e documentada no SAP.
 
-### Missing data (conceitual)
+### Dados faltantes (conceitual)
 
 Pacientes abandonam estudos, faltam visitas, medidas se perdem. A E9 alerta que
 **dados faltantes podem enviesar** os resultados e que o estudo deve ter um
@@ -110,7 +110,7 @@ Pacientes abandonam estudos, faltam visitas, medidas se perdem. A E9 alerta que
 quanto na análise. O tratamento de missing data conecta-se diretamente com a
 ideia de **estimand**, que a revisão E9(R1) trouxe para o centro do palco.
 
-## E9(R1) — o addendum sobre estimands
+## E9(R1) — o adendo sobre estimands
 
 A **E9(R1)** é um *addendum* (complemento) à E9 que introduziu um framework para
 uma pergunta aparentemente simples: **o que exatamente estamos tentando
@@ -148,7 +148,7 @@ porque o tema é hoje um dos mais valorizados e mais cobrados em entrevistas.
 > Saber explicar, com suas palavras, o que é um evento intercorrente e como ele
 > muda o efeito estimado te coloca imediatamente acima da média.
 
-## E3 — o Clinical Study Report (CSR)
+## E3 — o Relatório de Estudo Clínico (Clinical Study Report, CSR)
 
 A **E3**, *Structure and Content of Clinical Study Reports*, define o formato do
 **CSR** — o relatório completo e integrado de um único estudo clínico, com
@@ -160,7 +160,7 @@ soltas — elas alimentam o CSR. Entender a estrutura E3 ajuda você a saber **q
 tabelas** são esperadas, em que ordem, e como a seção de resultados estatísticos
 se encaixa no todo.
 
-## E8 — General Considerations for Clinical Studies
+## E8 — Considerações Gerais para Estudos Clínicos
 
 A **E8(R1)**, *General Considerations for Clinical Studies*, é a guideline
 "guarda-chuva" que apresenta os princípios gerais de desenho e condução de
@@ -172,7 +172,7 @@ esforço nos fatores que realmente importam para a confiabilidade dos resultados
 alto nível (tipos de estudo, fatores críticos de qualidade) sobre o qual as
 guidelines mais específicas, como a E9, se apoiam.
 
-## M4 — o Common Technical Document (CTD/eCTD)
+## M4 — o Documento Técnico Comum (Common Technical Document, CTD/eCTD)
 
 A **M4** define o **CTD** (*Common Technical Document*): a **estrutura
 padronizada** em que toda a submissão regulatória é organizada, dividida em

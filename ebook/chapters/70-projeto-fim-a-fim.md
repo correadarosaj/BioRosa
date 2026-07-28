@@ -12,7 +12,7 @@ GitHub — usando **dados clínicos públicos e sintéticos**. É a peça que
 transforma a frase "estou estudando pharma" em "olha aqui o que eu já sei
 fazer".
 
-## Por que um projeto end-to-end é a sua melhor arma
+## Por que um projeto de ponta a ponta (end-to-end) é a sua melhor arma
 
 Um recrutador de CRO ou pharma vê dezenas de currículos que dizem "conheço
 CDISC" e "familiaridade com SAS/R". Palavras são baratas. Um **repositório

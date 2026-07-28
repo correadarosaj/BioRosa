@@ -35,7 +35,7 @@ O segundo bullet começa com verbo (*derived*, *produced*), nomeia ferramentas e
 padrões reais, e descreve um entregável concreto. Verbos úteis: *developed,
 programmed, derived, validated, automated, authored, implemented, reviewed*.
 
-### As keywords que passam pelo ATS
+### As palavras-chave (keywords) que passam pelo ATS
 
 Grande parte das candidaturas em pharma/CRO passa primeiro por um **ATS**
 (*Applicant Tracking System*, o sistema que filtra currículos por

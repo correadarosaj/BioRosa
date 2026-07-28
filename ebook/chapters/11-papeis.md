@@ -12,7 +12,7 @@ você imagina.
 Vamos destrinchar os quatro principais: **Biostatistician**, **Statistical
 Programmer**, **Clinical Data Manager** e **Clinical Data Scientist**.
 
-## Biostatistician
+## Bioestatístico (Biostatistician)
 
 O **Biostatistician** (bioestatístico) é o dono dos **métodos**. É quem decide
 *como* o estudo vai ser analisado e responde por essas escolhas perante o
@@ -52,7 +52,7 @@ Biostatistician → Director / VP of Biostatistics. A progressão vai de "execut
 análises sob supervisão" a "define a estratégia estatística de um programa
 inteiro e negocia com o FDA".
 
-## Statistical Programmer (SAS/R programmer)
+## Programador estatístico (Statistical Programmer, SAS/R)
 
 O **Statistical Programmer** (programador estatístico, também chamado de *SAS
 programmer* ou *clinical programmer*) é quem **constrói os dados e os
@@ -100,7 +100,7 @@ programadores.
 > acadêmica é menor que na bioestatística, e muitas dessas vagas são
 > **remotas** — o que reduz a barreira geográfica e de visto no começo.
 
-## Clinical Data Manager
+## Gerente de dados clínicos (Clinical Data Manager)
 
 O **Clinical Data Manager** (gerente de dados clínicos, CDM) cuida da
 **qualidade e integridade dos dados** antes de eles chegarem à análise. É um
@@ -137,7 +137,7 @@ atenção a processo e conhecimento de GCP (*Good Clinical Practice*).
 → Data Management Lead / Manager. É um papel de carreira sólido por si só, e
 também um ponto de contato frequente com os times de programação e estatística.
 
-## Clinical Data Scientist
+## Cientista de dados clínicos (Clinical Data Scientist)
 
 O **Clinical Data Scientist** é o papel mais **novo e menos padronizado** dos
 quatro — o título significa coisas diferentes em empresas diferentes. Em geral,
@@ -210,7 +210,7 @@ programação estatística, o início costuma ser parecido ou um pouco menor.
 > números específicos a alguém, confira o dado mais recente no BLS
 > (bls.gov/ooh) e em pesquisas salariais de recrutadores de pharma.
 
-## Como escolher entre biostat e programming
+## Como escolher entre bioestatística e programação
 
 > **Dica de carreira:** se você **gosta de programar** e quer a rota de entrada
 > mais rápida e com barreira de credencial mais baixa, mire **statistical

@@ -119,7 +119,7 @@ filtros aplicar, como derivar cada estatística, como ordenar, como tratar
 missing. Em times enxutos, o shell bem anotado já cumpre esse papel; em big
 pharma, é um documento formal separado.
 
-### 4. Programação — production e QC
+### 4. Programação — produção (production) e QC
 
 Aqui o código entra em cena, e o trabalho se divide em dois:
 

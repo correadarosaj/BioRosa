@@ -91,7 +91,7 @@ Este é o núcleo do framework. Para cada tipo de evento intercorrente, o E9(R1)
 oferece cinco estratégias. Vou ilustrar todas com o mesmo caso concreto: **um
 paciente que descontinua o tratamento na semana 6** por um efeito adverso.
 
-### 1. Treatment policy
+### 1. Política de tratamento (treatment policy)
 
 Você ignora a descontinuação e usa o valor observado na semana 12
 **independentemente** de o paciente ter parado o tratamento. A pergunta é sobre
@@ -104,7 +104,7 @@ de ele parar.
 *No caso*: mede-se a pressão dele na semana 12, mesmo tendo largado o remédio na
 6, e esse valor entra na análise normalmente.
 
-### 2. Hypothetical
+### 2. Hipotética (hypothetical)
 
 Você estima o que teria acontecido num **cenário hipotético** em que o evento não
 ocorreu — ex.: "qual seria a pressão se o paciente **tivesse continuado** o
@@ -114,7 +114,7 @@ suposições explícitas.
 *No caso*: estima-se a pressão que o paciente teria na semana 12 **se não tivesse
 descontinuado**, tipicamente por imputação sob um modelo.
 
-### 3. Composite
+### 3. Composta (composite)
 
 O evento intercorrente vira **parte da definição do desfecho** — em geral como
 fracasso. Descontinuar por efeito adverso passa a contar como "não respondeu".
@@ -122,7 +122,7 @@ fracasso. Descontinuar por efeito adverso passa a contar como "não respondeu".
 *No caso*: como o paciente descontinuou por efeito adverso, ele é classificado
 como **falha de tratamento**, independentemente da pressão medida.
 
-### 4. While-on-treatment
+### 4. Durante o tratamento (while-on-treatment)
 
 Você considera só o valor **enquanto o paciente estava em tratamento**, até o
 momento do evento.
@@ -130,7 +130,7 @@ momento do evento.
 *No caso*: usa-se a última medida **antes** da descontinuação (a da semana 6, por
 exemplo); o que vem depois é ignorado, porque não reflete o tratamento.
 
-### 5. Principal stratum
+### 5. Estrato principal (principal stratum)
 
 Você foca no **subgrupo (estrato) de pacientes que não teriam** o evento
 intercorrente — ex.: só naqueles que tolerariam o tratamento. É conceitualmente
@@ -148,7 +148,7 @@ tolera o tratamento.
 > tratamento?"; a hypothetical, "qual é o efeito farmacológico se tomado como
 > prescrito?". São perguntas diferentes.
 
-## Relação com ITT e com missing data
+## Relação com a ITT e com os dados faltantes
 
 Dois pontos que confundem quem está aprendendo:
 

@@ -132,7 +132,7 @@ atrasado e sob risco de deixar erro passar por pressa.
 > vezes é a produção que erra; às vezes é o QC. Descobrir e documentar qual é
 > qual é o trabalho — não fazer os números baterem a qualquer custo.
 
-## Entrega e handoff
+## Entrega e transferência (handoff)
 
 Quando produção e QC batem, a tabela é **assinada** como validada e liberada
 para o CSR e a submissão. O *handoff* (a entrega) inclui, além do output: o

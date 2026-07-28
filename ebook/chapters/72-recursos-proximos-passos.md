@@ -64,7 +64,7 @@ específicas. Os mais reconhecidos na área:
 > especifica, variável por variável, como montar um domínio SDTM ou um dataset
 > ADaM. É a fonte da verdade — e é pública.
 
-## Livros e guidelines para estudar
+## Livros e diretrizes (guidelines) para estudar
 
 Para aprofundar com fontes primárias e corretas:
 

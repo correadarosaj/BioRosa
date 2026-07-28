@@ -82,7 +82,7 @@ adsl |>
 Uma chamada, a tabela pronta. A diferença de filosofia é gritante: SAS
 **constrói** a tabela; gtsummary **declara** a tabela e a biblioteca a monta.
 
-### Output esperado (as duas produzem)
+### Resultado esperado (as duas produzem)
 
 | Characteristic | Placebo (N=98) | Drug 10 mg (N=101) | Overall (N=199) |
 |---|---|---|---|
@@ -93,7 +93,7 @@ Uma chamada, a tabela pronta. A diferença de filosofia é gritante: SAS
 | &nbsp;&nbsp;Male | 51 (52.0) | 55 (54.5) | 106 (53.3) |
 | &nbsp;&nbsp;Female | 47 (48.0) | 46 (45.5) | 93 (46.7) |
 
-## Tabela 2 — Overview de TEAEs
+## Tabela 2 — Visão geral dos TEAEs
 
 O objetivo: número de **pacientes** (contagem única) com qualquer TEAE, TEAE
 sério e assim por diante, por braço, na Safety Population. O detalhe crítico é
@@ -172,7 +172,7 @@ denominador. Em `rtables`/`tern`, o mesmo se faz com layouts explícitos
 (`analyze`, `summarize_row_groups`) — mais verboso, porém mais próximo do
 controle fino que ambientes regulados exigem em tabelas complexas de AE.
 
-### Output esperado
+### Resultado esperado
 
 | Event category | Placebo (N=98) | Drug 10 mg (N=101) |
 |---|---|---|

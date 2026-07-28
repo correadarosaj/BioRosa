@@ -144,7 +144,7 @@ LS Mean change (SE)                 -xx.x (xx.x)   -xx.x (xx.x)
 Fonte: **BDS** (ADEFF/ADQS). População: **ITT** (ou mITT), a população de
 eficácia definida no SAP.
 
-## 6. Adverse events — o coração da segurança
+## 6. Eventos adversos (adverse events) — o coração da segurança
 
 Os **AEs** (*adverse events*) geram várias tabelas relacionadas. Duas ideias
 governam todas elas:
@@ -161,7 +161,7 @@ governam todas elas:
   tratamento. A flag `TRTEMFL = 'Y'` no ADAE marca esses eventos, e quase toda
   tabela de AE filtra por ela.
 
-### 6a. Overview de TEAEs
+### 6a. Visão geral dos TEAEs
 
 O resumo de alto nível: quantos pacientes tiveram qualquer TEAE, TEAEs
 relacionados, TEAEs sérios, TEAEs que levaram à descontinuação, mortes.

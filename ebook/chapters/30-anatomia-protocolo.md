@@ -29,7 +29,7 @@ que condensa o estudo inteiro — objetivos, desenho, tamanho amostral, endpoint
 Muitas vezes é a única parte que executivos e revisores leem primeiro. Se você
 souber escrever uma boa sinopse, você entendeu o estudo.
 
-### Background e rationale
+### Contexto e justificativa (background e rationale)
 
 O **background** revisa o que já se sabe: a doença, os tratamentos existentes,
 os dados pré-clínicos e de fases anteriores. O **rationale** (justificativa)
@@ -71,7 +71,7 @@ investigação, a dose, a via, o esquema, e o comparador (placebo ou tratamento
 ativo). Inclui regras de ajuste de dose, medicação concomitante permitida e
 proibida, e critérios de descontinuação.
 
-### Schedule of assessments
+### Cronograma de avaliações (schedule of assessments)
 
 O **schedule of assessments** (cronograma de avaliações) é uma tabela grande que
 lista, para cada visita, tudo o que será feito: exames, coletas de sangue,

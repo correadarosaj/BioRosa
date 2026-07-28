@@ -186,7 +186,7 @@ sapply(c(10, 12, 14, 16), function(s)
 Repare como uma premissa "razoável" de σ que erra de 12 para 16 quase **dobra**
 o estudo. É por isso que a premissa de variabilidade é a que mais tira o sono.
 
-## Ajuste para dropout
+## Ajuste para perdas de seguimento (dropout)
 
 O n calculado é o número de pacientes **avaliáveis** que você precisa. Mas
 pacientes abandonam o estudo (*dropout*). Se você espera perder uma fração *r*,

@@ -119,7 +119,7 @@ Saber **ler** esses documentos com olhar crítico — encontrar o endpoint
 primário, entender a população de análise, identificar o que o SAP especifica
 para cada tabela — é uma competência que separa o júnior perdido do júnior útil.
 
-## Soft skills: o que ninguém coloca no currículo mas todo mundo avalia
+## Competências comportamentais (soft skills): o que ninguém coloca no currículo mas todo mundo avalia
 
 Num ambiente validado e regulado, o "como" importa tanto quanto o "o quê":
 
