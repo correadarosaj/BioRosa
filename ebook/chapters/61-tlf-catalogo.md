@@ -126,7 +126,7 @@ A tabela que o estudo inteiro existe para produzir. O formato depende do tipo
 de endpoint (contínuo, binário, tempo-até-evento), mas geralmente mostra o
 resultado por braço, a **estimativa do efeito do tratamento** (diferença de
 médias, odds ratio, hazard ratio) com **intervalo de confiança** e o
-**valor-p**, tudo conforme o modelo pré-especificado (ex.: MMRM, ANCOVA).
+**p-valor**, tudo conforme o modelo pré-especificado (ex.: MMRM, ANCOVA).
 
 ```text
 Table 14.2.1  —  Primary Efficacy Endpoint: Change from Baseline in [Score]

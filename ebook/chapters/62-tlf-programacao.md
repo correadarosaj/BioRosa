@@ -207,7 +207,7 @@ emmeans(fit, "TRTPN") |>
 ```
 
 Repare que **a estatística é a mesma**: um modelo linear com baseline como
-covariável, LS means, diferença com IC e valor-p. SAS usa `PROC MIXED` +
+covariável, LS means, diferença com IC e p-valor. SAS usa `PROC MIXED` +
 `LSMEANS`; R usa `lm` + `emmeans`. Números idênticos, dialetos diferentes.
 
 ## Duas filosofias, um resultado

@@ -56,7 +56,7 @@ alvo — `MMRM`, `survival analysis`, `estimands`.
 ### Estrutura sugerida do resume
 
 ```text
-[Nome]  |  cidade/país  |  email  |  LinkedIn  |  link do GitHub (portfólio)
+[Nome]  |  cidade/país  |  e-mail  |  LinkedIn  |  link do GitHub (portfólio)
 
 SUMMARY (2-3 linhas)
   Quantitative professional transitioning into clinical biostatistics /
