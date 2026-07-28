@@ -75,11 +75,26 @@ advogado. Veja o aviso legal nas primeiras páginas.
 
 ## Sobre o autor
 
-*[Preencher: seu nome, formação, experiência em bioestatística/pesquisa
-clínica, e por que você escreveu este livro. Uma boa "sobre o autor" para o
-mercado americano enfatiza credenciais verificáveis — formação, anos de
-experiência, tipos de estudo/submissão em que atuou, ferramentas dominadas.
-Mantenha 2–4 parágrafos.]*
+Joel Correa da Rosa, PhD, integra o corpo docente (*Research Track — Quantitative
+Sciences*) do Departamento de Dermatologia da Icahn School of Medicine at Mount
+Sinai, em Nova York, com atuação em bioestatística e ciências quantitativas
+aplicadas à pesquisa biomédica. Em pesquisa clínica e translacional nos Estados
+Unidos, dedica-se à aplicação de métodos estatísticos avançados — de ensaios
+clínicos à descoberta de biomarcadores.
+
+Tem coautoria em artigos de alto impacto em imunologia e dermatologia, entre eles
+um dos trabalhos mais citados sobre a normalização da inflamação tipo 2 na
+dermatite atópica com o bloqueio de IL-13 (tralokinumabe). Participa de
+consórcios científicos internacionais, colabora na revisão por pares de
+periódicos, orienta pós-graduandos e conduz pesquisa financiada por agências
+federais dos Estados Unidos (NIH). Também integrou um grupo internacional de
+pesquisadores que publicou um livro sobre cidades inteligentes. Atualmente
+desenvolve tecnologia de biomarcadores em *tape strips* para a classificação de
+endótipos, com pedido de patente em andamento.
+
+Escreveu este livro para encurtar o caminho de outros profissionais brasileiros —
+traduzindo, em português e de forma prática, o conhecimento regulatório,
+estatístico e de dados que sustenta a pesquisa clínica nos Estados Unidos.
 
 ---
 

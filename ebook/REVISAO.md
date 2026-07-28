@@ -43,10 +43,12 @@ fontes oficiais e incorporados ao texto** com a informação vigente em julho de
 
 Estas são pessoais/administrativas — não posso preenchê-las por você:
 
-- [ ] **Nome do autor** — substituir `[Seu Nome — preencher]` / `[Seu Nome]` em:
-      `metadata.yaml`, `chapters/00-frontmatter.md`, `chapters/01-sobre.md`
-      (seção "Sobre o autor") e `assets/cover.html` (depois re-renderizar a capa).
-- [ ] **Bio "Sobre o autor"** — escrever 2–4 parágrafos em `chapters/01-sobre.md`.
+- [x] **Nome do autor** — "Joel Correa da Rosa, PhD" inserido em `metadata.yaml`,
+      `chapters/00-frontmatter.md`, `chapters/01-sobre.md` e na capa.
+      *(Confirmar: grafia com/sem acento "Corrêa"? manter "PhD"?)*
+- [x] **Bio "Sobre o autor"** — escrita em `chapters/01-sobre.md` a partir dos
+      feitos do currículo (Mount Sinai, IL-13/tralokinumabe, NIH, patente em tape
+      strips). *(Revisar dados e ajustar tom se desejar.)*
 - [ ] **ISBN** — gerado gratuitamente no KDP ao publicar; inserir em
       `metadata.yaml` e `chapters/00-frontmatter.md`.
 - [ ] **Contato/comunidade** — preencher em `chapters/93-encerramento.md`.
