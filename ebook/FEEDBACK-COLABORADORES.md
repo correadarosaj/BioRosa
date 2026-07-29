@@ -8,6 +8,12 @@ preciso o "Local", mais rápido e seguro fica aplicar a correção.
 > para um markdown próprio e devolver preenchido. Também vale comentar de forma
 > livre no fim — o importante é indicar **qual capítulo** e **qual trecho**.
 
+> **Prefere editar o texto direto?** Há uma versão editável do livro inteiro em
+> um único arquivo: **`manuscrito/do-brasil-ao-fda.qmd`** (Markdown/Quarto).
+> Abra em qualquer editor de texto e altere à vontade — veja `manuscrito/README.md`
+> para o passo a passo. Use esta tabela para apontamentos pontuais; use o
+> manuscrito para reescritas maiores.
+
 ## Como preencher cada campo
 
 - **ID** — numeração sequencial (F1, F2, …) só para referência.
