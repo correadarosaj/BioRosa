@@ -1,0 +1,57 @@
+name: Publicar ebook (GitHub Pages)
+
+# Renderiza o ebook em HTML e publica no GitHub Pages.
+# Requer, uma única vez: Settings -> Pages -> Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [master]
+    paths: ['ebook/**', '.github/workflows/ebook-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Renderizar o livro em HTML
+        run: |
+          cd ebook
+          mkdir -p _site
+          pandoc metadata.yaml $(ls chapters/*.md | sort) \
+            --from=markdown+smart \
+            --standalone --embed-resources \
+            --toc --toc-depth=2 \
+            --number-sections --top-level-division=chapter \
+            --mathml \
+            --css assets/print.css \
+            -o _site/index.html
+
+      - name: Upload do artefato do Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ebook/_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
