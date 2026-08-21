@@ -329,10 +329,45 @@ enrichment_onestep <- function(genes          = NULL,
     }, error = function(e) write_log(outdir, paste("Error dotplot", prefix, e$message)))
 
     tryCatch({
-      terms  <- enrichplot::pairwise_termsim(enrich_obj)
-      p_tree <- enrichplot::treeplot(terms, showCategory = max_show, label_format = 30) +
-        ggplot2::ggtitle(paste(prefix, "Treeplot"))
-      save_plot(p_tree, file.path(outdir, paste0(prefix, "_treeplot.png")), dir = outdir)
+      # enrichplot >= 1.30 no longer wraps tip labels via `label_format`, and
+      # its default offsets draw the auto cluster tags on top of the term
+      # labels. Wrap the term names BEFORE pairwise_termsim() so the
+      # similarity-matrix rownames still match the plotted labels, then push
+      # the tag column clear of the tips and widen the canvas so nothing is
+      # clipped at the right edge.
+      tree_obj <- enrich_obj
+      tree_obj@result$Description <- vapply(
+        tree_obj@result$Description,
+        function(d) paste(strwrap(d, width = 35), collapse = "\n"),
+        character(1), USE.NAMES = FALSE
+      )
+      terms  <- enrichplot::pairwise_termsim(tree_obj)
+      draw_tree <- function(n) {
+        tryCatch(
+          enrichplot::treeplot(
+            terms, showCategory = n,
+            fontsize_tiplab = 4, fontsize_cladelab = 4,
+            hexpand = 0.35, tiplab_offset = 0.3, cladelab_offset = 3
+          ),
+          error = function(e) {
+            # older enrichplot: the layout arguments above don't exist
+            if (!grepl("unused argument|formal argument", conditionMessage(e)))
+              stop(e)
+            enrichplot::treeplot(terms, showCategory = n, label_format = 30)
+          }
+        )
+      }
+      p_tree <- tryCatch(draw_tree(max_show), error = function(e) {
+        # enrichplot bug: when the shown terms split into equally sized
+        # clusters its clade labels come back empty and treeplot() fails
+        # with "arguments imply differing number of rows"; showing one term
+        # fewer breaks the tie
+        if (!grepl("differing number of rows", conditionMessage(e))) stop(e)
+        draw_tree(min(max_show, nrow(tree_obj@result)) - 1L)
+      })
+      p_tree <- p_tree + ggplot2::ggtitle(paste(prefix, "Treeplot"))
+      save_plot(p_tree, file.path(outdir, paste0(prefix, "_treeplot.png")),
+                width = 16, height = 10, dir = outdir)
     }, error = function(e) write_log(outdir, paste("Error treeplot", prefix, e$message)))
 
     tryCatch({
