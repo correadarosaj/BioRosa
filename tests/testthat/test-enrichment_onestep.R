@@ -151,3 +151,49 @@ test_that("enrichment_onestep() completes end-to-end on a DEG list with FGSEA hi
   expect_gt(length(pngs), 0)
   expect_true(all(file.info(pngs)$size > 0))
 })
+
+test_that(".msigdbr_fetch() clears a stale cache and retries on 'RDS not found'", {
+  calls  <- 0L
+  fake_sets <- data.frame(gs_name = "HALLMARK_X", gene_symbol = "GENE1")
+
+  # Stand-in for the real msigdbr cache: a temp dir holding a leftover zip,
+  # the state an interrupted first download leaves behind.
+  fake_cache <- file.path(tempfile("msigdbr_cache_"))
+  dir.create(fake_cache)
+  file.create(file.path(fake_cache, "msigdb.2026.1.zip"))
+
+  local_mocked_bindings(
+    msigdbr = function(...) {
+      calls <<- calls + 1L
+      if (calls == 1L) stop("RDS not found: /some/cache/msigdb.2026.1.Hs.H.rds")
+      fake_sets
+    },
+    .package = "msigdbr"
+  )
+  local_mocked_bindings(
+    R_user_dir = function(...) fake_cache,
+    .package = "tools"
+  )
+
+  expect_message(
+    out <- .msigdbr_fetch(species = "human", collection = "H"),
+    "incomplete"
+  )
+  expect_identical(out, fake_sets)
+  expect_identical(calls, 2L)
+  expect_false(dir.exists(fake_cache))
+})
+
+test_that(".msigdbr_fetch() rethrows unrelated msigdbr errors unchanged", {
+  calls <- 0L
+  local_mocked_bindings(
+    msigdbr = function(...) {
+      calls <<- calls + 1L
+      stop("some other failure")
+    },
+    .package = "msigdbr"
+  )
+  expect_error(.msigdbr_fetch(species = "human", collection = "H"),
+               "some other failure", fixed = TRUE)
+  expect_identical(calls, 1L)
+})

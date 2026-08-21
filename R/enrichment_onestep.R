@@ -9,6 +9,31 @@
 #            utils, stats
 
 
+# msigdbr (>= 2025) no longer bundles the MSigDB gene sets: the first call
+# downloads a zip from Zenodo into tools::R_user_dir("msigdbr", "cache") and
+# later calls read per-collection .rds files extracted from it. If that first
+# download or extraction is interrupted, the zip is left in place but the .rds
+# files are missing -- and because msigdbr skips both download and extraction
+# whenever the zip exists, every subsequent call fails permanently with
+# "RDS not found: .../msigdb.<release>.<sp>.<coll>.rds". This wrapper detects
+# that state, wipes the stale cache, and retries once so a clean download and
+# extraction can run.
+.msigdbr_fetch <- function(...) {
+  tryCatch(
+    msigdbr::msigdbr(...),
+    error = function(e) {
+      if (!grepl("RDS not found", conditionMessage(e), fixed = TRUE)) stop(e)
+      cache_dir <- tools::R_user_dir("msigdbr", "cache")
+      message(
+        "msigdbr cache at '", cache_dir, "' is incomplete ",
+        "(interrupted first download?). Clearing it and re-downloading MSigDB."
+      )
+      unlink(cache_dir, recursive = TRUE)
+      msigdbr::msigdbr(...)
+    }
+  )
+}
+
 #' Run a one-step enrichment pipeline from a gene list and its statistics
 #'
 #' @description
@@ -369,7 +394,7 @@ enrichment_onestep <- function(genes          = NULL,
   }
 
   perform_hallmark <- function(sym, outdir, label) {
-    sets      <- msigdbr::msigdbr(species = "human", category = "H")
+    sets      <- .msigdbr_fetch(species = "human", collection = "H")
     term2gene <- sets[, c("gs_name", "gene_symbol")]
     res <- clusterProfiler::enricher(
       gene         = sym,
@@ -436,9 +461,9 @@ enrichment_onestep <- function(genes          = NULL,
     ranks <- .ranked_list(df)
     if (length(ranks) < 2) stop("Too few ranked genes for FGSEA.")
 
-    hm <- msigdbr::msigdbr(species = "human", collection = "H")
-    bp <- msigdbr::msigdbr(species = "human", collection = "C5", subcollection = "BP")
-    re <- msigdbr::msigdbr(species = "human", collection = "C2", subcollection = "REACTOME")
+    hm <- .msigdbr_fetch(species = "human", collection = "H")
+    bp <- .msigdbr_fetch(species = "human", collection = "C5", subcollection = "BP")
+    re <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "REACTOME")
 
     sets <- list(
       Hallmark = split(hm$gene_symbol, hm$gs_name),
@@ -548,9 +573,9 @@ enrichment_onestep <- function(genes          = NULL,
   rxgr <- list(UP = NULL, DOWN = NULL)
   if (run_rxgr) {
     if (is.null(rxgr_sets)) {
-      hm <- msigdbr::msigdbr(species = "human", collection = "H")
-      bp <- msigdbr::msigdbr(species = "human", collection = "C5", subcollection = "BP")
-      re <- msigdbr::msigdbr(species = "human", collection = "C2", subcollection = "REACTOME")
+      hm <- .msigdbr_fetch(species = "human", collection = "H")
+      bp <- .msigdbr_fetch(species = "human", collection = "C5", subcollection = "BP")
+      re <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "REACTOME")
       gp <- get("guttman_pathways", envir = asNamespace("BioRosa"))
       rxgr_sets <- list(
         Hallmark         = split(hm$gene_symbol, hm$gs_name),

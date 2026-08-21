@@ -86,6 +86,23 @@ scores <- muScore(biomarker_matrix)
 
 See `?<function>` for full argument documentation.
 
+## Troubleshooting
+
+### `enrichment_onestep()` fails with `RDS not found: .../msigdbr/msigdb.<release>.Hs.H.rds`
+
+Recent versions of the `msigdbr` dependency download the MSigDB gene sets on
+first use into a local cache (`tools::R_user_dir("msigdbr", "cache")`, e.g.
+`~/Library/Caches/org.R-project.R/R/msigdbr` on macOS). If that first download
+or extraction is interrupted, the cache is left half-populated and `msigdbr`
+fails with this error on every later call. Current BioRosa detects this,
+clears the cache, and re-downloads automatically; on older versions, fix it
+manually by deleting the cache and rerunning (with a working internet
+connection):
+
+```r
+unlink(tools::R_user_dir("msigdbr", "cache"), recursive = TRUE)
+```
+
 ## License
 
 MIT.
