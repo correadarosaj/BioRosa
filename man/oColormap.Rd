@@ -10,7 +10,7 @@ oColormap(colormap = "spectral", interpolate = c("spline", "linear"))
 \item{colormap}{character string naming the palette.}
 
 \item{interpolate}{interpolation method passed to
-\code{\link[grDevices:colorRamp]{grDevices::colorRampPalette()}}: \code{"spline"} (default) or \code{"linear"}.}
+\code{\link[grDevices:colorRampPalette]{grDevices::colorRampPalette()}}: \code{"spline"} (default) or \code{"linear"}.}
 }
 \value{
 A function \code{f(n)} returning a character vector of \code{n} hex colours.

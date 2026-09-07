@@ -52,7 +52,7 @@ runBigTab<-function(ebfit,adj='BH',mcut=1.2,pcut=0.05, annot=FALSE, annotTab=NUL
   pvals<-apply(pvals,2, reformatps)
   fdrs<-apply(fdrs,2, reformatps)
 
-  D<-decideTests(ebfit$p.value,method="separate",adjust.method=adj,p.value=pcut,lfc=log2(mcut),coefficients = ebfit$coef)
+  D<-limma::decideTests(ebfit$p.value,method="separate",adjust.method=adj,p.value=pcut,lfc=log2(mcut),coefficients = ebfit$coef)
   colnames(D)<-paste('StatusFCH',mcut,ifelse(adj=='none','P','FDR'),pcut,"_",ctrnames,sep='')
   Tab<-cbind(logFCHs,FCHs,pvals,fdrs,D); cn<-colnames(Tab)
 
