@@ -40,6 +40,62 @@ remotes::install_github("correadarosaj/BioRosa")
 library(BioRosa)
 ```
 
+# Command map
+
+BioRosa's functions fall into seven types, loosely following the order of an
+analysis: prepare the data, build the BigTab, then visualise and analyse.
+
+| Type | Functions | Purpose |
+|---|---|---|
+| Prepare | `deltaCtNormalize()`, `runEbfit()`, `runBigTab()`, `compute_normalization()`, `numerize()`, `pullvector()` | qPCR ΔCt normalization; reshape model fits into a BigTab; per-gene molecular normalization against a reference tissue |
+| BigTab summaries | `FromEbfit2Table()`, `process_degs()`, `extract_top()` | DEG calls, per-contrast counts, top-gene extraction |
+| Heatmaps | `doAnnotatedHeatmap()`, `doAnnotatedHeatmapGrid()`, `oColormap()`, `panel_fun()` | Annotated expression heatmaps (write PDFs) and their palettes |
+| Trajectories | `doTrajectory()`, `doTrajectoryModel()`, `summarySE()` | Observed and model-based clinical-score trajectories |
+| Enrichment | `enrichment_onestep()`, `rxgr_enrichment()`, `oSEA()`, `oSEAextract()`, `oSEAdotplot()`, `oSEAforest()`, `oRDS()` | One-call pathway pipeline and the OpenXGR-style Fisher engine |
+| Improvement | `compute_improvement()`, `aggregate_improvement()`, `plot_improvement_genes()`, `plot_improvement_subjects()`, `evaluate_improvement()`, `extractImprovement()` | Per-gene transcriptomic improvement toward non-lesional |
+| Scores & models | `muScore()`, `generate.Zscores()`, `runCor()`, `GA_logistic_regression()`, `pval2star()` | Sample-level gene-set scores, correlations, GA predictor selection, significance stars |
+
+The chart below shows how the types connect — raw data flows into the
+preparation functions, everything converges on the BigTab, and the visualise /
+analyse families read from it:
+
+```{r command-map, eval = TRUE, echo = TRUE, fig.width = 8, fig.height = 5}
+op <- par(mar = c(0, 0, 0, 0))
+plot.new(); plot.window(xlim = c(0, 10), ylim = c(0, 10))
+
+bx <- function(x, y, w, h, title, fns, fill) {
+  rect(x - w/2, y - h/2, x + w/2, y + h/2, col = fill, border = "grey35", lwd = 1.2)
+  text(x, y + h/2 - 0.28, title, font = 2, cex = 0.9)
+  text(x, y - 0.08, fns, cex = 0.72, col = "grey20")
+}
+arr <- function(x0, y0, x1, y1)
+  arrows(x0, y0, x1, y1, length = 0.12, lwd = 1.4, col = "grey30")
+
+bx(5, 9.1, 9, 1.2, "Raw data",
+   "expression matrices · long clinical tables · per-gene model fits · qPCR Ct",
+   "#EAF2FB")
+bx(5, 7.0, 9, 1.2, "Prepare",
+   "deltaCtNormalize · runEbfit · runBigTab · compute_normalization",
+   "#FDF3E3")
+bx(5, 4.9, 4.6, 1.2, "BigTab",
+   "one row per gene; lgFCH_* / pvals_* / Status_* per contrast",
+   "#EFEFEF")
+bx(2.6, 2.6, 4.6, 1.4, "Visualise",
+   "doAnnotatedHeatmap(Grid)\ndoTrajectory(Model)", "#EBF5EC")
+bx(7.4, 2.6, 4.6, 1.4, "Analyse",
+   "enrichment_onestep · oSEA\ncompute_improvement · muScore", "#F5EBF2")
+bx(5, 0.7, 9, 1.0, "Outputs",
+   "PDF figures · Excel tables · ggplot objects", "#EFEFEF")
+
+arr(5,   8.48, 5,   7.62)   # raw -> prepare
+arr(5,   6.38, 5,   5.52)   # prepare -> BigTab
+arr(4.2, 4.30, 3.0, 3.32)   # BigTab -> visualise
+arr(5.8, 4.30, 7.0, 3.32)   # BigTab -> analyse
+arr(2.6, 1.88, 4.0, 1.22)   # visualise -> outputs
+arr(7.4, 1.88, 6.0, 1.22)   # analyse -> outputs
+par(op)
+```
+
 # The BigTab: BioRosa's central data structure
 
 Most BioRosa functions revolve around a **BigTab** — a gene-indexed data frame
@@ -337,6 +393,96 @@ feeding it to a heatmap or scoring routine:
 present <- intersect(guttman_pathways[["Immune Genes (EG)"]], rownames(expr_mat))
 ```
 
+# More building blocks: syntax at a glance
+
+The sections above cover the main pipeline end to end. The remaining command
+types are collected here with minimal syntax examples — see each function's
+help page for the full argument list.
+
+## Molecular normalization
+
+`compute_normalization()` turns a long expression table (one row per
+Subject x Visit x Tissue x Gene) into per-gene log fold change of lesional skin
+against a fixed reference, at every visit; `plot_normalization()` and
+`evaluate_normalization()` (a one-call wrapper) visualise it:
+
+```{r norm-syntax}
+norm <- compute_normalization(
+  long_df,                        # columns: Gene, Value, SubjectID, Visit, Tissue
+  baseline = "BL", lesional = "LS", reference = "NL",
+  degs = deg_symbols              # or let the internal FC + p filter choose
+)
+plot_normalization(norm, reference_label = "Non-Lesional")
+
+# One call: normalize + plot + save
+evaluate_normalization(long_df, arm_col = "Arm", signature_name = "IFN signature",
+                       outdir = "results/normalization")
+```
+
+## Transcriptomic improvement
+
+The improvement family measures how far each gene (or subject) has moved from
+its baseline lesional state toward non-lesional skin:
+
+```{r improvement-syntax}
+imp <- compute_improvement(long_df, baseline = "BL", lesional = "LS",
+                           nonlesional = "NL")
+agg <- aggregate_improvement(imp, level = "subject")   # or level = "gene"
+plot_improvement_subjects(agg)
+plot_improvement_genes(aggregate_improvement(imp, level = "gene"))
+
+# One call: compute + aggregate + plot + save
+evaluate_improvement(long_df, arm_col = "Arm", outdir = "results/improvement")
+```
+
+For the older lesional / non-lesional array design, `extractImprovement()`
+computes per-gene improvement directly from pre/post matrices:
+
+```{r extract-improvement-syntax}
+impr <- extractImprovement(PRE.LS, PRE.NL, POST.LS, genes, coefs)
+```
+
+## qPCR ΔCt normalization
+
+`deltaCtNormalize()` subtracts the housekeeper's Ct from every gene, returning
+`-ΔCt` (higher = more expressed), ready for heatmaps or the BigTab pipeline:
+
+```{r deltact-syntax}
+expr <- deltaCtNormalize(ct_mat, hk = "RPLP0")
+```
+
+## Sample-level gene-set scores
+
+`generate.Zscores()` scores each sample on one gene set (mean Z over the set,
+scaled by `sqrt(k)`); `muScore()` summarises a subjects x variables matrix into
+one rank-based ordinal score per subject:
+
+```{r scores-syntax}
+z  <- generate.Zscores(expr_mat, guttman_pathways[["Immune Genes (EG)"]], "Immune")
+mu <- muScore(clin_matrix)        # subjects in rows, variables in columns
+```
+
+## Correlations, model selection, and small utilities
+
+```{r misc-syntax}
+runCor("EASI", "IL13", dat = clin)                 # quick two-column correlation
+
+fit <- GA_logistic_regression(df, response = "Responder",   # 0/1 column, name or index
+                              criterion = "AUC",            # or "AIC"
+                              popSize = 50, maxiter = 40)
+
+top <- extract_top(BigTab, ebfit = ebfit, pcut = 0.05, n = 75)  # top genes per contrast
+
+summarySE(clin, measurevar = "EASI", groupvars = c("Trt", "Visit"))
+```
+
+`pval2star()` converts p-values to significance stars (the same `***` / `**` /
+`*` / `+` scale the heatmaps and trajectory plots use):
+
+```{r pval2star-demo, eval = TRUE}
+pval2star(c(0.2, 0.07, 0.04, 0.009, 0.0005))
+```
+
 # Where to go next
 
 * `?BioRosa` — package overview and a map of every workflow.
@@ -345,6 +491,10 @@ present <- intersect(guttman_pathways[["Immune Genes (EG)"]], rownames(expr_mat)
 * `?enrichment_onestep` — the full enrichment pipeline and its options.
 * `?oSEA`, `?oSEAforest`, `?oSEAdotplot` — the OpenXGR-style engine.
 * `?runEbfit`, `?runBigTab`, `?process_degs` — building and summarising a BigTab.
+* `?compute_normalization`, `?evaluate_normalization` — molecular normalization.
+* `?compute_improvement`, `?evaluate_improvement` — transcriptomic improvement.
+* `?deltaCtNormalize` — qPCR ΔCt normalization.
+* `?muScore`, `?generate.Zscores`, `?GA_logistic_regression` — scores and models.
 
 ```{r session, eval = TRUE}
 sessionInfo()
