@@ -6,13 +6,13 @@
 #' @examples
 runCor = function(varx,vary,dat = newdata){
 
-  tempdata = dat %>%
+  tempdata = dat |>
     dplyr::select( SUBJID,
                    Y = all_of(varx),
-                   X = all_of(vary))%>%
-    distinct()%>%
-    mutate(Y = numerize(Y)) %>%
-    mutate(X = numerize(X)) %>%
+                   X = all_of(vary))|>
+    distinct()|>
+    mutate(Y = numerize(Y)) |>
+    mutate(X = numerize(X)) |>
     na.omit()
 
   cor.spearman = with(tempdata,cor.test(Y,X,method='spearman'))
@@ -26,7 +26,7 @@ runCor = function(varx,vary,dat = newdata){
     cor.pearson = cor.pearson$estimate,
     p.value.pearson = cor.pearson$p.value,
     nobs = dim(tempdata)[1]
-  ) %>% remove_rownames()
+  ) |> remove_rownames()
 
 
   return(outx)

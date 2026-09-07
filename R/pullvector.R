@@ -6,5 +6,5 @@
 #' @examples
 
 pullvector<-function(data,var='GENENAME'){
-  data %>% dplyr::select({{var}}) %>% pull()
+  data |> dplyr::select({{var}}) |> pull()
 }

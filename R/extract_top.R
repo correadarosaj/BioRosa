@@ -30,11 +30,11 @@ extract_top <-
 
 
       if(method == 'none'){
-      BigTab = BigTab %>% dplyr::select(GENENAME,
+      BigTab = BigTab |> dplyr::select(GENENAME,
                                         fch = contains(paste0('lgFCH', cont)),
                                         pval = contains(paste0('pvals', cont)))
       }else if(method == 'fdr'){
-        BigTab = BigTab %>% dplyr::select(GENENAME,
+        BigTab = BigTab |> dplyr::select(GENENAME,
                                           fch = contains(paste0('lgFCH', cont)),
                                           pval = contains(paste0('fdrs', cont)))
       }
@@ -48,22 +48,22 @@ extract_top <-
           p.value = pcut,
           adjust.method = method,
           sort.by = 'logFC'
-        ) %>% data.frame() %>%
-          rownames_to_column('GENENAME') %>%
-          dplyr::select(GENENAME) %>% pull()
+        ) |> data.frame() |>
+          rownames_to_column('GENENAME') |>
+          dplyr::select(GENENAME) |> pull()
 
       } else if (direction == 'up') {
-        Top = BigTab %>% dplyr::filter(pval < pcut &
-                                         fch > 0) %>%
-          dplyr::arrange(desc(fch)) %>% head(n) %>%
-          dplyr::select(GENENAME) %>%
+        Top = BigTab |> dplyr::filter(pval < pcut &
+                                         fch > 0) |>
+          dplyr::arrange(desc(fch)) |> head(n) |>
+          dplyr::select(GENENAME) |>
           pull()
 
       } else if (direction == 'down') {
-        Top = BigTab %>% dplyr::filter(pval < pcut &
-                                         fch < 0) %>%
-          dplyr::arrange(fch) %>% head(n) %>%
-          dplyr::select(GENENAME) %>%
+        Top = BigTab |> dplyr::filter(pval < pcut &
+                                         fch < 0) |>
+          dplyr::arrange(fch) |> head(n) |>
+          dplyr::select(GENENAME) |>
           pull()
 
       }

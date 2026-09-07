@@ -37,13 +37,13 @@ require(tidyverse)
     AvsB = runif(10,-2,2),
     AvsC = runif(10,-6,6),
     BvsC = runif(10,-2,2)
-  ) %>% as.matrix()
+  ) |> as.matrix()
 
   fdr.matrix = cbind.data.frame(
     AvsB = runif(10,0,.25),
     AvsC = runif(10,0,.25),
     BvsC = runif(10,0,.25)
-  ) %>% as.matrix()
+  ) |> as.matrix()
 
 
 
