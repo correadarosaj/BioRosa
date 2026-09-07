@@ -17,15 +17,20 @@ test_that("process_degs() rejects bad inputs", {
   expect_error(process_degs(),                  "data frame", fixed = TRUE)
   expect_error(process_degs(BigTab = list()),   "data frame", fixed = TRUE)
   expect_error(
-    process_degs(BigTab = data.frame(x = 1)),
-    "GENENAME",
-    fixed = TRUE
-  )
-  expect_error(
     process_degs(BigTab = make_bigtab(), cont.list = character(0)),
     "non-empty",
     fixed = TRUE
   )
+})
+
+test_that("process_degs() falls back to row names when GENENAME is missing", {
+  bt <- make_bigtab()
+  rownames(bt) <- bt$GENENAME
+  bt$GENENAME  <- NULL
+  xlsx <- withr::local_tempfile(fileext = ".xlsx")
+  res  <- process_degs(bt, "A_vs_B", FCH = 1, pcut = 0.05, method = "fdr",
+                       output_xlsx = xlsx)
+  expect_equal(sort(res$degs$A_vs_B), c("EGFR", "MYC", "TP53"))
 })
 
 test_that("process_degs() returns correct counts and DEG vectors", {

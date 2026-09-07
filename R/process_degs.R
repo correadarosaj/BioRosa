@@ -75,10 +75,18 @@ process_degs <- function(BigTab,
                          method      = c("none", "fdr"),
                          output_xlsx = "degs.xlsx") {
 
-  if (missing(BigTab) || !is.data.frame(BigTab))
-    stop("`BigTab` must be a data frame.")
-  if (!"GENENAME" %in% colnames(BigTab))
-    stop("`BigTab` must contain a `GENENAME` column.")
+  if (missing(BigTab) || !(is.data.frame(BigTab) || is.matrix(BigTab)))
+    stop("`BigTab` must be a data frame or matrix.")
+
+  # `runBigTab()` returns a matrix with genes as row names and no GENENAME
+  # column; fall back to row names in that case, per the documented BigTab
+  # contract ("genes live in a GENENAME column, or the row names").
+  if (is.matrix(BigTab)) BigTab <- as.data.frame(BigTab, stringsAsFactors = FALSE)
+  if (!"GENENAME" %in% colnames(BigTab)) {
+    if (is.null(rownames(BigTab)))
+      stop("`BigTab` must contain a `GENENAME` column or have row names.")
+    BigTab$GENENAME <- rownames(BigTab)
+  }
   if (missing(cont.list) || !is.character(cont.list) || length(cont.list) == 0)
     stop("`cont.list` must be a non-empty character vector.")
   method <- match.arg(method)
