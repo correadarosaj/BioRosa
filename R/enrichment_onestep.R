@@ -146,6 +146,18 @@
 #'   bundled [guttman_pathways] lab list.
 #' @param rxgr_fdr FDR cut-off applied when keeping RXGR terms for the tables and
 #'   figures. Default `0.05`.
+#' @param write_summary Logical. When `TRUE` (default), after all tables are
+#'   written the function calls [biorosa_summary()] on `output_dir` to build a
+#'   single cross-method consensus report (`report.html`, a summary figure,
+#'   publication-text draft and supporting CSVs) under `summary_output_dir`. The
+#'   call is wrapped so any failure is logged but never aborts the enrichment
+#'   run. Set `FALSE` to skip.
+#' @param summary_output_dir Destination for the consensus summary. `NULL`
+#'   (default) uses `file.path(output_dir, "biorosa_consensus_summary")`.
+#' @param summary_args Named list of extra arguments forwarded to
+#'   [biorosa_summary()] (e.g. `list(contrast = "...", reverse = TRUE, top_n = 8)`).
+#'   `contrast` defaults to the `contrast` suffix when supplied via `BigTab`.
+#'   `overwrite = TRUE` is passed by default so re-running refreshes the summary.
 #'
 #' @return A named list:
 #'   * `fgsea` — named per-collection list (`Hallmark`, `GO_BP`, `Reactome`),
@@ -157,6 +169,9 @@
 #'   * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
 #'     [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
 #'     `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
+#'   * `summary` — the invisible return of [biorosa_summary()] (evidence,
+#'     themes, figure, publication text, file paths, ...), or `NULL` when
+#'     `write_summary = FALSE` or the summary step failed.
 #'
 #' @examples
 #' \dontrun{
@@ -195,7 +210,10 @@ enrichment_onestep <- function(genes          = NULL,
                                rank_by         = c("lgFCH", "FCH", "signed_pval"),
                                run_rxgr        = TRUE,
                                rxgr_sets       = NULL,
-                               rxgr_fdr        = 0.05) {
+                               rxgr_fdr        = 0.05,
+                               write_summary      = TRUE,
+                               summary_output_dir = NULL,
+                               summary_args       = list()) {
 
   rank_by <- match.arg(rank_by)
 
@@ -643,5 +661,34 @@ enrichment_onestep <- function(genes          = NULL,
   write_log(output_dir, "Pipeline finished.")
   message("=== PIPELINE IS FINISHED ===")
 
-  list(fgsea = fgsea_results, ora = ora, gsea = gsea, rxgr = rxgr)
+  # ---- Consensus summary report ----
+  # Synthesize every table just written under `output_dir` into a single
+  # cross-method consensus report + figure via biorosa_summary(). Run last so
+  # it sees the complete output tree, and wrapped so a summary failure (e.g. a
+  # missing optional package) is logged but never aborts the enrichment run.
+  summary_res <- NULL
+  if (isTRUE(write_summary)) {
+    sum_dir <- if (is.null(summary_output_dir))
+      file.path(output_dir, "biorosa_consensus_summary") else summary_output_dir
+    call_args <- utils::modifyList(
+      list(path = output_dir, output_dir = sum_dir, overwrite = TRUE),
+      summary_args
+    )
+    # Default the human-readable contrast label to the BigTab `contrast` suffix
+    # when the caller supplied one and did not override it in `summary_args`.
+    if (is.null(call_args$contrast) && !is.null(contrast)) call_args$contrast <- contrast
+    summary_res <- tryCatch(
+      do.call(biorosa_summary, call_args),
+      error = function(e) {
+        msg <- paste("biorosa_summary skipped:", conditionMessage(e))
+        message(msg); write_log(output_dir, msg)
+        NULL
+      }
+    )
+    if (!is.null(summary_res))
+      write_log(output_dir, paste("Consensus summary written to:", sum_dir))
+  }
+
+  list(fgsea = fgsea_results, ora = ora, gsea = gsea, rxgr = rxgr,
+       summary = summary_res)
 }
