@@ -22,7 +22,10 @@ enrichment_onestep(
   rank_by = c("lgFCH", "FCH", "signed_pval"),
   run_rxgr = TRUE,
   rxgr_sets = NULL,
-  rxgr_fdr = 0.05
+  rxgr_fdr = 0.05,
+  write_summary = TRUE,
+  summary_output_dir = NULL,
+  summary_args = list()
 )
 }
 \arguments{
@@ -93,6 +96,21 @@ bundled \link{guttman_pathways} lab list.}
 
 \item{rxgr_fdr}{FDR cut-off applied when keeping RXGR terms for the tables and
 figures. Default \code{0.05}.}
+
+\item{write_summary}{Logical. When \code{TRUE} (default), after all tables are
+written the function calls \code{\link[=biorosa_summary]{biorosa_summary()}} on \code{output_dir} to build a
+single cross-method consensus report (\code{report.html}, a summary figure,
+publication-text draft and supporting CSVs) under \code{summary_output_dir}. The
+call is wrapped so any failure is logged but never aborts the enrichment
+run. Set \code{FALSE} to skip.}
+
+\item{summary_output_dir}{Destination for the consensus summary. \code{NULL}
+(default) uses \code{file.path(output_dir, "biorosa_consensus_summary")}.}
+
+\item{summary_args}{Named list of extra arguments forwarded to
+\code{\link[=biorosa_summary]{biorosa_summary()}} (e.g. \code{list(contrast = "...", reverse = TRUE, top_n = 8)}).
+\code{contrast} defaults to the \code{contrast} suffix when supplied via \code{BigTab}.
+\code{overwrite = TRUE} is passed by default so re-running refreshes the summary.}
 }
 \value{
 A named list:
@@ -106,6 +124,9 @@ gives direction).
 \item \code{rxgr}  — list with \verb{$UP} and \verb{$DOWN}, each a per-collection
 \code{\link[=rxgr_enrichment]{rxgr_enrichment()}} result (\verb{$table}, \verb{$dotplot}, \verb{$forest}, ...);
 \code{NULL} entries when \code{run_rxgr = FALSE} or a direction has no genes.
+\item \code{summary} — the invisible return of \code{\link[=biorosa_summary]{biorosa_summary()}} (evidence,
+themes, figure, publication text, file paths, ...), or \code{NULL} when
+\code{write_summary = FALSE} or the summary step failed.
 }
 }
 \description{
