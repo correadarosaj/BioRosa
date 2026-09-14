@@ -11,7 +11,8 @@
 #'   exported gene statistics. Supply both to use group-specific report wording.
 #' @param reverse Reverse the exported contrast, including NES and gene log2FC.
 #' @param alpha Source adjusted-p cutoff. Values are not recomputed or combined.
-#' @param top_n Maximum displayed groups per direction; all evidence is exported.
+#' @param top_n Maximum consensus pathways displayed per direction in the
+#'   lollipop figure and report table; all evidence is exported.
 #' @param min_jaccard Gene-overlap threshold for descriptive grouping.
 #' @param clustering 'network' (weighted Louvain), 'complete', or 'none'.
 #' @param gene_map Optional data.frame with ENTREZID and SYMBOL columns.
@@ -19,18 +20,21 @@
 #'   human identifiers are observed. Unresolved IDs remain namespace-prefixed.
 #' @param seed Reproducible network-clustering seed; caller RNG state is restored.
 #' @param overwrite Replace only a previous output owned by this function.
-#' @return Invisibly, a list with evidence, themes, selected, genes, figure,
-#'   publication_text, methods_text, diagnostics, files and settings.
+#' @return Invisibly, a list with evidence, consensus (one row per pathway
+#'   significant in two or more methods on the same side, with mean NES over
+#'   the ranked methods and the best adjusted P), themes, selected, genes,
+#'   figure (the consensus lollipop), publication_text, methods_text,
+#'   diagnostics, files and settings.
 #' @details Requires readxl, data.table, Matrix, igraph, ggplot2 and jsonlite.
 #'   No LLM or earlier agent output is needed. No new enrichment test is run.
 #' @seealso [enrichment_onestep()], which calls this automatically after a run.
 #' @export
 biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensus_summary"),
                             contrast = NULL, positive_group = NULL, negative_group = NULL,
-                            reverse = FALSE, alpha = 0.05, top_n = 5L,
+                            reverse = FALSE, alpha = 0.05, top_n = 15L,
                             min_jaccard = 0.25, clustering = c("network", "complete", "none"),
                             gene_map = NULL, seed = 1L, overwrite = FALSE) {
-  version <- "1.0.0"
+  version <- "1.1.0"
   needed <- c("readxl", "data.table", "Matrix", "igraph", "ggplot2", "jsonlite")
   missing <- needed[!vapply(needed, requireNamespace, quietly=TRUE, FUN.VALUE=logical(1))]
   if(length(missing)) stop("Install required R packages: ", paste(missing, collapse=", "), call.=FALSE)
@@ -289,27 +293,46 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
     "Absence from a filtered export is unknown. Nonsignificance is recorded only when a corresponding row is present. Missing collections are allowed.",
     "Transcriptional enrichment alone cannot distinguish cell-composition changes from within-cell regulation. The original model, contrast, gene universe and enrichment settings remain the analyst's responsibility.")
   if(!groups_supplied)limitations<-c("Positive and negative group labels were not supplied. The publication draft deliberately avoids treatment attribution.",limitations)
-  caption<-sprintf("Figure. Directional concordance of selected enrichment groups for %s. Each cell shows the number of distinct significant member terms for one tool on the indicated side (source adjusted P < %.3g). Color indicates direction, and cell labels retain counts. 'ns' indicates a corresponding nonsignificant row was observed; 'opp' indicates significant opposite-side evidence; '-' indicates no applicable result was observed. Rows are selected descriptive groups, not independent tests; counts and group size do not measure effect size. Groups may have evidence in both directions. All significant results, including non-displayed groups, are provided in the supplementary evidence.",context,alpha)
-  # One portable figure object plus vector PDF and 300-dpi PNG.
-  if(nrow(selected)) {
-    pd<-merge(coverage,selected[,.(theme_id,direction,label)],by=c("theme_id","direction"),sort=FALSE)
-    pd[,support_fill:=factor(ifelse(n_significant>0,direction,"No same-side support"),levels=c("UP","DOWN","No same-side support"))]
-    pd[,cell:=ifelse(n_significant>0,as.character(n_significant),ifelse(status=="Nonsignificant observed","ns",ifelse(status=="Opposite-side support","opp","-")))]
-    pd[,display:=paste0(ifelse(direction=="UP","UP: ","DOWN: "),label," [",theme_id,"]")]
-    order_rows<-selected[order(match(direction,c("UP","DOWN"))),paste0(ifelse(direction=="UP","UP: ","DOWN: "),label," [",theme_id,"]")]
-    wrapped<-vapply(order_rows,function(x)paste(strwrap(x,width=58),collapse="\n"),character(1))
-    pd[,display:=factor(display,levels=rev(order_rows),labels=rev(wrapped))]
-    pd[,tool:=factor(tool,levels=tools_present)]
-    fig<-ggplot2::ggplot(pd,ggplot2::aes(tool,display,fill=support_fill))+ggplot2::geom_tile(color="white",linewidth=.8)+
-      ggplot2::geom_text(ggplot2::aes(label=cell),size=3.5)+
-      ggplot2::scale_fill_manual(values=c(UP="#f2c09e",DOWN="#b9cee5","No same-side support"="#f1f2f4"),drop=FALSE)+
-      ggplot2::labs(title="Consensus across enrichment methods",subtitle=paste(strwrap(context,width=100),collapse="\n"),x=NULL,y=NULL,fill=NULL,
-        caption="Cell numbers = significant member terms. ns = nonsignificant observed; opp = opposite side; - = unknown.\nORA / RXGR: overrepresentation; GSE / FGSEA: ranked enrichment. Counts are not effect sizes.")+
-      ggplot2::theme_minimal(base_size=11)+ggplot2::theme(panel.grid=ggplot2::element_blank(),legend.position="bottom",plot.caption=ggplot2::element_text(hjust=0,size=9),axis.text.y=ggplot2::element_text(color="#253445"))
-    height<-max(5,2.5+sum(lengths(strsplit(wrapped,"\n",fixed=TRUE)))*.34)
+  # ---- Per-pathway consensus ----
+  # A pathway is "in consensus" when the same collection-scoped term is
+  # significant on the same side in >= 2 tools. The summary score is the mean
+  # NES over the ranked tools (GSE / FGSEA); ORA / RXGR contribute to the tool
+  # count and to the best adjusted P only. Terms without any ranked NES are
+  # kept in the table but cannot be drawn.
+  consensus <- dt(term_key=character(),direction=character(),pathway=character(),collection=character(),
+    n_tools=integer(),tools=character(),n_families=integer(),mean_NES=numeric(),best_padj=numeric(),n_genes=integer())
+  if(nrow(sig)) consensus <- sig[,.(pathway=normalized_name[1],collection=collection[1],n_tools=un(tool),
+      tools=paste(sort(unique(tool)),collapse=";"),n_families=un(family),
+      mean_NES=if(any(!is.na(NES)))mean(NES,na.rm=TRUE)else NA_real_,best_padj=min(padj),
+      n_genes=length(unique(unlist(lapply(genes,genesplit))))),by=.(term_key,direction)][n_tools>=2L]
+  consensus[,conflicting:=term_key%in%conflicts$term_key]
+  consensus[,neglog10_padj:=-log10(pmax(best_padj,.Machine$double.xmin))]
+  data.table::setorderv(consensus,c("direction","best_padj","n_tools","pathway"),c(-1,1,-1,1))
+  selected_pathways <- consensus[!is.na(mean_NES)&!conflicting,head(.SD,top_n),by=direction]
+  consensus[,plotted:=paste(term_key,direction)%in%paste(selected_pathways$term_key,selected_pathways$direction)]
+  caption<-sprintf("Figure. Consensus enrichment for %s. One lollipop per pathway significant (source adjusted P < %.3g) on the same side in at least two methods. Lollipop length is the mean normalized enrichment score (NES) across the ranked methods (GSE, FGSEA); dot size is the number of methods (ORA, RXGR, GSE, FGSEA) in agreement; dot colour is -log10 of the smallest adjusted P across methods. Up to %d pathways per direction are shown, ranked by smallest adjusted P. Methods share the same gene-level data, so agreement is descriptive corroboration, not independent replication. The full list is in consensus_pathways.csv.",context,alpha,top_n)
+  # ---- Lollipop figure: vector PDF and 300-dpi PNG ----
+  if(nrow(selected_pathways)) {
+    pd<-data.table::copy(selected_pathways)
+    pd[,label:=vapply(paste0(pathway,"  [",collection,"]"),function(x)paste(strwrap(x,width=55),collapse="\n"),character(1))]
+    data.table::setorder(pd,mean_NES)
+    pd[,label:=factor(label,levels=unique(label))]
+    fig<-ggplot2::ggplot(pd,ggplot2::aes(x=mean_NES,y=label))+
+      ggplot2::geom_vline(xintercept=0,colour="grey60",linewidth=.4)+
+      ggplot2::geom_segment(ggplot2::aes(x=0,xend=mean_NES,yend=label),colour="grey55",linewidth=.6)+
+      ggplot2::geom_point(ggplot2::aes(size=n_tools,colour=neglog10_padj))+
+      ggplot2::scale_colour_gradient(low="#fdbb84",high="#7f0000",name=expression(-log[10]~"best adj. P"))+
+      ggplot2::scale_size_continuous(range=c(3.5,7),breaks=sort(unique(pd$n_tools)),name="Methods in agreement")+
+      ggplot2::labs(title="Consensus enrichment across methods",subtitle=paste(strwrap(context,width=100),collapse="\n"),
+        x="Mean NES (ranked methods)",y=NULL,
+        caption="Length = mean NES over GSE/FGSEA. Size = methods significant on the same side. Colour = -log10 smallest adjusted P.")+
+      ggplot2::theme_minimal(base_size=11)+
+      ggplot2::theme(panel.grid.minor=ggplot2::element_blank(),panel.grid.major.y=ggplot2::element_blank(),
+        legend.position="right",plot.caption=ggplot2::element_text(hjust=0,size=9),axis.text.y=ggplot2::element_text(color="#253445"))
+    height<-max(4.5,1.8+sum(lengths(strsplit(levels(pd$label),"\n",fixed=TRUE)))*.3)
   } else {
-    fig<-ggplot2::ggplot()+ggplot2::annotate("text",x=0,y=0,label=paste("No significant enrichment in the available exports",sprintf("Source adjusted P < %.3g",alpha),sep="\n"),size=5)+ggplot2::theme_void()+ggplot2::labs(title="Enrichment consensus")
-    height<-5
+    fig<-ggplot2::ggplot()+ggplot2::annotate("text",x=0,y=0,label=paste("No pathway reached consensus in the available exports",sprintf("(significant in >= 2 methods, source adjusted P < %.3g)",alpha),sep="\n"),size=5)+ggplot2::theme_void()+ggplot2::labs(title="Consensus enrichment across methods")
+    height<-4.5
   }
   stopifnot(nrow(sig)==sum(ev$significant&!ev$duplicate),!anyNA(sig$theme_id),!anyDuplicated(sig$evidence_id))
   if(!identical(unname(tools::md5sum(names(checksums))),unname(checksums)))stop("Source files changed during analysis; rerun on a stable snapshot",call.=FALSE)
@@ -322,6 +345,7 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   write_table(registry,"input_formats");write_table(bridges[n_ids>1],"term_id_bridges");write_table(mapping,"gene_mapping")
   write_table(term_support,"term_support");write_table(terms,"theme_membership");write_table(themes,"themes");write_table(selected,"selected_themes")
   write_table(coverage,"tool_coverage");write_table(conflicts,"conflicts");write_table(gene_facts,"representative_genes")
+  write_table(consensus,"consensus_pathways")
   write_table(evidence_selected,"publication_evidence");write_table(ev[opposite_known_genes>0],"gene_direction_audit")
   write_table(diagnostics,"diagnostics");write_table(dt(file=names(checksums),md5=unname(checksums)),"input_checksums")
   write_table(dt(package=needed,version=vapply(needed,function(p)as.character(utils::packageVersion(p)),character(1))),"package_versions")
@@ -332,18 +356,21 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   ggplot2::ggsave(file.path(stage,"summary_figure.pdf"),fig,width=11,height=height,device=grDevices::pdf,useDingbats=FALSE,limitsize=FALSE)
   esc<-function(x){x<-gsub("&","&amp;",as.character(x),fixed=TRUE);x<-gsub("<","&lt;",x,fixed=TRUE);x<-gsub(">","&gt;",x,fixed=TRUE);gsub('"',"&quot;",x,fixed=TRUE)}
   htmltable<-function(d){if(!nrow(d))return("<p>None observed.</p>");paste0("<div class='table'><table><thead><tr>",paste0("<th>",esc(names(d)),"</th>",collapse=""),"</tr></thead><tbody>",paste(vapply(seq_len(nrow(d)),function(i)paste0("<tr>",paste0("<td>",esc(unlist(d[i],use.names=FALSE)),"</td>",collapse=""),"</tr>"),character(1)),collapse=""),"</tbody></table></div>")}
-  image64<-jsonlite::base64_enc(readBin(file.path(stage,"summary_figure.png"),"raw",n=file.info(file.path(stage,"summary_figure.png"))$size))
-  html<-paste0("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>BioRosa enrichment consensus</title><style>body{font:16px/1.6 Arial,sans-serif;color:#243445;max-width:1120px;margin:36px auto;padding:0 24px}h1,h2{color:#254e70;line-height:1.2}h2{margin-top:2em}img{max-width:100%}.table{overflow:auto}table{border-collapse:collapse;font-size:13px}td,th{padding:9px;border-bottom:1px solid #dce3eb;text-align:left}th{background:#edf3f7}a{color:#215e8b}.note{background:#f2f5f8;padding:14px}</style></head><body>",
-    "<h1>BioRosa enrichment consensus</h1><p>",esc(context),"</p><p class='note'>",nrow(sig)," significant records; ",nrow(terms)," matched terms; ",nrow(selected)," displayed groups. Method agreement is descriptive, not independent replication.</p>",
-    "<h2>Publication text draft</h2><p>",esc(results),"</p><p><a href='publication_text.txt'>Download results, methods and figure legend</a></p>",
-    "<h2>Summary figure</h2><img alt='Directional consensus across enrichment methods' src='data:image/png;base64,",image64,"'><p>",esc(caption),"</p><p><a href='summary_figure.pdf'>Vector PDF</a> | <a href='summary_figure.png'>300-dpi PNG</a></p>",
-    "<h2>Selected groups</h2>",htmltable(selected[,.(theme_id,direction,label,n_terms,n_tools,n_families,n_concordant_terms,mixed)]),
-    "<h2>Representative gene effects</h2>",htmltable(gene_facts),"<h2>Conflicting evidence</h2>",htmltable(conflicts),
-    "<h2>Methods</h2><p>",esc(method),"</p><h2>Interpretation and coverage</h2><ul>",paste0("<li>",esc(limitations),"</li>",collapse=""),"</ul>",htmltable(inventory),
-    "<h2>Diagnostics</h2>",htmltable(diagnostics),"<h2>Supplementary evidence</h2><p><a href='evidence_all.csv'>All source rows</a> | <a href='publication_evidence.csv'>Publication evidence</a> | <a href='themes.csv'>All groups</a> | <a href='tool_coverage.csv'>Observed tool coverage</a> | <a href='input_checksums.csv'>Input checksums</a></p></body></html>")
+  preview<-tempfile("biorosa-preview-",fileext=".png")
+  ggplot2::ggsave(preview,fig,width=11,height=height,dpi=110,bg="white",limitsize=FALSE)
+  image64<-jsonlite::base64_enc(readBin(preview,"raw",n=file.info(preview)$size));unlink(preview)
+  shown<-selected_pathways[,.(pathway,collection,direction,mean_NES=round(mean_NES,2),best_padj=formatC(best_padj,format="e",digits=1),methods=gsub(";",", ",tools),n_methods=n_tools)]
+  html<-paste0("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>BioRosa enrichment consensus</title><style>body{font:16px/1.6 Arial,sans-serif;color:#243445;max-width:1120px;margin:36px auto;padding:0 24px}h1,h2{color:#254e70;line-height:1.2}h2{margin-top:2em}img{max-width:100%}.table{overflow:auto}table{border-collapse:collapse;font-size:13px}td,th{padding:9px;border-bottom:1px solid #dce3eb;text-align:left}th{background:#edf3f7}a{color:#215e8b}.note{background:#f2f5f8;padding:14px}details{margin-top:1.5em}summary{color:#254e70;font-weight:bold;cursor:pointer}.cap{font-size:14px;color:#4a5a6a}</style></head><body>",
+    "<h1>BioRosa enrichment consensus</h1><p>",esc(context),"</p><p class='note'>",nrow(consensus)," pathway",if(nrow(consensus)==1L)"" else "s"," significant in two or more methods on the same side (",length(tools_present)," methods, ",nrow(sig)," significant records); ",nrow(selected_pathways)," shown.</p>",
+    "<img alt='Consensus enrichment lollipop' src='data:image/png;base64,",image64,"'><p class='cap'>",esc(caption),"</p><p><a href='summary_figure.pdf'>Vector PDF</a> | <a href='summary_figure.png'>300-dpi PNG</a> | <a href='consensus_pathways.csv'>All consensus pathways (CSV)</a></p>",
+    "<h2>Consensus pathways</h2>",htmltable(shown),
+    "<details><summary>Publication text draft</summary><p>",esc(results),"</p><p><a href='publication_text.txt'>Download results, methods and figure legend</a></p></details>",
+    "<details><summary>Methods</summary><p>",esc(method),"</p></details>",
+    "<details><summary>Limitations, coverage and diagnostics</summary><ul>",paste0("<li>",esc(limitations),"</li>",collapse=""),"</ul>",htmltable(inventory),htmltable(diagnostics),"</details>",
+    "<details><summary>Supplementary tables</summary><p><a href='evidence_all.csv'>All source rows</a> | <a href='evidence_significant.csv'>Significant rows</a> | <a href='themes.csv'>Gene-overlap groups</a> | <a href='representative_genes.csv'>Representative genes</a> | <a href='conflicts.csv'>Conflicting evidence</a> | <a href='tool_coverage.csv'>Observed tool coverage</a> | <a href='input_checksums.csv'>Input checksums</a></p></details></body></html>")
   writeLines(html,file.path(stage,"report.html"))
   writeLines(paste("biorosa_summary",version),file.path(stage,marker))
-  result<-list(evidence=ev,themes=themes,selected=selected,genes=gene_facts,figure=fig,publication_text=results,methods_text=method,diagnostics=diagnostics,settings=settings)
+  result<-list(evidence=ev,consensus=consensus,themes=themes,selected=selected,genes=gene_facts,figure=fig,publication_text=results,methods_text=method,diagnostics=diagnostics,settings=settings)
   saveRDS(result,file.path(stage,"summary.rds"))
   dir.create(dest,recursive=TRUE,showWarnings=FALSE)
   products<-list.files(stage,all.files=TRUE,no..=TRUE)

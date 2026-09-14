@@ -46,3 +46,7 @@
 #'
 #' @keywords internal
 "_PACKAGE"
+
+# biorosa_summary() uses data.table's `:=` and `.SD` idioms inside the package
+# namespace; without this flag data.table falls back to data.frame semantics.
+.datatable.aware <- TRUE
