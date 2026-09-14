@@ -34,6 +34,25 @@
   )
 }
 
+# Default gene-set collections for the RXGR engine: the collections offered by
+# the OpenXGR web server that MSigDB also distributes (Hallmark, GO BP, KEGG,
+# Reactome), plus the bundled lab list. KEGG uses MSigDB's "KEGG Legacy"
+# subcollection, the 186 canonical KEGG pathways.
+.rxgr_default_sets <- function() {
+  hm <- .msigdbr_fetch(species = "human", collection = "H")
+  bp <- .msigdbr_fetch(species = "human", collection = "C5", subcollection = "BP")
+  kg <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "CP:KEGG_LEGACY")
+  re <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "REACTOME")
+  gp <- get("guttman_pathways", envir = asNamespace("BioRosa"))
+  list(
+    Hallmark         = split(hm$gene_symbol, hm$gs_name),
+    GO_BP            = split(bp$gene_symbol, bp$gs_name),
+    KEGG             = split(kg$gene_symbol, kg$gs_name),
+    Reactome         = split(re$gene_symbol, re$gs_name),
+    guttman_pathways = gp[lengths(gp) > 0]
+  )
+}
+
 #' Run a one-step enrichment pipeline from a gene list and its statistics
 #'
 #' @description
@@ -57,8 +76,9 @@
 #'    are derived from thresholds: `padj < padj_cutoff` together with
 #'    `log2FoldChange > log2fc_cutoff` (UP) or `< -log2fc_cutoff` (DOWN), and
 #'    the universe is every gene with a non-`NA` `padj`.
-#' 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), and
-#'    Reactome (`C2 / REACTOME`) collections. GSEA is run **once on the full
+#' 2. **Runs FGSEA** against the MSigDB Hallmark, GO_BP (`C5 / BP`), KEGG
+#'    (`C2 / CP:KEGG_LEGACY`, the 186 canonical pathways) and Reactome
+#'    (`C2 / REACTOME`) collections. GSEA is run **once on the full
 #'    gene list ranked by the `rank_by` statistic** (default `log2FoldChange`)
 #'    — not on a `padj`-filtered or UP/DOWN-split subset — because its
 #'    statistic depends on where a set's members fall across the *entire*
@@ -83,7 +103,8 @@
 #'
 #' 6. **Runs the OpenXGR-style RXGR engine** (when `run_rxgr = TRUE`) on the
 #'    same UP / DOWN sets via [rxgr_enrichment()], against MSigDB Hallmark,
-#'    GO_BP, Reactome and the bundled [guttman_pathways] lab list. This adds
+#'    GO_BP, KEGG and Reactome (the collections the OpenXGR web server offers)
+#'    and the bundled [guttman_pathways] lab list. This adds
 #'    Fisher's-exact statistics (enrichment z-score, odds ratio with 95% CI,
 #'    FDR) plus a dotplot and forest plot per collection, written under
 #'    `output_dir/RXGR/`.
@@ -142,8 +163,9 @@
 #'   plot. Outputs go to `output_dir/RXGR/<collection>/`.
 #' @param rxgr_sets Named list of gene-set collections for the RXGR engine, each
 #'   element itself a named list of gene-symbol vectors. `NULL` (default) uses
-#'   MSigDB Hallmark, GO biological process and Reactome together with the
-#'   bundled [guttman_pathways] lab list.
+#'   MSigDB Hallmark, GO biological process, KEGG (Legacy, the 186 canonical
+#'   pathways) and Reactome together with the bundled [guttman_pathways] lab
+#'   list, mirroring the OpenXGR web server.
 #' @param rxgr_fdr FDR cut-off applied when keeping RXGR terms for the tables and
 #'   figures. Default `0.05`.
 #' @param write_summary Logical. When `TRUE` (default), after all tables are
@@ -516,11 +538,13 @@ enrichment_onestep <- function(genes          = NULL,
 
     hm <- .msigdbr_fetch(species = "human", collection = "H")
     bp <- .msigdbr_fetch(species = "human", collection = "C5", subcollection = "BP")
+    kg <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "CP:KEGG_LEGACY")
     re <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "REACTOME")
 
     sets <- list(
       Hallmark = split(hm$gene_symbol, hm$gs_name),
       GO_BP    = split(bp$gene_symbol, bp$gs_name),
+      KEGG     = split(kg$gene_symbol, kg$gs_name),
       Reactome = split(re$gene_symbol, re$gs_name)
     )
 
@@ -625,18 +649,7 @@ enrichment_onestep <- function(genes          = NULL,
   # ---- RXGR: OpenXGR-style Fisher / odds-ratio enrichment ----
   rxgr <- list(UP = NULL, DOWN = NULL)
   if (run_rxgr) {
-    if (is.null(rxgr_sets)) {
-      hm <- .msigdbr_fetch(species = "human", collection = "H")
-      bp <- .msigdbr_fetch(species = "human", collection = "C5", subcollection = "BP")
-      re <- .msigdbr_fetch(species = "human", collection = "C2", subcollection = "REACTOME")
-      gp <- get("guttman_pathways", envir = asNamespace("BioRosa"))
-      rxgr_sets <- list(
-        Hallmark         = split(hm$gene_symbol, hm$gs_name),
-        GO_BP            = split(bp$gene_symbol, bp$gs_name),
-        Reactome         = split(re$gene_symbol, re$gs_name),
-        guttman_pathways = gp[lengths(gp) > 0]
-      )
-    }
+    if (is.null(rxgr_sets)) rxgr_sets <- .rxgr_default_sets()
     rxgr_root <- file.path(output_dir, "RXGR"); make_dir(rxgr_root)
     queries   <- list(UP = up_df$SYMBOL, DOWN = down_df$SYMBOL)
     for (dir_name in names(queries)) {

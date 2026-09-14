@@ -75,7 +75,9 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   dt <- data.table::data.table; rb <- data.table::rbindlist; un <- data.table::uniqueN
   diagnostics <- dt(level=character(),code=character(),detail=character())
   note <- function(code,detail,level="note") diagnostics <<- rb(list(diagnostics,dt(level=level,code=code,detail=detail)))
-  normal <- function(x) tolower(trimws(gsub(" +"," ",gsub("_"," ",sub("^(HALLMARK|GOBP|GOCC|GOMF|KEGG|REACTOME)_","",x)))))
+  # Punctuation-insensitive so "cytokine-cytokine receptor interaction" (KEGG
+  # via enrichKEGG) matches KEGG_CYTOKINE_CYTOKINE_RECEPTOR_INTERACTION (MSigDB).
+  normal <- function(x) tolower(trimws(gsub("[^A-Za-z0-9]+"," ",sub("^(HALLMARK|GOBP|GOCC|GOMF|KEGG|REACTOME)_","",x))))
   genesplit <- function(x) {
     if(is.na(x)||!nzchar(x))return(character())
     x<-sub("^c\\(","",sub("\\)$","",x))

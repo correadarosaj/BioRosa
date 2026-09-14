@@ -338,7 +338,7 @@ res <- enrichment_onestep(
 
 The returned list has four elements:
 
-* `res$fgsea` — per-collection FGSEA (`Hallmark`, `GO_BP`, `Reactome`).
+* `res$fgsea` — per-collection FGSEA (`Hallmark`, `GO_BP`, `KEGG`, `Reactome`).
 * `res$ora`   — `$UP` / `$DOWN`, each with `GO`, `Reactome`, `KEGG`, `Hallmark`.
 * `res$gsea`  — a single `gseGO` result.
 * `res$rxgr`  — `$UP` / `$DOWN`, each a per-collection RXGR result

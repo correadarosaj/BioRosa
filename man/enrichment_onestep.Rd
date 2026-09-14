@@ -91,8 +91,9 @@ plot. Outputs go to \verb{output_dir/RXGR/<collection>/}.}
 
 \item{rxgr_sets}{Named list of gene-set collections for the RXGR engine, each
 element itself a named list of gene-symbol vectors. \code{NULL} (default) uses
-MSigDB Hallmark, GO biological process and Reactome together with the
-bundled \link{guttman_pathways} lab list.}
+MSigDB Hallmark, GO biological process, KEGG (Legacy, the 186 canonical
+pathways) and Reactome together with the bundled \link{guttman_pathways} lab
+list, mirroring the OpenXGR web server.}
 
 \item{rxgr_fdr}{FDR cut-off applied when keeping RXGR terms for the tables and
 figures. Default \code{0.05}.}
@@ -150,8 +151,9 @@ universe being every gene that has a non-\code{NA} status. Otherwise the sets
 are derived from thresholds: \code{padj < padj_cutoff} together with
 \code{log2FoldChange > log2fc_cutoff} (UP) or \verb{< -log2fc_cutoff} (DOWN), and
 the universe is every gene with a non-\code{NA} \code{padj}.
-\item \strong{Runs FGSEA} against the MSigDB Hallmark, GO_BP (\code{C5 / BP}), and
-Reactome (\code{C2 / REACTOME}) collections. GSEA is run \strong{once on the full
+\item \strong{Runs FGSEA} against the MSigDB Hallmark, GO_BP (\code{C5 / BP}), KEGG
+(\code{C2 / CP:KEGG_LEGACY}, the 186 canonical pathways) and Reactome
+(\code{C2 / REACTOME}) collections. GSEA is run \strong{once on the full
 gene list ranked by the \code{rank_by} statistic} (default \code{log2FoldChange})
 — not on a \code{padj}-filtered or UP/DOWN-split subset — because its
 statistic depends on where a set's members fall across the \emph{entire}
@@ -175,7 +177,8 @@ full set of in-memory result objects so callers can iterate without
 re-reading from disk.
 \item \strong{Runs the OpenXGR-style RXGR engine} (when \code{run_rxgr = TRUE}) on the
 same UP / DOWN sets via \code{\link[=rxgr_enrichment]{rxgr_enrichment()}}, against MSigDB Hallmark,
-GO_BP, Reactome and the bundled \link{guttman_pathways} lab list. This adds
+GO_BP, KEGG and Reactome (the collections the OpenXGR web server offers)
+and the bundled \link{guttman_pathways} lab list. This adds
 Fisher's-exact statistics (enrichment z-score, odds ratio with 95\% CI,
 FDR) plus a dotplot and forest plot per collection, written under
 \verb{output_dir/RXGR/}.

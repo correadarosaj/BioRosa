@@ -140,7 +140,7 @@ test_that("enrichment_onestep() completes end-to-end on a DEG list with FGSEA hi
 
   expect_named(res, c("fgsea", "ora", "gsea", "rxgr", "summary"))
   expect_null(res$summary)
-  expect_named(res$fgsea, c("Hallmark", "GO_BP", "Reactome"))
+  expect_named(res$fgsea, c("Hallmark", "GO_BP", "KEGG", "Reactome"))
   expect_true(file.exists(file.path(out_dir, "FGSEA_results.xlsx")))
   expect_true(file.exists(file.path(out_dir, "up_df.csv")))
   expect_true(file.exists(file.path(out_dir, "down_df.csv")))
