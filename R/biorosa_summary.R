@@ -14,6 +14,11 @@
 #' @param top_n Maximum consensus pathways displayed per direction in the
 #'   lollipop figure and report table; all evidence is exported.
 #' @param min_jaccard Gene-overlap threshold for descriptive grouping.
+#' @param max_overlap Redundancy filter for the consensus figure. Consensus
+#'   pathways are walked in adjusted-P order and a pathway whose gene set has
+#'   Jaccard similarity of at least `max_overlap` with an already kept,
+#'   same-side pathway is hidden as redundant (its `redundant_with` column in
+#'   `consensus` names the kept pathway). Use `1` to disable.
 #' @param clustering 'network' (weighted Louvain), 'complete', or 'none'.
 #' @param gene_map Optional data.frame with ENTREZID and SYMBOL columns.
 #'   Otherwise human Entrez IDs are mapped with org.Hs.eg.db when available and
@@ -32,7 +37,7 @@
 biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensus_summary"),
                             contrast = NULL, positive_group = NULL, negative_group = NULL,
                             reverse = FALSE, alpha = 0.05, top_n = 15L,
-                            min_jaccard = 0.25, clustering = c("network", "complete", "none"),
+                            min_jaccard = 0.25, max_overlap = 0.5, clustering = c("network", "complete", "none"),
                             gene_map = NULL, seed = 1L, overwrite = FALSE) {
   version <- "1.1.0"
   needed <- c("readxl", "data.table", "Matrix", "igraph", "ggplot2", "jsonlite")
@@ -45,6 +50,7 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   if(!string(output_dir)) stop("output_dir must be a nonempty path",call.=FALSE)
   if(!is.numeric(alpha)||length(alpha)!=1L||!is.finite(alpha)||alpha<=0||alpha>1) stop("alpha must be in (0, 1]",call.=FALSE)
   if(!is.numeric(min_jaccard)||length(min_jaccard)!=1L||!is.finite(min_jaccard)||min_jaccard<=0||min_jaccard>1) stop("min_jaccard must be in (0, 1]",call.=FALSE)
+  if(!is.numeric(max_overlap)||length(max_overlap)!=1L||!is.finite(max_overlap)||max_overlap<=0||max_overlap>1) stop("max_overlap must be in (0, 1]",call.=FALSE)
   if(!is.numeric(top_n)||length(top_n)!=1L||!is.finite(top_n)||top_n<1||top_n!=as.integer(top_n)) stop("top_n must be a positive integer",call.=FALSE)
   if(!is.numeric(seed)||length(seed)!=1L||!is.finite(seed)||seed<0||seed>.Machine$integer.max||seed!=as.integer(seed)) stop("seed must be a nonnegative integer",call.=FALSE)
   if(!flag(reverse)||!flag(overwrite)) stop("reverse and overwrite must be TRUE or FALSE",call.=FALSE)
@@ -298,19 +304,30 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   # significant on the same side in >= 2 tools. The summary score is the mean
   # NES over the ranked tools (GSE / FGSEA); ORA / RXGR contribute to the tool
   # count and to the best adjusted P only. Terms without any ranked NES are
-  # kept in the table but cannot be drawn.
+  # kept in the table but cannot be drawn. Walking the table in adjusted-P
+  # order, a pathway whose gene set overlaps an already kept same-side pathway
+  # at Jaccard >= max_overlap is hidden as redundant (GO parent/child terms).
   consensus <- dt(term_key=character(),direction=character(),pathway=character(),collection=character(),
-    n_tools=integer(),tools=character(),n_families=integer(),mean_NES=numeric(),best_padj=numeric(),n_genes=integer())
+    n_tools=integer(),tools=character(),n_families=integer(),mean_NES=numeric(),best_padj=numeric(),n_genes=integer(),genes=character())
   if(nrow(sig)) consensus <- sig[,.(pathway=normalized_name[1],collection=collection[1],n_tools=un(tool),
       tools=paste(sort(unique(tool)),collapse=";"),n_families=un(family),
       mean_NES=if(any(!is.na(NES)))mean(NES,na.rm=TRUE)else NA_real_,best_padj=min(padj),
-      n_genes=length(unique(unlist(lapply(genes,genesplit))))),by=.(term_key,direction)][n_tools>=2L]
+      n_genes=length(unique(unlist(lapply(genes,genesplit)))),genes=paste(sort(unique(unlist(lapply(genes,genesplit)))),collapse=";")),by=.(term_key,direction)][n_tools>=2L]
   consensus[,conflicting:=term_key%in%conflicts$term_key]
   consensus[,neglog10_padj:=-log10(pmax(best_padj,.Machine$double.xmin))]
   data.table::setorderv(consensus,c("direction","best_padj","n_tools","pathway"),c(-1,1,-1,1))
-  selected_pathways <- consensus[!is.na(mean_NES)&!conflicting,head(.SD,top_n),by=direction]
+  consensus[,redundant_with:=NA_character_]
+  for(di in unique(consensus$direction)) {
+    idx<-which(consensus$direction==di&!is.na(consensus$mean_NES)&!consensus$conflicting);kept<-integer()
+    for(i in idx) {
+      gi<-genesplit(consensus$genes[i])
+      hit<-if(max_overlap<1)kept[vapply(kept,function(k){gk<-genesplit(consensus$genes[k]);length(intersect(gi,gk))/length(union(gi,gk))>=max_overlap},logical(1))] else integer()
+      if(length(hit))consensus$redundant_with[i]<-consensus$term_key[hit[1]] else kept<-c(kept,i)
+    }
+  }
+  selected_pathways <- consensus[!is.na(mean_NES)&!conflicting&is.na(redundant_with),head(.SD,top_n),by=direction]
   consensus[,plotted:=paste(term_key,direction)%in%paste(selected_pathways$term_key,selected_pathways$direction)]
-  caption<-sprintf("Figure. Consensus enrichment for %s. One lollipop per pathway significant (source adjusted P < %.3g) on the same side in at least two methods. Lollipop length is the mean normalized enrichment score (NES) across the ranked methods (GSE, FGSEA); dot size is the number of methods (ORA, RXGR, GSE, FGSEA) in agreement; dot colour is -log10 of the smallest adjusted P across methods. Up to %d pathways per direction are shown, ranked by smallest adjusted P. Methods share the same gene-level data, so agreement is descriptive corroboration, not independent replication. The full list is in consensus_pathways.csv.",context,alpha,top_n)
+  caption<-sprintf("Figure. Consensus enrichment for %s. One lollipop per pathway significant (source adjusted P < %.3g) on the same side in at least two methods. Lollipop length is the mean normalized enrichment score (NES) across the ranked methods (GSE, FGSEA); dot size is the number of methods (ORA, RXGR, GSE, FGSEA) in agreement; dot colour is -log10 of the smallest adjusted P across methods. Up to %d pathways per direction are shown, ranked by smallest adjusted P; a pathway whose gene set overlaps a higher-ranked, same-side pathway at Jaccard similarity of at least %.2f is hidden as redundant. Methods share the same gene-level data, so agreement is descriptive corroboration, not independent replication. The full list is in consensus_pathways.csv.",context,alpha,top_n,max_overlap)
   # ---- Lollipop figure: vector PDF and 300-dpi PNG ----
   if(nrow(selected_pathways)) {
     pd<-data.table::copy(selected_pathways)
@@ -336,7 +353,7 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   }
   stopifnot(nrow(sig)==sum(ev$significant&!ev$duplicate),!anyNA(sig$theme_id),!anyDuplicated(sig$evidence_id))
   if(!identical(unname(tools::md5sum(names(checksums))),unname(checksums)))stop("Source files changed during analysis; rerun on a stable snapshot",call.=FALSE)
-  settings<-list(version=version,path=root,contrast=contrast,positive_group=positive_group,negative_group=negative_group,reverse=reverse,alpha=alpha,top_n=top_n,min_jaccard=min_jaccard,clustering=clustering,seed=seed)
+  settings<-list(version=version,path=root,contrast=contrast,positive_group=positive_group,negative_group=negative_group,reverse=reverse,alpha=alpha,top_n=top_n,min_jaccard=min_jaccard,max_overlap=max_overlap,clustering=clustering,seed=seed)
   # Stage outputs and publish only after successful analysis and rendering.
   stage<-tempfile("biorosa-stage-",tmpdir=dirname(dest));dir.create(stage)
   on.exit(unlink(stage,recursive=TRUE),add=TRUE)
@@ -361,7 +378,7 @@ biorosa_summary <- function(path, output_dir = file.path(path, "biorosa_consensu
   image64<-jsonlite::base64_enc(readBin(preview,"raw",n=file.info(preview)$size));unlink(preview)
   shown<-selected_pathways[,.(pathway,collection,direction,mean_NES=round(mean_NES,2),best_padj=formatC(best_padj,format="e",digits=1),methods=gsub(";",", ",tools),n_methods=n_tools)]
   html<-paste0("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>BioRosa enrichment consensus</title><style>body{font:16px/1.6 Arial,sans-serif;color:#243445;max-width:1120px;margin:36px auto;padding:0 24px}h1,h2{color:#254e70;line-height:1.2}h2{margin-top:2em}img{max-width:100%}.table{overflow:auto}table{border-collapse:collapse;font-size:13px}td,th{padding:9px;border-bottom:1px solid #dce3eb;text-align:left}th{background:#edf3f7}a{color:#215e8b}.note{background:#f2f5f8;padding:14px}details{margin-top:1.5em}summary{color:#254e70;font-weight:bold;cursor:pointer}.cap{font-size:14px;color:#4a5a6a}</style></head><body>",
-    "<h1>BioRosa enrichment consensus</h1><p>",esc(context),"</p><p class='note'>",nrow(consensus)," pathway",if(nrow(consensus)==1L)"" else "s"," significant in two or more methods on the same side (",length(tools_present)," methods, ",nrow(sig)," significant records); ",nrow(selected_pathways)," shown.</p>",
+    "<h1>BioRosa enrichment consensus</h1><p>",esc(context),"</p><p class='note'>",nrow(consensus)," pathway",if(nrow(consensus)==1L)"" else "s"," significant in two or more methods on the same side (",length(tools_present)," methods, ",nrow(sig)," significant records); ",nrow(selected_pathways)," shown; ",sum(!is.na(consensus$redundant_with))," hidden as redundant (gene-set Jaccard &ge; ",max_overlap,").</p>",
     "<img alt='Consensus enrichment lollipop' src='data:image/png;base64,",image64,"'><p class='cap'>",esc(caption),"</p><p><a href='summary_figure.pdf'>Vector PDF</a> | <a href='summary_figure.png'>300-dpi PNG</a> | <a href='consensus_pathways.csv'>All consensus pathways (CSV)</a></p>",
     "<h2>Consensus pathways</h2>",htmltable(shown),
     "<details><summary>Publication text draft</summary><p>",esc(results),"</p><p><a href='publication_text.txt'>Download results, methods and figure legend</a></p></details>",
