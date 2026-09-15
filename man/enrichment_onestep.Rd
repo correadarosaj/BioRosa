@@ -163,9 +163,11 @@ collection is saved to \code{FGSEA_results.xlsx}.
 \code{clusterProfiler::enrichGO} for GO \code{BP}, \code{MF}, \code{CC};
 \code{ReactomePA::enrichPathway}; \code{clusterProfiler::enrichKEGG}
 (organism \code{"hsa"}); and \code{clusterProfiler::enricher} against MSigDB
-Hallmark. SYMBOL → ENTREZ conversion is done with
+Hallmark. All four use the measured genes (the same universe as GO)
+as the background, so a targeted panel is not tested against the
+whole genome. SYMBOL → ENTREZ conversion is done with
 \code{clusterProfiler::bitr} only for the backends that require Entrez
-IDs (Reactome, KEGG).
+IDs (Reactome, KEGG), for both the query and the universe.
 \item \strong{Runs \code{gseGO}} with \code{ont = "ALL"} once on the same full ranked list
 (again, not split by direction), then collapses redundant terms with
 \code{clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")}.

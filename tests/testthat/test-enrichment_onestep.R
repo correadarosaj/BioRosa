@@ -145,6 +145,17 @@ test_that("enrichment_onestep() completes end-to-end on a DEG list with FGSEA hi
   expect_true(file.exists(file.path(out_dir, "up_df.csv")))
   expect_true(file.exists(file.path(out_dir, "down_df.csv")))
 
+  # Every ORA collection must use the measured genes as background, never the
+  # genome: the BgRatio denominator can't exceed the number of input genes.
+  for (x in list.files(out_dir, pattern = "_(UP|DOWN)\\.xlsx$",
+                       recursive = TRUE, full.names = TRUE)) {
+    tab <- openxlsx::read.xlsx(x)
+    if (nrow(tab) && "BgRatio" %in% names(tab)) {
+      bg <- as.integer(sub(".*/", "", tab$BgRatio))
+      expect_true(all(bg <= length(genes)), info = basename(x))
+    }
+  }
+
   # FGSEA now runs on the full ranked list (UP + DOWN together): the IFN
   # Hallmark pathway is present in the ranking, so Hallmark is non-empty and
   # at least one top-pathway PNG must have been emitted.

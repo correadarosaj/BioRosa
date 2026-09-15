@@ -88,9 +88,11 @@
 #'    `clusterProfiler::enrichGO` for GO `BP`, `MF`, `CC`;
 #'    `ReactomePA::enrichPathway`; `clusterProfiler::enrichKEGG`
 #'    (organism `"hsa"`); and `clusterProfiler::enricher` against MSigDB
-#'    Hallmark. SYMBOL → ENTREZ conversion is done with
+#'    Hallmark. All four use the measured genes (the same universe as GO)
+#'    as the background, so a targeted panel is not tested against the
+#'    whole genome. SYMBOL → ENTREZ conversion is done with
 #'    `clusterProfiler::bitr` only for the backends that require Entrez
-#'    IDs (Reactome, KEGG).
+#'    IDs (Reactome, KEGG), for both the query and the universe.
 #' 4. **Runs `gseGO`** with `ont = "ALL"` once on the same full ranked list
 #'    (again, not split by direction), then collapses redundant terms with
 #'    `clusterProfiler::simplify(cutoff = 0.7, by = "p.adjust")`.
@@ -441,9 +443,10 @@ enrichment_onestep <- function(genes          = NULL,
     out
   }
 
-  perform_reactome <- function(entrez, outdir, label) {
+  perform_reactome <- function(entrez, universe_entrez, outdir, label) {
     res <- ReactomePA::enrichPathway(
       gene         = entrez,
+      universe     = universe_entrez,
       organism     = "human",
       pvalueCutoff = pval_cutoff,
       qvalueCutoff = qval_cutoff,
@@ -455,9 +458,10 @@ enrichment_onestep <- function(genes          = NULL,
     res
   }
 
-  perform_kegg <- function(entrez, outdir, label) {
+  perform_kegg <- function(entrez, universe_entrez, outdir, label) {
     res <- clusterProfiler::enrichKEGG(
       gene         = entrez,
+      universe     = universe_entrez,
       organism     = "hsa",
       pvalueCutoff = pval_cutoff,
       qvalueCutoff = qval_cutoff
@@ -468,11 +472,12 @@ enrichment_onestep <- function(genes          = NULL,
     res
   }
 
-  perform_hallmark <- function(sym, outdir, label) {
+  perform_hallmark <- function(sym, universe, outdir, label) {
     sets      <- .msigdbr_fetch(species = "human", collection = "H")
     term2gene <- sets[, c("gs_name", "gene_symbol")]
     res <- clusterProfiler::enricher(
       gene         = sym,
+      universe     = universe,
       TERM2GENE    = term2gene,
       pvalueCutoff = pval_cutoff,
       qvalueCutoff = qval_cutoff
@@ -618,6 +623,13 @@ enrichment_onestep <- function(genes          = NULL,
                           toType = "ENTREZID",
                           OrgDb = org.Hs.eg.db::org.Hs.eg.db) else NULL
 
+  # Every ORA call tests against the measured genes (`universe`), not the
+  # whole genome: on a targeted panel (e.g. Olink) a genome background makes
+  # two-gene overlaps look significant. KEGG / Reactome need Entrez IDs.
+  universe_entrez <- suppressMessages(suppressWarnings(
+    clusterProfiler::bitr(universe, fromType = "SYMBOL", toType = "ENTREZID",
+                          OrgDb = org.Hs.eg.db::org.Hs.eg.db)))$ENTREZID
+
   go_dir   <- file.path(output_dir, "GO")
   re_dir   <- file.path(output_dir, "Reactome")
   kegg_dir <- file.path(output_dir, "KEGG")
@@ -631,16 +643,16 @@ enrichment_onestep <- function(genes          = NULL,
 
   if (nrow(up_df) > 0) {
     ora$UP$GO       <- perform_go(up_df$SYMBOL, universe, go_dir,  "UP")
-    ora$UP$Reactome <- perform_reactome(entrez_up$ENTREZID, re_dir, "UP")
-    ora$UP$KEGG     <- perform_kegg(entrez_up$ENTREZID, kegg_dir,   "UP")
-    ora$UP$Hallmark <- perform_hallmark(up_df$SYMBOL, hm_dir,       "UP")
+    ora$UP$Reactome <- perform_reactome(entrez_up$ENTREZID, universe_entrez, re_dir, "UP")
+    ora$UP$KEGG     <- perform_kegg(entrez_up$ENTREZID, universe_entrez, kegg_dir, "UP")
+    ora$UP$Hallmark <- perform_hallmark(up_df$SYMBOL, universe, hm_dir, "UP")
   }
 
   if (nrow(down_df) > 0) {
     ora$DOWN$GO       <- perform_go(down_df$SYMBOL, universe, go_dir,  "DOWN")
-    ora$DOWN$Reactome <- perform_reactome(entrez_dn$ENTREZID, re_dir, "DOWN")
-    ora$DOWN$KEGG     <- perform_kegg(entrez_dn$ENTREZID, kegg_dir,   "DOWN")
-    ora$DOWN$Hallmark <- perform_hallmark(down_df$SYMBOL, hm_dir,     "DOWN")
+    ora$DOWN$Reactome <- perform_reactome(entrez_dn$ENTREZID, universe_entrez, re_dir, "DOWN")
+    ora$DOWN$KEGG     <- perform_kegg(entrez_dn$ENTREZID, universe_entrez, kegg_dir, "DOWN")
+    ora$DOWN$Hallmark <- perform_hallmark(down_df$SYMBOL, universe, hm_dir, "DOWN")
   }
 
   # GSEA (gseGO) runs ONCE on the full ranked list; NES sign gives direction.
