@@ -111,6 +111,18 @@
 #'    FDR) plus a dotplot and forest plot per collection, written under
 #'    `output_dir/RXGR/`.
 #'
+#' **Gene-list mode.** When you only have a list of genes (no fold changes or
+#' p-values for every measured gene), pass it as `gene_list` instead. The
+#' ranked methods (FGSEA and `gseGO`) need a statistic for every measured gene,
+#' so they are skipped; only the methods that take a gene set run — ORA
+#' (GO BP/MF/CC, Reactome, KEGG, Hallmark) and RXGR. `gene_list` can be a
+#' character vector (one undirected set, written with the label `LIST`) or a
+#' list named `UP` and/or `DOWN`. Supply `universe` (every gene that was
+#' measured) whenever the list comes from a targeted panel such as Olink;
+#' without it each backend tests against its whole annotated genome. The
+#' consensus summary is skipped in this mode because it is built around the
+#' ranked methods' NES.
+#'
 #' Each per-plot rendering step is wrapped in `tryCatch()`, so a single
 #' failing plot (e.g. an `enrichplot::treeplot` on a result with too few
 #' terms) is logged and skipped rather than aborting the whole pipeline.
@@ -126,6 +138,14 @@
 #' @param padj Numeric vector of p-values (or adjusted p-values), same length
 #'   and order as `genes`, used for thresholding. Optional when `BigTab` is
 #'   supplied.
+#' @param gene_list Gene-list mode: HGNC symbols to test with the
+#'   gene-set methods only (ORA + RXGR). Either a character vector (one
+#'   undirected set, labelled `LIST`) or a list named `UP` and/or `DOWN`.
+#'   Cannot be combined with `genes`, `log2FoldChange`, `padj` or `BigTab`.
+#' @param universe Background genes for gene-list mode — normally every gene
+#'   that was measured. `NULL` (default) lets each backend use its whole
+#'   annotated genome, which inflates significance for targeted panels.
+#'   Ignored outside gene-list mode, where the universe is the measured genes.
 #' @param output_dir Directory for Excel tables, plots, and `log.txt`.
 #'   Created if missing.
 #' @param padj_cutoff Maximum `padj` for a gene to enter the ORA gene sets.
@@ -186,10 +206,12 @@
 #' @return A named list:
 #'   * `fgsea` — named per-collection list (`Hallmark`, `GO_BP`, `Reactome`),
 #'     each a `data.table` of FGSEA results on the full ranked list (NES sign
-#'     gives direction).
-#'   * `ora`   — list with `$UP` and `$DOWN`, each holding `GO`, `Reactome`,
-#'     `KEGG`, and `Hallmark` enrichment result objects.
+#'     gives direction). `NULL` in gene-list mode.
+#'   * `ora`   — list with `$UP` and `$DOWN` (or one element per `gene_list`
+#'     set, e.g. `$LIST`), each holding `GO`, `Reactome`, `KEGG`, and
+#'     `Hallmark` enrichment result objects.
 #'   * `gsea`  — a single `gseGO` result object (run on the full ranked list).
+#'     `NULL` in gene-list mode.
 #'   * `rxgr`  — list with `$UP` and `$DOWN`, each a per-collection
 #'     [rxgr_enrichment()] result (`$table`, `$dotplot`, `$forest`, ...);
 #'     `NULL` entries when `run_rxgr = FALSE` or a direction has no genes.
@@ -214,6 +236,13 @@
 #'   contrast   = "Drug.W16vsBL",
 #'   output_dir = "results/Drug.W16vsBL"
 #' )
+#'
+#' # (c) gene-list mode: ORA + RXGR only, against the measured background
+#' res <- enrichment_onestep(
+#'   gene_list  = list(UP = up_genes, DOWN = down_genes),
+#'   universe   = rownames(BigTab),
+#'   output_dir = "results/my_list"
+#' )
 #' }
 #'
 #' @export
@@ -237,12 +266,33 @@ enrichment_onestep <- function(genes          = NULL,
                                rxgr_fdr        = 0.05,
                                write_summary      = TRUE,
                                summary_output_dir = NULL,
-                               summary_args       = list()) {
+                               summary_args       = list(),
+                               gene_list          = NULL,
+                               universe           = NULL) {
 
-  rank_by <- match.arg(rank_by)
+  rank_by   <- match.arg(rank_by)
+  list_mode <- !is.null(gene_list)
 
-  # ---- Resolve inputs: parallel vectors OR a BigTab + contrast suffix ----
-  if (!is.null(BigTab)) {
+  # ---- Resolve inputs: gene list, parallel vectors, OR BigTab + contrast ----
+  if (list_mode) {
+    if (!is.null(genes) || !is.null(log2FoldChange) || !is.null(padj) ||
+        !is.null(BigTab)) {
+      stop("Supply either `gene_list` or a DE result (`genes`/`log2FoldChange`/",
+           "`padj` or `BigTab`), not both.")
+    }
+    if (is.list(gene_list)) {
+      if (is.null(names(gene_list)) || !all(names(gene_list) %in% c("UP", "DOWN")) ||
+          anyDuplicated(names(gene_list))) {
+        stop("A list `gene_list` must be named \"UP\" and/or \"DOWN\".")
+      }
+    } else {
+      gene_list <- list(LIST = gene_list)
+    }
+    gene_list <- lapply(gene_list, function(g) {
+      g <- as.character(g); unique(g[!is.na(g) & nzchar(g)])
+    })
+    if (all(lengths(gene_list) == 0L)) stop("`gene_list` contains no genes.")
+  } else if (!is.null(BigTab)) {
     if (!is.data.frame(BigTab)) stop("`BigTab` must be a data frame.")
     if (is.null(contrast) || length(contrast) != 1L) {
       stop("With `BigTab`, supply a single `contrast` suffix (e.g. \"Drug.W16vsBL\").")
@@ -282,37 +332,40 @@ enrichment_onestep <- function(genes          = NULL,
       }
     }
   } else if (is.null(genes) || is.null(log2FoldChange) || is.null(padj)) {
-    stop("`genes`, `log2FoldChange`, and `padj` are all required.")
+    stop("`genes`, `log2FoldChange`, and `padj` are all required ",
+         "(or supply `gene_list` for gene-set methods only).")
   }
 
-  if (length(genes) != length(log2FoldChange) ||
-      length(genes) != length(padj)) {
-    stop("`genes`, `log2FoldChange`, and `padj` must have the same length.")
+  if (!list_mode) {
+    if (length(genes) != length(log2FoldChange) ||
+        length(genes) != length(padj)) {
+      stop("`genes`, `log2FoldChange`, and `padj` must have the same length.")
+    }
+    if (!is.character(genes))         genes          <- as.character(genes)
+    if (!is.numeric(log2FoldChange))  log2FoldChange <- as.numeric(log2FoldChange)
+    if (!is.numeric(padj))            padj           <- as.numeric(padj)
+    if (!exists("status", inherits = FALSE)) status <- NULL
+
+    df <- data.frame(
+      SYMBOL         = genes,
+      log2FoldChange = log2FoldChange,
+      padj           = padj,
+      stringsAsFactors = FALSE
+    )
+    if (!is.null(status)) df$status <- status
+
+    # Ranking statistic for GSEA (fgsea / gseGO). Magnitude matters for the
+    # weighted enrichment score, so the choice of stat is exposed:
+    #   "lgFCH"       log2 fold change (default)
+    #   "FCH"         signed linear fold change, sign(lgFCH) * 2^|lgFCH|
+    #   "signed_pval" sign(lgFCH) * -log10(p), significance with direction
+    df$rank_stat <- switch(
+      rank_by,
+      lgFCH       = df$log2FoldChange,
+      FCH         = sign(df$log2FoldChange) * 2 ^ abs(df$log2FoldChange),
+      signed_pval = sign(df$log2FoldChange) * -log10(pmax(df$padj, 1e-300))
+    )
   }
-  if (!is.character(genes))         genes          <- as.character(genes)
-  if (!is.numeric(log2FoldChange))  log2FoldChange <- as.numeric(log2FoldChange)
-  if (!is.numeric(padj))            padj           <- as.numeric(padj)
-  if (!exists("status", inherits = FALSE)) status <- NULL
-
-  df <- data.frame(
-    SYMBOL         = genes,
-    log2FoldChange = log2FoldChange,
-    padj           = padj,
-    stringsAsFactors = FALSE
-  )
-  if (!is.null(status)) df$status <- status
-
-  # Ranking statistic for GSEA (fgsea / gseGO). Magnitude matters for the
-  # weighted enrichment score, so the choice of stat is exposed:
-  #   "lgFCH"       log2 fold change (default)
-  #   "FCH"         signed linear fold change, sign(lgFCH) * 2^|lgFCH|
-  #   "signed_pval" sign(lgFCH) * -log10(p), significance with direction
-  df$rank_stat <- switch(
-    rank_by,
-    lgFCH       = df$log2FoldChange,
-    FCH         = sign(df$log2FoldChange) * 2 ^ abs(df$log2FoldChange),
-    signed_pval = sign(df$log2FoldChange) * -log10(pmax(df$padj, 1e-300))
-  )
 
   # ---- Nested helpers ----
   make_dir <- function(path) {
@@ -591,42 +644,58 @@ enrichment_onestep <- function(genes          = NULL,
   make_dir(output_dir)
   write_log(output_dir, "Pipeline started.")
 
-  fgsea_excel   <- file.path(output_dir, "FGSEA_results.xlsx")
-  fgsea_results <- perform_fgsea_all(df, fgsea_excel)
+  fgsea_results <- NULL
+  gsea          <- NULL
 
-  # UP / DOWN sets for ORA: from the BigTab status column when available
-  # (1 = UP, -1 = DOWN), otherwise from the padj / log2fc thresholds.
-  if (!is.null(df$status)) {
-    message("ORA UP/DOWN sets defined by the BigTab status column.")
-    universe <- df$SYMBOL[!is.na(df$status)]
-    up_df    <- df[!is.na(df$status) & df$status ==  1, ]
-    down_df  <- df[!is.na(df$status) & df$status == -1, ]
+  if (list_mode) {
+    # Gene-list mode: no per-gene statistic, so only the gene-set methods
+    # (ORA, RXGR) run. The caller's `universe` is the background (NULL = each
+    # backend's annotated genome).
+    queries <- gene_list
+    for (lab in names(queries)) message(lab, " genes: ", length(queries[[lab]]))
+    if (is.null(universe)) {
+      msg <- paste("No `universe` supplied: ORA/RXGR test against each",
+                   "collection's whole annotated genome.")
+      message(msg); write_log(output_dir, msg)
+    } else {
+      universe <- unique(as.character(universe[!is.na(universe)]))
+      outside  <- setdiff(unlist(queries, use.names = FALSE), universe)
+      if (length(outside)) {
+        message(length(outside), " gene(s) in `gene_list` are not in `universe` ",
+                "and will be ignored: ", paste(utils::head(outside, 10), collapse = ", "),
+                if (length(outside) > 10) ", ..." else "")
+      }
+    }
   } else {
-    universe <- df$SYMBOL[!is.na(df$padj)]
-    up_df    <- df[!is.na(df$padj) & df$padj < padj_cutoff &
-                     df$log2FoldChange >  log2fc_cutoff, ]
-    down_df  <- df[!is.na(df$padj) & df$padj < padj_cutoff &
-                     df$log2FoldChange < -log2fc_cutoff, ]
+    fgsea_excel   <- file.path(output_dir, "FGSEA_results.xlsx")
+    fgsea_results <- perform_fgsea_all(df, fgsea_excel)
+
+    # UP / DOWN sets for ORA: from the BigTab status column when available
+    # (1 = UP, -1 = DOWN), otherwise from the padj / log2fc thresholds.
+    if (!is.null(df$status)) {
+      message("ORA UP/DOWN sets defined by the BigTab status column.")
+      universe <- df$SYMBOL[!is.na(df$status)]
+      up_df    <- df[!is.na(df$status) & df$status ==  1, ]
+      down_df  <- df[!is.na(df$status) & df$status == -1, ]
+    } else {
+      universe <- df$SYMBOL[!is.na(df$padj)]
+      up_df    <- df[!is.na(df$padj) & df$padj < padj_cutoff &
+                       df$log2FoldChange >  log2fc_cutoff, ]
+      down_df  <- df[!is.na(df$padj) & df$padj < padj_cutoff &
+                       df$log2FoldChange < -log2fc_cutoff, ]
+    }
+
+    message("UP genes:   ", nrow(up_df))
+    message("DOWN genes: ", nrow(down_df))
+    utils::write.csv(up_df,   file.path(output_dir, "up_df.csv"),   row.names = FALSE)
+    utils::write.csv(down_df, file.path(output_dir, "down_df.csv"), row.names = FALSE)
+    queries <- list(UP = up_df$SYMBOL, DOWN = down_df$SYMBOL)
   }
-
-  message("UP genes:   ", nrow(up_df))
-  message("DOWN genes: ", nrow(down_df))
-  utils::write.csv(up_df,   file.path(output_dir, "up_df.csv"),   row.names = FALSE)
-  utils::write.csv(down_df, file.path(output_dir, "down_df.csv"), row.names = FALSE)
-
-  entrez_up <- if (nrow(up_df)   > 0)
-    clusterProfiler::bitr(up_df$SYMBOL,   fromType = "SYMBOL",
-                          toType = "ENTREZID",
-                          OrgDb = org.Hs.eg.db::org.Hs.eg.db) else NULL
-  entrez_dn <- if (nrow(down_df) > 0)
-    clusterProfiler::bitr(down_df$SYMBOL, fromType = "SYMBOL",
-                          toType = "ENTREZID",
-                          OrgDb = org.Hs.eg.db::org.Hs.eg.db) else NULL
 
   # Every ORA call tests against the measured genes (`universe`), not the
   # whole genome: on a targeted panel (e.g. Olink) a genome background makes
   # two-gene overlaps look significant. KEGG / Reactome need Entrez IDs.
-  universe_entrez <- suppressMessages(suppressWarnings(
+  universe_entrez <- if (!is.null(universe)) suppressMessages(suppressWarnings(
     clusterProfiler::bitr(universe, fromType = "SYMBOL", toType = "ENTREZID",
                           OrgDb = org.Hs.eg.db::org.Hs.eg.db)))$ENTREZID
 
@@ -635,35 +704,34 @@ enrichment_onestep <- function(genes          = NULL,
   kegg_dir <- file.path(output_dir, "KEGG")
   hm_dir   <- file.path(output_dir, "Hallmark")
   gse_dir  <- file.path(output_dir, "gse")
-  lapply(list(go_dir, re_dir, kegg_dir, hm_dir, gse_dir), make_dir)
+  lapply(list(go_dir, re_dir, kegg_dir, hm_dir), make_dir)
 
   # ORA (over-representation) is the method that legitimately takes the UP /
-  # DOWN significant gene sets.
-  ora <- list(UP = list(), DOWN = list())
+  # DOWN significant gene sets (or the caller's gene list).
+  ora <- lapply(queries, function(q) list())
 
-  if (nrow(up_df) > 0) {
-    ora$UP$GO       <- perform_go(up_df$SYMBOL, universe, go_dir,  "UP")
-    ora$UP$Reactome <- perform_reactome(entrez_up$ENTREZID, universe_entrez, re_dir, "UP")
-    ora$UP$KEGG     <- perform_kegg(entrez_up$ENTREZID, universe_entrez, kegg_dir, "UP")
-    ora$UP$Hallmark <- perform_hallmark(up_df$SYMBOL, universe, hm_dir, "UP")
-  }
-
-  if (nrow(down_df) > 0) {
-    ora$DOWN$GO       <- perform_go(down_df$SYMBOL, universe, go_dir,  "DOWN")
-    ora$DOWN$Reactome <- perform_reactome(entrez_dn$ENTREZID, universe_entrez, re_dir, "DOWN")
-    ora$DOWN$KEGG     <- perform_kegg(entrez_dn$ENTREZID, universe_entrez, kegg_dir, "DOWN")
-    ora$DOWN$Hallmark <- perform_hallmark(down_df$SYMBOL, universe, hm_dir, "DOWN")
+  for (lab in names(queries)) {
+    q <- queries[[lab]]
+    if (length(q) == 0L) next
+    entrez <- clusterProfiler::bitr(q, fromType = "SYMBOL", toType = "ENTREZID",
+                                    OrgDb = org.Hs.eg.db::org.Hs.eg.db)
+    ora[[lab]]$GO       <- perform_go(q, universe, go_dir, lab)
+    ora[[lab]]$Reactome <- perform_reactome(entrez$ENTREZID, universe_entrez, re_dir, lab)
+    ora[[lab]]$KEGG     <- perform_kegg(entrez$ENTREZID, universe_entrez, kegg_dir, lab)
+    ora[[lab]]$Hallmark <- perform_hallmark(q, universe, hm_dir, lab)
   }
 
   # GSEA (gseGO) runs ONCE on the full ranked list; NES sign gives direction.
-  gsea <- perform_gse(df, gse_dir)
+  if (!list_mode) {
+    make_dir(gse_dir)
+    gsea <- perform_gse(df, gse_dir)
+  }
 
   # ---- RXGR: OpenXGR-style Fisher / odds-ratio enrichment ----
-  rxgr <- list(UP = NULL, DOWN = NULL)
+  rxgr <- stats::setNames(vector("list", length(queries)), names(queries))
   if (run_rxgr) {
     if (is.null(rxgr_sets)) rxgr_sets <- .rxgr_default_sets()
     rxgr_root <- file.path(output_dir, "RXGR"); make_dir(rxgr_root)
-    queries   <- list(UP = up_df$SYMBOL, DOWN = down_df$SYMBOL)
     for (dir_name in names(queries)) {
       q <- queries[[dir_name]]
       if (length(q) == 0L) next
@@ -692,7 +760,11 @@ enrichment_onestep <- function(genes          = NULL,
   # it sees the complete output tree, and wrapped so a summary failure (e.g. a
   # missing optional package) is logged but never aborts the enrichment run.
   summary_res <- NULL
-  if (isTRUE(write_summary)) {
+  if (isTRUE(write_summary) && list_mode) {
+    msg <- paste("biorosa_summary skipped: the consensus report needs the",
+                 "ranked methods, which do not run in gene-list mode.")
+    message(msg); write_log(output_dir, msg)
+  } else if (isTRUE(write_summary)) {
     sum_dir <- if (is.null(summary_output_dir))
       file.path(output_dir, "biorosa_consensus_summary") else summary_output_dir
     call_args <- utils::modifyList(

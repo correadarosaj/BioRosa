@@ -25,7 +25,9 @@ enrichment_onestep(
   rxgr_fdr = 0.05,
   write_summary = TRUE,
   summary_output_dir = NULL,
-  summary_args = list()
+  summary_args = list(),
+  gene_list = NULL,
+  universe = NULL
 )
 }
 \arguments{
@@ -112,16 +114,28 @@ run. Set \code{FALSE} to skip.}
 \code{\link[=biorosa_summary]{biorosa_summary()}} (e.g. \code{list(contrast = "...", reverse = TRUE, top_n = 8)}).
 \code{contrast} defaults to the \code{contrast} suffix when supplied via \code{BigTab}.
 \code{overwrite = TRUE} is passed by default so re-running refreshes the summary.}
+
+\item{gene_list}{Gene-list mode: HGNC symbols to test with the
+gene-set methods only (ORA + RXGR). Either a character vector (one
+undirected set, labelled \code{LIST}) or a list named \code{UP} and/or \code{DOWN}.
+Cannot be combined with \code{genes}, \code{log2FoldChange}, \code{padj} or \code{BigTab}.}
+
+\item{universe}{Background genes for gene-list mode — normally every gene
+that was measured. \code{NULL} (default) lets each backend use its whole
+annotated genome, which inflates significance for targeted panels.
+Ignored outside gene-list mode, where the universe is the measured genes.}
 }
 \value{
 A named list:
 \itemize{
 \item \code{fgsea} — named per-collection list (\code{Hallmark}, \code{GO_BP}, \code{Reactome}),
 each a \code{data.table} of FGSEA results on the full ranked list (NES sign
-gives direction).
-\item \code{ora}   — list with \verb{$UP} and \verb{$DOWN}, each holding \code{GO}, \code{Reactome},
-\code{KEGG}, and \code{Hallmark} enrichment result objects.
+gives direction). \code{NULL} in gene-list mode.
+\item \code{ora}   — list with \verb{$UP} and \verb{$DOWN} (or one element per \code{gene_list}
+set, e.g. \verb{$LIST}), each holding \code{GO}, \code{Reactome}, \code{KEGG}, and
+\code{Hallmark} enrichment result objects.
 \item \code{gsea}  — a single \code{gseGO} result object (run on the full ranked list).
+\code{NULL} in gene-list mode.
 \item \code{rxgr}  — list with \verb{$UP} and \verb{$DOWN}, each a per-collection
 \code{\link[=rxgr_enrichment]{rxgr_enrichment()}} result (\verb{$table}, \verb{$dotplot}, \verb{$forest}, ...);
 \code{NULL} entries when \code{run_rxgr = FALSE} or a direction has no genes.
@@ -186,6 +200,18 @@ FDR) plus a dotplot and forest plot per collection, written under
 \verb{output_dir/RXGR/}.
 }
 
+\strong{Gene-list mode.} When you only have a list of genes (no fold changes or
+p-values for every measured gene), pass it as \code{gene_list} instead. The
+ranked methods (FGSEA and \code{gseGO}) need a statistic for every measured gene,
+so they are skipped; only the methods that take a gene set run — ORA
+(GO BP/MF/CC, Reactome, KEGG, Hallmark) and RXGR. \code{gene_list} can be a
+character vector (one undirected set, written with the label \code{LIST}) or a
+list named \code{UP} and/or \code{DOWN}. Supply \code{universe} (every gene that was
+measured) whenever the list comes from a targeted panel such as Olink;
+without it each backend tests against its whole annotated genome. The
+consensus summary is skipped in this mode because it is built around the
+ranked methods' NES.
+
 Each per-plot rendering step is wrapped in \code{tryCatch()}, so a single
 failing plot (e.g. an \code{enrichplot::treeplot} on a result with too few
 terms) is logged and skipped rather than aborting the whole pipeline.
@@ -209,6 +235,13 @@ res <- enrichment_onestep(
   BigTab     = BigTab,            # GENENAME-indexed DE table
   contrast   = "Drug.W16vsBL",
   output_dir = "results/Drug.W16vsBL"
+)
+
+# (c) gene-list mode: ORA + RXGR only, against the measured background
+res <- enrichment_onestep(
+  gene_list  = list(UP = up_genes, DOWN = down_genes),
+  universe   = rownames(BigTab),
+  output_dir = "results/my_list"
 )
 }
 

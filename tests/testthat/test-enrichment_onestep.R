@@ -210,3 +210,72 @@ test_that(".msigdbr_fetch() rethrows unrelated msigdbr errors unchanged", {
                "some other failure", fixed = TRUE)
   expect_identical(calls, 1L)
 })
+
+test_that("enrichment_onestep() gene-list mode validates its input", {
+  expect_error(
+    enrichment_onestep(gene_list = c("TP53", "MYC"), genes = "TP53"),
+    "not both", fixed = TRUE
+  )
+  expect_error(
+    enrichment_onestep(gene_list = list(up = "TP53")),
+    "named \"UP\" and/or \"DOWN\"", fixed = TRUE
+  )
+  expect_error(
+    enrichment_onestep(gene_list = list("TP53", "MYC")),
+    "named \"UP\" and/or \"DOWN\"", fixed = TRUE
+  )
+  expect_error(
+    enrichment_onestep(gene_list = c(NA, "")),
+    "contains no genes", fixed = TRUE
+  )
+})
+
+test_that("enrichment_onestep() gene-list mode runs ORA + RXGR only", {
+  skip_on_cran()
+  skip_if_offline()
+  for (p in c("msigdbr", "clusterProfiler", "ReactomePA", "enrichplot",
+              "org.Hs.eg.db", "openxlsx", "ggplot2", "data.table")) {
+    skip_if_not_installed(p)
+  }
+
+  hm <- msigdbr::msigdbr(species = "human", collection = "H")
+  ifn_genes <- unique(hm$gene_symbol[
+    hm$gs_name == "HALLMARK_INTERFERON_ALPHA_RESPONSE"])
+  skip_if(length(ifn_genes) < 40, "Hallmark IFN-alpha pathway unexpectedly small")
+
+  query    <- head(ifn_genes, 30)
+  universe <- unique(c(ifn_genes, head(unique(hm$gene_symbol), 400)))
+  out_dir  <- withr::local_tempdir()
+
+  expect_message(
+    res <- enrichment_onestep(
+      gene_list = query, universe = universe, output_dir = out_dir,
+      pval_cutoff = 0.5, qval_cutoff = 0.5,
+      rxgr_sets = list(Hallmark = split(hm$gene_symbol, hm$gs_name))),
+    "biorosa_summary skipped", fixed = TRUE
+  )
+
+  expect_named(res, c("fgsea", "ora", "gsea", "rxgr", "summary"))
+  expect_null(res$fgsea); expect_null(res$gsea); expect_null(res$summary)
+  expect_named(res$ora, "LIST")
+  expect_named(res$ora$LIST, c("GO", "Reactome", "KEGG", "Hallmark"))
+  expect_true("HALLMARK_INTERFERON_ALPHA_RESPONSE" %in% res$ora$LIST$Hallmark@result$ID)
+  expect_false(is.null(res$rxgr$LIST$Hallmark))
+
+  # Ranked outputs must not exist; ORA tables carry the LIST label.
+  expect_false(file.exists(file.path(out_dir, "FGSEA_results.xlsx")))
+  expect_false(dir.exists(file.path(out_dir, "gse")))
+  expect_false(file.exists(file.path(out_dir, "up_df.csv")))
+  xl <- list.files(out_dir, pattern = "_LIST\\.xlsx$", recursive = TRUE,
+                   full.names = TRUE)
+  expect_gt(length(xl), 0)
+
+  # The supplied universe is the background, not the genome.
+  for (x in xl) {
+    tab <- openxlsx::read.xlsx(x)
+    if (nrow(tab) && "BgRatio" %in% names(tab)) {
+      bg <- as.integer(sub(".*/", "", tab$BgRatio))
+      expect_true(all(bg <= length(universe)), info = basename(x))
+    }
+  }
+})
